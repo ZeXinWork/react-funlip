@@ -1,0 +1,212 @@
+.account-wrapper {
+  box-sizing: border-box;
+  width: 360px;
+  height: 580px;
+  background: #fff;
+}
+.account-wrapper .cur {
+  cursor: pointer;
+}
+.account-wrapper .user-body-wrapper {
+  box-sizing: border-box;
+  padding-left: 25px;
+}
+.account-wrapper .user-body-wrapper .img-icon {
+  width: 24px;
+  height: 24px;
+  margin-bottom: 3px;
+}
+.account-wrapper .user-body-wrapper .user-text {
+  font-size: 14px;
+  font-family: PingFangSC-Semibold, PingFang SC;
+  font-weight: 600;
+  color: #5d648b;
+  line-height: 20px;
+  margin-left: 8px;
+}
+.account-wrapper .user-body-wrapper .mb-20 {
+  margin-bottom: 16px;
+}
+.account-wrapper .user-body-wrapper .fl-sp {
+  display: flex;
+  justify-content: space-between;
+}
+.account-wrapper .user-body-wrapper .arrowRight-special {
+  margin-left: 194px;
+  width: 16px;
+  height: 16px;
+}
+.account-wrapper .user-body-wrapper .arrowRight-common {
+  margin-left: 208px;
+  width: 16px;
+  height: 16px;
+}
+.account-wrapper .user-body-wrapper .getPassword {
+  width: 312px;
+  height: 37px;
+  line-height: 37px;
+}
+.account-wrapper .user-body-wrapper .getPassword .password-text {
+  cursor: pointer;
+}
+.account-wrapper .user-body-wrapper .home-set {
+  width: 312px;
+  height: 37px;
+  line-height: 37px;
+}
+.account-wrapper .user-body-wrapper .home-set .set-text {
+  cursor: pointer;
+}
+.account-wrapper .user-body-wrapper .device-control {
+  width: 312px;
+  height: 37px;
+  line-height: 37px;
+}
+.account-wrapper .user-body-wrapper .device-control .control-text {
+  cursor: pointer;
+}
+.account-wrapper .user-body-wrapper .home-sync {
+  width: 312px;
+  height: 37px;
+  line-height: 37px;
+}
+.account-wrapper .user-body-wrapper .home-sync .sync-text {
+  cursor: pointer;
+}
+.account-wrapper .user-body-wrapper .home-about {
+  width: 312px;
+  height: 37px;
+  line-height: 37px;
+}
+.account-wrapper .user-body-wrapper .home-about .about-text {
+  cursor: pointer;
+}
+.account-wrapper .user-body-wrapper .home-out {
+  width: 312px;
+  height: 37px;
+  line-height: 37px;
+}
+.account-wrapper .user-body-wrapper .home-out .out-text {
+  cursor: pointer;
+}
+.account-wrapper .home-user-info-wrappers {
+  padding: 0 24px;
+  padding-top: 20px;
+}
+.account-wrapper .home-user-info-wrappers .home-user-info-wrapper {
+  display: flex;
+  margin-bottom: 20px;
+  width: 312px;
+  height: 88px;
+  background: url("img_me_bg@2x.png") no-repeat;
+  background-size: 100% 100%;
+}
+.account-wrapper .home-user-info-wrappers .home-user-info-wrapper .home-user-photo {
+  width: 48px;
+  height: 48px;
+  margin: 20px 0;
+  margin-left: 16px;
+}
+.account-wrapper .home-user-info-wrappers .home-user-info-wrapper .user-level {
+  margin-left: 10px;
+  margin-top: 23px;
+  width: 80px;
+  height: 22px;
+  background: linear-gradient(142deg, #d5b97d 0%, #c8a66b 100%);
+  border-radius: 11px;
+  text-align: center;
+}
+.account-wrapper .home-user-info-wrappers .home-user-info-wrapper .user-level .user-level-icon {
+  margin-bottom: 3px;
+  width: 16px;
+  height: 16px;
+}
+.account-wrapper .home-user-info-wrappers .home-user-info-wrapper .user-level .user-level-text {
+  width: 46px;
+  height: 16px;
+  font-size: 11px;
+  font-family: PingFang-SC-Bold, PingFang-SC;
+  color: #f7f2e8;
+  line-height: 16px;
+  margin-left: 2px;
+}
+.account-wrapper .home-user-info-wrappers .home-user-info {
+  height: 40px;
+  margin-left: 12px;
+  margin-top: 20px;
+}
+.account-wrapper .home-user-info-wrappers .home-user-info .home-username {
+  line-height: 22px;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: PingFangSC-Semibold, PingFang SC;
+  color: #3a3f6d;
+}
+.account-wrapper .home-user-info-wrappers .home-user-info .home-telephone-Number {
+  margin-top: 4px;
+  font-size: 12px;
+  font-family: PingFang-SC-Medium, PingFang-SC;
+  font-weight: 500;
+  color: #3a3f6d;
+  line-height: 17px;
+}
+.home-classification {
+  flex: 1;
+}
+.home-classification .lock-wrapper {
+  width: 100%;
+}
+.home-classification .lock-wrapper .lock-item {
+  height: 50px;
+  float: right;
+  cursor: pointer;
+}
+.home-classification .lock-wrapper::after {
+  display: block;
+  content: "";
+  clear: both;
+}
+.home-classification .item-classification {
+  display: flex;
+  justify-content: center;
+  flex: 1;
+}
+.home-classification .item-classification .mb-6 {
+  margin-bottom: 6px;
+}
+.home-classification .item-classification .item-account {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: 65px;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+.home-classification .item-classification .item-set {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: 65px;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+.home-classification .item-classification .item-password-Library {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: 65px;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+.home-classification .item-classification .item-folder {
+  display: flex;
+  flex-direction: column;
+  height: 65px;
+  justify-content: center;
+  flex: 1;
+  align-items: center;
+  cursor: pointer;
+}

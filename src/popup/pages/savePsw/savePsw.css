@@ -1,0 +1,113 @@
+.save-psw-wrapper {
+  width: 360px;
+  height: 264px;
+  margin: 0 16px;
+  background: #ffffff;
+  box-sizing: border-box;
+}
+.save-psw-wrapper .save-ps-header {
+  display: flex;
+  border-bottom: 1px solid #ddddeb;
+  justify-content: space-between;
+  margin-top: 16px;
+  padding-bottom: 5px;
+}
+.save-psw-wrapper .save-ps-header .save-header-left {
+  display: flex;
+  align-items: center;
+}
+.save-psw-wrapper .save-ps-header .save-header-left .logo {
+  width: 32px;
+  height: 32px;
+  margin-right: 8px;
+}
+.save-psw-wrapper .save-ps-header .save-header-left .header-text {
+  width: 41px;
+  height: 20px;
+  font-size: 14px;
+  font-family: PingFangSC-Semibold, PingFang SC;
+  font-weight: 600;
+  color: #3a3f6d;
+  line-height: 20px;
+}
+.save-psw-wrapper .save-ps-header .logo-right {
+  width: 18px;
+  height: 18px;
+  margin-right: 4px;
+}
+.save-psw-wrapper .body-text {
+  margin-top: 15px;
+  width: 308px;
+  height: 20px;
+  font-size: 14px;
+  font-family: PingFang-SC-Medium, PingFang-SC;
+  font-weight: 500;
+  color: #8f96b6;
+  line-height: 20px;
+}
+.save-psw-wrapper .save-psw-body {
+  margin-top: 16px;
+}
+.save-psw-wrapper .save-psw-body .body-password {
+  width: 328px;
+  height: 72px;
+  background: #f8f9fc;
+  border-radius: 7px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.save-psw-wrapper .save-psw-body .body-password .body-password-left {
+  display: flex;
+  align-items: center;
+}
+.save-psw-wrapper .save-psw-body .body-password .body-password-left .body-password-img {
+  margin-left: 19px;
+}
+.save-psw-wrapper .save-psw-body .body-password .body-password-left .body-left-text {
+  width: 200px;
+  margin-left: 11px;
+}
+.save-psw-wrapper .save-psw-body .body-right-icon {
+  margin-right: 15px;
+}
+.save-psw-wrapper .autoMid {
+  width: 100%;
+  margin-top: 40px;
+}
+.save-psw-wrapper .autoMid .button-layout {
+  display: flex;
+  margin-left: 70px;
+}
+.save-psw-wrapper .autoMid .main {
+  width: 108px;
+  height: 40px;
+  box-sizing: border-box;
+  padding: 2px;
+  border-radius: 18px;
+  background-image: -webkit-linear-gradient(90deg, #18bff6, #1875f6);
+}
+.save-psw-wrapper .autoMid .btn-1 {
+  width: 100%;
+  height: 100%;
+  border-radius: 18px;
+  background: #fff;
+  text-align: center;
+  line-height: 30px;
+  cursor: pointer;
+}
+.save-psw-wrapper .autoMid .set-bg {
+  background: linear-gradient(245deg, #4ca0fe 0%, #8455ff 100%);
+  border-radius: 18px;
+  cursor: pointer;
+}
+.save-psw-wrapper .autoMid .btn-layout {
+  width: 118px;
+  height: 40px;
+  text-align: center;
+  line-height: 40px;
+}
+.save-psw-wrapper .autoMid .ml-20 {
+  margin-left: 20px;
+  margin-right: 14px;
+}

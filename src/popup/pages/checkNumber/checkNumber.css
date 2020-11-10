@@ -1,0 +1,31 @@
+.check-wrapper {
+  width: 360px;
+  height: 580px;
+  box-sizing: border-box;
+}
+.check-wrapper .check-header {
+  height: 150px;
+  margin-left: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.check-wrapper .check-body {
+  display: flex;
+  flex-direction: column;
+  margin-left: 30px;
+  margin-top: 80px;
+}
+.check-wrapper .check-body .check-body-input {
+  width: 300px;
+  height: 40px;
+  text-align: center;
+}
+.check-wrapper .check-body Button {
+  width: 30px;
+  margin-left: 100px;
+  margin-top: 40px;
+  font-size: 16px;
+  outline: none;
+  border: none;
+}

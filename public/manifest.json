@@ -1,0 +1,47 @@
+{
+  "name": "funlip",
+  "version": "1.0",
+  "description": "funlip",
+  "icons": {
+    "16": "images/logo16.png",
+    "48": "images/logo32.png"
+  },
+  "manifest_version": 2,
+  "browser_action": {
+    "default_icon": "images/logo16.png",
+    "default_title": "Funlip",
+    "default_popup": "index.html"
+  },
+  "background": {
+    "scripts": [
+      "static/js/background.js"
+    ],
+    "persistent": true
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "css": [
+        "static/css/content.css"
+      ],
+      "js": [
+        "static/js/content.js"
+      ],
+      "run_at": "document_end",
+      "all_frames": true
+    }
+  ],
+  "permissions": [
+    "tabs",
+    "declarativeContent",
+    "storage",
+    "notifications",
+    "http://*/*",
+    "https://*/*"
+  ],
+  "web_accessible_resources": [
+    "insert.js"
+  ]
+}

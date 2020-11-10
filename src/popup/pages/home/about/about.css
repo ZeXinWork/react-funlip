@@ -1,0 +1,18 @@
+.home-about-wrapper {
+  width: 358px;
+  height: 523px;
+  box-sizing: border-box;
+}
+.home-about-wrapper .home-about-title {
+  height: 45px;
+}
+.home-about-wrapper .pd-10 {
+  padding: 10px;
+}
+.home-about-wrapper .bd-ccc {
+  border-bottom: 1px solid #ccc;
+}
+.home-about-wrapper .layout {
+  display: flex;
+  justify-content: space-between;
+}

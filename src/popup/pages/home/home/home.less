@@ -1,0 +1,97 @@
+.home-wrapper {
+  * {
+    margin: 0;
+    padding: 0;
+  }
+  position: relative;
+  width: 360px;
+  height: 600px;
+  background: #fff;
+  border: 1px solid transparent;
+  display: flex;
+  box-sizing: border-box;
+  flex-direction: column;
+  border-bottom: none;
+  background: 1px solid transparent;
+  overflow: hidden;
+  .home-classification {
+    position: absolute;
+    width: 360px;
+    bottom: 0;
+    right: 0;
+    .fly-ball {
+      width: 64px;
+      height: 64px;
+      position: absolute;
+      bottom: 35px;
+      left: 148px;
+      cursor: pointer;
+      z-index: 99;
+    }
+    .lock-wrapper {
+      width: 100%;
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 24px;
+      width: 360px;
+      .lock-item-wrapper {
+        width: 79px;
+        height: 40px;
+        background: #ffffff;
+        box-shadow: 0px 3px 6px 0px rgba(204, 205, 219, 0.8);
+        border-radius: 20px 0px 0px 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        .lock-icon {
+          width: 16px;
+          height: 16px;
+        }
+        .lock-text {
+          width: 28px;
+          height: 20px;
+          font-size: 14px;
+          font-family: PingFangSC-Semibold, PingFang SC;
+          font-weight: 600;
+          color: #5d648b;
+          line-height: 20px;
+          margin-left: 2px;
+        }
+      }
+    }
+    .item-classification {
+      border-bottom: none;
+      display: flex;
+      position: relative;
+
+      width: 360px;
+      height: 64px;
+
+      box-shadow: 0px 5px 15px 0px rgba(198, 206, 219, 0.8),
+        1px 1px 4px 0px rgba(255, 255, 255, 0.3),
+        -1px -1px 3px 0px rgba(242, 244, 247, 0.2);
+      .item-icon {
+        width: 24px;
+        height: 24px;
+        position: absolute;
+        cursor: pointer;
+        margin-top: 20px;
+      }
+      .img1 {
+        left: 24px;
+      }
+      .img2 {
+        left: 96px;
+      }
+      .img3 {
+        left: 239px;
+      }
+      .img4 {
+        left: 312px;
+      }
+    }
+  }
+  .home-header {
+    flex: 1;
+  }
+}

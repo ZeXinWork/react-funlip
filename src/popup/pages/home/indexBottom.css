@@ -1,0 +1,9 @@
+.home-classification {
+  position: relative;
+}
+.home-classification .fly-ball {
+  position: absolute;
+  bottom: 60px;
+  left: 160px;
+  cursor: pointer;
+}

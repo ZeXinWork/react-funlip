@@ -1,0 +1,590 @@
+/*global chrome*/
+import { handleLocalStorage, getCaptcha } from "../api";
+
+import localforage from "localforage";
+import qs from "qs";
+let passwordItem;
+let data;
+let url = "";
+let userName = "";
+let password = "";
+
+//获取用户数据流程 （内存-》本地-》接口）
+// 1、建立一个本地仓库（同步执行）
+localforage.config({
+  driver: localforage.INDEXEDDB,
+  name: "I-heart-indexDB2",
+});
+//2、封装从接口获取用户信息的代码
+const getData = async () => {
+  const token = handleLocalStorage("get", "token");
+  const pluginID = handleLocalStorage("get", "pluginID");
+  const value = {
+    pluginId: pluginID,
+  };
+  return fetch("http://112.74.86.214:8088/plugin/api/v1/password/list", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ClientType: "plugin",
+      Authorization: token,
+    },
+    body: JSON.stringify(value),
+  }).then((response) => response.text());
+};
+
+//3、判断本地是否有数据（异步）如果有 就直接获取 没有就发请求给接口
+const getDataBaseLen = async () => {
+  let res;
+  const getLen = async () => {
+    const res = await localforage.keys();
+    return res.length;
+  };
+  const getLength = async () => {
+    res = await getLen();
+  };
+  await getLength();
+  return res;
+};
+
+//4、获取接口或本地数据 并存在内存data中
+const getAllData = async () => {
+  const len = await getDataBaseLen();
+  let userInfo;
+
+  //len不为0，则本地有值，则去本地拿数据
+  if (len != 0) {
+    const getLocalData = async () => {
+      const res = localforage
+        .getItem("userInfo")
+        .then(function (value) {
+          // 当离线仓库中的值被载入时，此处代码运行
+          return value;
+        })
+        .catch(function (err) {
+          // 当出错时，此处代码运行
+        });
+      return res;
+    };
+    userInfo = await getLocalData();
+    data = userInfo;
+  } else {
+    const getServeData = async () => {
+      //将值设置在本地数据库
+
+      const initData = async () => {
+        let res = await getData();
+        userInfo = res;
+        userInfo = JSON.parse(userInfo);
+        data = userInfo;
+        localforage
+          .setItem("userInfo", userInfo)
+          .then(function (value) {
+            // 当离线仓库中的值被载入时，此处代码运行
+          })
+          .catch(function (err) {
+            // 当出错时，此处代码运行
+          });
+      };
+      await initData();
+    };
+    await getServeData();
+  }
+
+  return userInfo;
+};
+
+//往数据库里添加数据，并添加到内存返回给密码库页面
+const addItem = async (value) => {
+  value = JSON.parse(value);
+  const localState = await localforage
+    .getItem("userInfo")
+    .then(function (value) {
+      // 当离线仓库中的值被载入时，此处代码运行
+      return value;
+    })
+    .catch(function (err) {
+      // 当出错时，此处代码运行
+    });
+  localState.push(value);
+  localforage
+    .setItem("userInfo", localState)
+    .then(function (value) {
+      data = value;
+      const cmd = "addSuccess";
+      chrome.runtime.sendMessage(cmd, function (response) {});
+    })
+    .catch(function (err) {
+      // 当出错时，此处代码运行
+    });
+  //
+  // let arr = JSON.parse(localState);
+  // arr.push(value);
+  //
+  //
+  //
+  // data = arr;
+  //
+  // localforage
+  //   .setItem("userInfo", arr)
+  //   .then(function (value) {})
+  //   .catch(function (err) {
+  //     // 当出错时，此处代码运行
+  //   });
+};
+
+//删除数据库指定数据,并添加到内存返回给密码库页面
+const deletePsdItem = async (deleteItem) => {
+  let value = JSON.parse(deleteItem);
+  let idArrays = [];
+
+  value.data.map((item) => {
+    idArrays.push(item.id);
+  });
+
+  const localState = await localforage
+    .getItem("userInfo")
+    .then(function (value) {
+      // 当离线仓库中的值被载入时，此处代码运行
+      return value;
+    })
+    .catch(function (err) {
+      // 当出错时，此处代码运行
+    });
+  for (let i = 0; i < localState.length; i++) {
+    localState[i].index = i;
+    idArrays.map((item) => {
+      if (localState[i].id === item) {
+        localState.splice(localState[i].index, 1);
+      }
+    });
+  }
+
+  const newData = await localforage
+    .setItem("userInfo", localState)
+    .then(function (value) {
+      return value;
+    })
+    .catch(function (err) {
+      // 当出错时，此处代码运行
+    });
+  data = newData;
+  const cmd = "deleteSuccess";
+  chrome.runtime.sendMessage(cmd, function (response) {});
+};
+
+const editItem = async (value) => {
+  value = JSON.parse(value);
+  const localState = await localforage
+    .getItem("userInfo")
+    .then(function (value) {
+      // 当离线仓库中的值被载入时，此处代码运行
+      return value;
+    })
+    .catch(function (err) {
+      // 当出错时，此处代码运行
+    });
+  localState.push(value);
+  localforage
+    .setItem("userInfo", localState)
+    .then(function (value) {
+      data = value;
+    })
+    .catch(function (err) {
+      // 当出错时，此处代码运行
+    });
+};
+
+const sendDataToPopup = (data) => {
+  const cmd = {
+    type: "popupGetData",
+    data,
+  };
+  chrome.runtime.sendMessage(cmd, function (response) {});
+};
+chrome.runtime.onInstalled.addListener(function () {
+  chrome.declarativeContent.onPageChanged.removeRules(undefined, function () {
+    chrome.declarativeContent.onPageChanged.addRules([
+      {
+        // 运行插件运行的页面URL规则
+        conditions: [
+          new chrome.declarativeContent.PageStateMatcher({ pageUrl: {} }),
+        ],
+        actions: [new window.chrome.declarativeContent.ShowPageAction()],
+      },
+    ]);
+  });
+});
+
+// bg监听由content.js或者popup发来的信息
+chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+  let { type } = message.mes;
+  let { requestType } = message.mes;
+  const autoFill = handleLocalStorage("get", "autoFill");
+  const autoStore = handleLocalStorage("get", "autoStore");
+  if (type === "autofill") {
+    if (autoFill == 1) {
+      let userInfoData = { data };
+      userInfoData.test = "autofill";
+      chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+        chrome.tabs.sendMessage(tabs[0].id, userInfoData, function (
+          response
+        ) {});
+      });
+    }
+  } else if (type === "mesToBackground") {
+    passwordItem = message.mes;
+    passwordItem.test = "mesToBackground";
+
+    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+      chrome.tabs.sendMessage(tabs[0].id, passwordItem, function (response) {});
+    });
+  } else if (type === "autolock") {
+    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+      chrome.tabs.sendMessage(tabs[0].id, message.mes, function (response) {});
+    });
+  } else if (type === "first-lock") {
+    handleLocalStorage("set", "autolock", "lock");
+  } else if (type === "getUserList") {
+    const getData = async () => {
+      const data = await getAllData();
+      if (data) {
+        sendDataToPopup(data);
+      }
+    };
+    getData();
+  } else if (type === "showSave") {
+    //判断当前是否应该打开自动保存页面
+    url = message.mes.url;
+  } else if (type === "isShowSave") {
+    //判断当前是否应该打开自动保存页面
+    let sendUrl = {
+      showUrl: url,
+      password: password,
+      userName: userName,
+    };
+    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+      chrome.tabs.sendMessage(tabs[0].id, sendUrl, function (response) {});
+    });
+  } else if (type === "cancelSave") {
+    url = "";
+  } else if (type === "savePsUs") {
+    userName = message.mes.userName;
+    password = message.mes.password;
+  } else if (type === "cancelCP") {
+    userName = "";
+    password = "";
+  } else if (type === "goUrl") {
+    const { url } = message.mes;
+
+    const gonewURL = {
+      toNewUrl: url,
+      type: "goNewUrl",
+    };
+    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+      chrome.tabs.sendMessage(tabs[0].id, gonewURL, function (response) {});
+    });
+  } else if (type === "showImage3") {
+    let cmd = "showImage3";
+    chrome.runtime.sendMessage(cmd, function (response) {});
+  } else if (requestType === "getNumbers") {
+    let { areaCode, phone, type } = message.mes;
+    const { NumberType } = message.mes;
+    console.log(NumberType);
+    if (NumberType) {
+      type = "FORGOT_PASSWORD";
+    }
+    fetch("http://112.74.86.214:8088/plugin/api/v1/captcha/send", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ClientType: "plugin",
+      },
+      body: JSON.stringify({
+        areaCode,
+        phone,
+        type,
+      }),
+    })
+      .then((response) => response.text())
+      .then((text) => sendResponse(text))
+      .catch((error) => {});
+    return true;
+  } else if (requestType === "checkNumber") {
+    const {
+      captcha,
+      client_ip,
+      device_name,
+      phone,
+      phone_area_code,
+    } = message.mes;
+    let userInfo = {
+      phone,
+      captcha,
+      client_ip,
+      phone_area_code,
+      device_name,
+    };
+    userInfo = qs.stringify(userInfo);
+    fetch("http://112.74.86.214:8088/app/api/login/sms", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        ClientType: "plugin",
+      },
+      body: userInfo,
+    })
+      .then((response) => response.text())
+      .then((text) => sendResponse(text))
+      .catch((error) => {});
+    return true;
+  } else if (requestType === "saveNewPsw") {
+    const pluginId = handleLocalStorage("get", "pluginID");
+    const token = handleLocalStorage("get", "token");
+
+    const { title, pwd, note, website, account } = message.mes;
+    let userInfo = {
+      title,
+      pwd,
+      note,
+      website,
+      account,
+      pluginId,
+    };
+    userInfo = JSON.stringify(userInfo);
+    fetch("http://112.74.86.214:8088/plugin/api/v1/password/store", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ClientType: "plugin",
+        Authorization: token,
+      },
+      body: userInfo,
+    })
+      .then((response) => response.text())
+      .then((text) => addItem(text))
+      .catch((error) => {});
+    // self.props.history.push("/home/psd");
+    return true;
+  } else if (requestType === "deleteItem") {
+    const token = handleLocalStorage("get", "token");
+
+    const { pluginId, passwordIds } = message.mes;
+    let userInfo = {
+      pluginId,
+      passwordIds,
+    };
+    userInfo = JSON.stringify(userInfo);
+    fetch("http://112.74.86.214:8088/plugin/api/v1/password/delete", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ClientType: "plugin",
+        Authorization: token,
+      },
+      body: userInfo,
+    })
+      .then((response) => response.text())
+      .then((text) => deletePsdItem(text))
+      .catch((error) => {});
+    // self.props.history.push("/home/psd");
+    return true;
+  } else if (requestType === "editNewPsw") {
+    const token = handleLocalStorage("get", "token");
+
+    const { title, pwd, note, website, account, pluginId } = message.mes;
+    let userInfo = {
+      title,
+      pwd,
+      note,
+      website,
+      account,
+      pluginId,
+    };
+    const finished = "finished";
+    userInfo = JSON.stringify(userInfo);
+    fetch("http://112.74.86.214:8088/plugin/api/v1/password/store", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ClientType: "plugin",
+        Authorization: token,
+      },
+      body: userInfo,
+    })
+      .then((response) => response.text())
+      .then((text) => editItem(text))
+      .then((res) => sendResponse(res))
+      .catch((error) => {});
+    // self.props.history.push("/home/psd");
+    return true;
+  } else if (requestType === "outLogin") {
+    const token = handleLocalStorage("get", "token");
+    fetch("http://112.74.86.214:8088/app/api/logout", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ClientType: "plugin",
+        Authorization: token,
+      },
+      body: "",
+    })
+      .then((response) => response.text())
+      .then((text) => sendResponse(text))
+      .catch((error) => {});
+    return true;
+  } else if (requestType === "saveMainPassword") {
+    const token = handleLocalStorage("get", "token");
+    const { password } = message.mes;
+    let mainPass = JSON.stringify(password);
+    fetch("http://112.74.86.214:8088/plugin/api/v1/mainpass/set", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ClientType: "plugin",
+        Authorization: token,
+      },
+      body: mainPass,
+    })
+      .then((response) => response.text())
+      .then((text) => sendResponse(text))
+      .then(() => {
+        data = "";
+      })
+      .catch((error) => {});
+    return true;
+  } else if (requestType === "searchPsw") {
+    const token = handleLocalStorage("get", "token");
+
+    const { searchInfo } = message.mes;
+
+    let reqData = JSON.stringify(searchInfo);
+
+    fetch("http://112.74.86.214:8088/plugin/api/v1/password/search", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ClientType: "plugin",
+        Authorization: token,
+      },
+      body: reqData,
+    })
+      .then((response) => response.text())
+      .then((text) => sendResponse(text))
+      .catch((error) => {});
+    return true;
+  } else if (requestType === "setAutoFill") {
+    const token = handleLocalStorage("get", "token");
+    const pluginId = handleLocalStorage("get", "pluginID");
+    let { config } = message.mes;
+
+    if (config == "open") {
+      config = "OPEN_AUTO_FILL";
+    } else {
+      config = "CLOSE_AUTO_FILL";
+    }
+    let userInfo = {
+      pluginId,
+      setting: config,
+    };
+
+    let data = JSON.stringify(userInfo);
+    fetch("http://112.74.86.214:8088/plugin/api/v1/setting/update", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ClientType: "plugin",
+        Authorization: token,
+      },
+      body: data,
+    })
+      .then((response) => response.text())
+      .then((text) => sendResponse(text))
+      .catch((error) => {});
+    return true;
+  } else if (requestType === "setAutoStore") {
+    const token = handleLocalStorage("get", "token");
+    const pluginId = handleLocalStorage("get", "pluginID");
+    let { config } = message.mes;
+    if (config == "open") {
+      config = "OPEN_AUTO_STORE";
+    } else {
+      config = "CLOSE_AUTO_STORE";
+    }
+    let userInfo = {
+      pluginId,
+      setting: config,
+    };
+    let data = JSON.stringify(userInfo);
+    fetch("http://112.74.86.214:8088/plugin/api/v1/setting/update", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ClientType: "plugin",
+        Authorization: token,
+      },
+      body: data,
+    })
+      .then((response) => response.text())
+      .then((text) => sendResponse(text))
+      .catch((error) => {});
+    return true;
+  } else if (requestType === "verifyPassword") {
+    const token = handleLocalStorage("get", "token");
+    const { mainPass } = message.mes;
+    let userInfo = {
+      mainPass,
+    };
+    let data = JSON.stringify(userInfo);
+    fetch("http://112.74.86.214:8088/plugin/api/v1/mainpass/verify", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ClientType: "plugin",
+        Authorization: token,
+      },
+      body: data,
+    })
+      .then((response) => response.text())
+      .then((text) => sendResponse(text))
+      .catch((error) => {});
+    return true;
+  } else if (requestType === "resetMainPsw") {
+    const token = handleLocalStorage("get", "token");
+    const { userInfo } = message.mes;
+    console.log(userInfo);
+    let data = JSON.stringify(userInfo);
+    fetch("http://112.74.86.214:8088/plugin/api/v1/mainpass/reset", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ClientType: "plugin",
+        Authorization: token,
+      },
+      body: data,
+    })
+      .then((response) => response.text())
+      .then((text) => sendResponse(text))
+      .catch((error) => {});
+    return true;
+  }
+  return true;
+});
+
+// chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+//   let type = message.mes.type;
+//   if (type === "mesToBackground") {
+//     alert("kaishi");
+//     passwordItem = message.mes;
+//     alert("接收到来自于popup的消息:" + passwordItem);o
+//     alert("我想发送消息给content");
+//     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+//       chrome.tabs.sendMessage(tabs[0].id, { passwordItem }, function (
+//         response
+//       ) {
+//
+//       });
+//     });
+//     alert("结束");
+//   }
+// });

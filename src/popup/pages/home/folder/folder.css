@@ -1,0 +1,71 @@
+.folder-wrapper {
+  box-sizing: border-box;
+  width: 360px;
+  height: 580px;
+}
+.folder-wrapper .reFranch {
+  width: 40px;
+  height: 40px;
+  margin-left: 300px;
+  margin-top: 24px;
+  cursor: pointer;
+}
+.folder-wrapper .folder-collect {
+  display: flex;
+  flex-wrap: wrap;
+  height: 410px;
+  overflow: auto;
+  margin-left: 10px;
+}
+.folder-wrapper .folder-create {
+  width: 138px;
+  height: 70px;
+  background: url("createBg.png");
+  background-size: 100% 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 15px;
+  border-radius: 3%;
+}
+.folder-wrapper .folder-create .folder-create-item {
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+}
+.folder-wrapper .folder-info {
+  width: 138px;
+  height: 70px;
+  background: #f8f9fc;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 15px;
+  cursor: pointer;
+}
+.folder-wrapper .folder-info .folder-user-info {
+  margin: 10px;
+}
+.folder-wrapper .folder-info .folder-icon {
+  margin-top: 10px;
+  margin-left: 5px;
+}
+.folder-wrapper .folder-info .folder-icon .mlr-6 {
+  margin: 0 6px;
+}
+.folder-wrapper .folder-info .folder-icon .mr-6 {
+  width: 40px;
+  height: 40px;
+  margin-right: 6px;
+}
+.folder-wrapper .folder-info .folder-text {
+  width: 32px;
+  height: 22px;
+  font-size: 16px;
+  font-family: PingFangSC-Semibold, PingFang SC;
+  font-weight: 600;
+  color: #3a3f6d;
+  line-height: 22px;
+}

@@ -1,0 +1,236 @@
+.account-wrapper {
+  box-sizing: border-box;
+  width: 360px;
+  height: 580px;
+  background: #fff;
+  .cur {
+    cursor: pointer;
+  }
+  .user-body-wrapper {
+    box-sizing: border-box;
+    padding-left: 25px;
+    .img-icon {
+      width: 24px;
+      height: 24px;
+      margin-bottom: 3px;
+    }
+    .user-text {
+      font-size: 14px;
+      font-family: PingFangSC-Semibold, PingFang SC;
+      font-weight: 600;
+      color: #5d648b;
+      line-height: 20px;
+      margin-left: 8px;
+    }
+    .mb-20 {
+      margin-bottom: 16px;
+    }
+    .fl-sp {
+      display: flex;
+      justify-content: space-between;
+    }
+    .arrowRight-special {
+      margin-left: 194px;
+      width: 16px;
+      height: 16px;
+    }
+    .arrowRight-common {
+      margin-left: 208px;
+      width: 16px;
+      height: 16px;
+    }
+    .getPassword {
+      width: 312px;
+      // border-bottom: 1px solid #ececec;
+      height: 37px;
+      line-height: 37px;
+      .password-text {
+        cursor: pointer;
+      }
+    }
+    .home-set {
+      width: 312px;
+      // border-bottom: 1px solid #ececec;
+      height: 37px;
+      line-height: 37px;
+      .set-text {
+        cursor: pointer;
+      }
+      .set-icon {
+      }
+    }
+    .device-control {
+      width: 312px;
+      // border-bottom: 1px solid #ececec;
+      height: 37px;
+      line-height: 37px;
+      .control-text {
+        cursor: pointer;
+      }
+      .control-icon {
+      }
+    }
+    .home-sync {
+      width: 312px;
+
+      // border-bottom: 1px solid #ececec;
+      height: 37px;
+      line-height: 37px;
+      .sync-text {
+        cursor: pointer;
+      }
+      .sync-icon {
+      }
+    }
+    .home-about {
+      width: 312px;
+      // border-bottom: 1px solid #ececec;
+      height: 37px;
+      line-height: 37px;
+      .about-text {
+        cursor: pointer;
+      }
+      .about-icon {
+      }
+    }
+    .home-out {
+      width: 312px;
+
+      // border-bottom: 1px solid #ececec;
+      height: 37px;
+      line-height: 37px;
+      .out-text {
+        cursor: pointer;
+      }
+      .out-icon {
+      }
+    }
+  }
+
+  .home-user-info-wrappers {
+    padding: 0 24px;
+    padding-top: 20px;
+    .home-user-info-wrapper {
+      display: flex;
+      margin-bottom: 20px;
+      width: 312px;
+      height: 88px;
+      background: url("./img_me_bg@2x.png") no-repeat;
+      background-size: 100% 100%;
+      .home-user-photo {
+        width: 48px;
+        height: 48px;
+        margin: 20px 0;
+        margin-left: 16px;
+      }
+      .user-level {
+        margin-left: 10px;
+        margin-top: 23px;
+        width: 80px;
+        height: 22px;
+        background: linear-gradient(142deg, #d5b97d 0%, #c8a66b 100%);
+        border-radius: 11px;
+        text-align: center;
+        .user-level-icon {
+          margin-bottom: 3px;
+          width: 16px;
+          height: 16px;
+        }
+        .user-level-text {
+          width: 46px;
+          height: 16px;
+          font-size: 11px;
+          font-family: PingFang-SC-Bold, PingFang-SC;
+          color: #f7f2e8;
+          line-height: 16px;
+          margin-left: 2px;
+        }
+      }
+    }
+    .home-user-info {
+      height: 40px;
+      margin-left: 12px;
+      margin-top: 20px;
+      .home-username {
+        line-height: 22px;
+        font-size: 16px;
+        font-weight: 600;
+        font-family: PingFangSC-Semibold, PingFang SC;
+        color: #3a3f6d;
+      }
+      .home-telephone-Number {
+        margin-top: 4px;
+        font-size: 12px;
+        font-family: PingFang-SC-Medium, PingFang-SC;
+        font-weight: 500;
+        color: #3a3f6d;
+        line-height: 17px;
+      }
+    }
+  }
+}
+
+.home-classification {
+  flex: 1;
+  //锁定布局
+  .lock-wrapper {
+    width: 100%;
+    .lock-item {
+      height: 50px;
+      float: right;
+      cursor: pointer;
+    }
+  }
+
+  //清楚浮动
+  .lock-wrapper::after {
+    display: block;
+    content: "";
+    clear: both;
+  }
+
+  .item-classification {
+    .mb-6 {
+      margin-bottom: 6px;
+    }
+    display: flex;
+    justify-content: center;
+    flex: 1;
+    .item-account {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      height: 65px;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+    }
+    .item-set {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      height: 65px;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+    }
+    .item-password-Library {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      height: 65px;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+    }
+    .item-folder {
+      display: flex;
+      flex-direction: column;
+      height: 65px;
+      justify-content: center;
+      flex: 1;
+      align-items: center;
+      cursor: pointer;
+    }
+  }
+}
