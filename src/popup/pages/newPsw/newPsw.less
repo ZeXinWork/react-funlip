@@ -5,15 +5,21 @@
   height: 600px;
   background: #ffffff;
   background: 1px solid transparent;
-
   overflow: hidden;
   * {
     margin: 0;
     padding: 0;
   }
   .ant-form-item-explain {
-    margin-top: -20px;
+    color: #5770ec !important;
   }
+  // .ant-form-item-explain {
+  //   font-size: 12px;
+  //   font-family: PingFang-SC-Medium, PingFang-SC;
+  //   font-weight: 500;
+  //   color: #5770ec;
+  //   line-height: 17px;
+  // }
   input {
     outline: none;
     border: none;
@@ -56,12 +62,15 @@
       margin-top: 32px;
       .password-body-num {
         width: 230px;
-        height: 36px;
+        height: 66px;
+
         text-align: center;
         line-height: 18px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        .password-body-num-text {
+          overflow: hidden;
+          white-space: normal;
+          word-break: break-all;
+        }
       }
       .password-slider-wrapper {
         height: 16px;

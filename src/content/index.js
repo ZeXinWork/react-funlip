@@ -1,715 +1,715 @@
-/*global chrome*/
+// /*global chrome*/
 
-import React, { useState, useEffect } from "react";
-import { handleLocalStorage, getCaptcha } from "../api";
-import ReactDOM from "react-dom";
-// import { Form, Input, Button } from "antd";
-import Button from "antd/es/button";
-import Input from "antd/es/input";
-import Form from "antd/es/form";
-import "antd/es/button/style/index.css";
-import "antd/es/input/style/index.css";
-import "antd/es/form/style/index.css";
-import logo from "./images/icon_WePass_logo备份@2x.png";
-import edit from "./images/icon_edit@2x.png";
-import close from "./images/close.png";
-import "./antd-diy.css";
-import "./savePsw.css";
+// import React, { useState, useEffect } from "react";
+// import { handleLocalStorage, getCaptcha } from "../api";
+// import ReactDOM from "react-dom";
+// // import { Form, Input, Button } from "antd";
+// import Button from "antd/es/button";
+// import Input from "antd/es/input";
+// import Form from "antd/es/form";
+// import "antd/es/button/style/index.css";
+// import "antd/es/input/style/index.css";
+// import "antd/es/form/style/index.css";
+// import logo from "./images/icon_WePass_logo备份@2x.png";
+// import edit from "./images/icon_edit@2x.png";
+// import close from "./images/close.png";
+// import "./antd-diy.css";
+// import "./savePsw.css";
 
-//布局 将savePSW插入到页面当中
-function Content() {
-  //自动保存密码
-  let [show, setShow] = useState("none");
-  let [psw, setPsw] = useState("url");
-  let [userName, setUserName] = useState("url");
-  let [url, setUrl] = useState("");
-  let [detail, setDetail] = useState(false);
-  let [title, setTitle] = useState("");
-  let [note, setNote] = useState("");
-  //表单布局
-  const layout = {
-    labelCol: { span: 24 },
-    wrapperCol: { span: 16 },
-  };
-  //表单失败后的回调
-  const onFinishFailed = (errorInfo) => {};
+// //布局 将savePSW插入到页面当中
+// function Content() {
+//   //自动保存密码
+//   let [show, setShow] = useState("none");
+//   let [psw, setPsw] = useState("url");
+//   let [userName, setUserName] = useState("url");
+//   let [url, setUrl] = useState("");
+//   let [detail, setDetail] = useState(false);
+//   let [title, setTitle] = useState("");
+//   let [note, setNote] = useState("");
+//   //表单布局
+//   const layout = {
+//     labelCol: { span: 24 },
+//     wrapperCol: { span: 16 },
+//   };
+//   //表单失败后的回调
+//   const onFinishFailed = (errorInfo) => {};
 
-  //表单验证通过后的回调
-  const onFinish = (values) => {
-    let { title, password, tip, url, username } = values;
-    let passwordItem = {
-      title,
-      password,
-      tip,
-      url,
-      username,
-    };
-  };
+//   //表单验证通过后的回调
+//   const onFinish = (values) => {
+//     let { title, password, tip, url, username } = values;
+//     let passwordItem = {
+//       title,
+//       password,
+//       tip,
+//       url,
+//       username,
+//     };
+//   };
 
-  // 获取当前主域名;
-  const configUrl = (url) => {
-    var domain = url.split("/"); //以“/”进行分割
+//   // 获取当前主域名;
+//   const configUrl = (url) => {
+//     var domain = url.split("/"); //以“/”进行分割
 
-    if (domain[2]) {
-      domain = domain[2];
-    } else {
-      return url;
-    }
+//     if (domain[2]) {
+//       domain = domain[2];
+//     } else {
+//       return url;
+//     }
 
-    let newDomain = domain.split(".");
-    for (let i = 0; i < newDomain.length; i++) {
-      if (newDomain[i] == "com") {
-        newDomain = newDomain[i - 1] + "." + newDomain[i];
-        return newDomain;
-      }
-    }
-    // if (newDomain[2]) {
-    //   newDomain = newDomain[1] + "." + newDomain[2];
-    //   return newDomain;
-    // } else {
-    //   return domain;
-    // }
-  };
+//     let newDomain = domain.split(".");
+//     for (let i = 0; i < newDomain.length; i++) {
+//       if (newDomain[i] == "com") {
+//         newDomain = newDomain[i - 1] + "." + newDomain[i];
+//         return newDomain;
+//       }
+//     }
+//     // if (newDomain[2]) {
+//     //   newDomain = newDomain[1] + "." + newDomain[2];
+//     //   return newDomain;
+//     // } else {
+//     //   return domain;
+//     // }
+//   };
 
-  const sendMessageToBackgroundScript02 = (mes) => {
-    mes.type = "showSave";
-    mes.url = configUrl(window.location.href);
+//   const sendMessageToBackgroundScript02 = (mes) => {
+//     mes.type = "showSave";
+//     mes.url = configUrl(window.location.href);
 
-    chrome.runtime.sendMessage({ mes });
-  };
+//     chrome.runtime.sendMessage({ mes });
+//   };
 
-  const sendMessageToBackgroundScript3 = (mes) => {
-    mes.type = "isShowSave";
-    mes.url = window.location.href;
-    chrome.runtime.sendMessage({ mes });
-  };
+//   const sendMessageToBackgroundScript3 = (mes) => {
+//     mes.type = "isShowSave";
+//     mes.url = window.location.href;
+//     chrome.runtime.sendMessage({ mes });
+//   };
 
-  const sendMessageToBackgroundScript4 = (mes) => {
-    mes.type = "cancelSave";
-    chrome.runtime.sendMessage({ mes });
-  };
+//   const sendMessageToBackgroundScript4 = (mes) => {
+//     mes.type = "cancelSave";
+//     chrome.runtime.sendMessage({ mes });
+//   };
 
-  const sendMessageToBackgroundScript5 = (mes) => {
-    mes.type = "savePsUs";
-    chrome.runtime.sendMessage({ mes });
-  };
+//   const sendMessageToBackgroundScript5 = (mes) => {
+//     mes.type = "savePsUs";
+//     chrome.runtime.sendMessage({ mes });
+//   };
 
-  const saveNewPwd = () => {
-    let inputLogin = document.getElementById("Funlip-edit-input-info-text");
-    let loginValue;
-    let passwordValue;
-    if (inputLogin) {
-      loginValue = inputLogin.value;
-    }
-    let inputPassword = document.getElementById(
-      "Funlip-edit-input-PswInfo-text"
-    );
-    if (inputPassword) {
-      passwordValue = inputPassword.value;
-    }
-    let mes;
-    if (loginValue && passwordValue) {
-      mes = {
-        requestType: "saveNewPsw",
-        pwd: passwordValue,
-        website: url,
-        account: loginValue,
-        title,
-        note,
-      };
-    } else {
-      mes = {
-        requestType: "saveNewPsw",
-        pwd: psw,
-        website: url,
-        account: userName,
-        title,
-        note,
-      };
-    }
+//   const saveNewPwd = () => {
+//     let inputLogin = document.getElementById("Funlip-edit-input-info-text");
+//     let loginValue;
+//     let passwordValue;
+//     if (inputLogin) {
+//       loginValue = inputLogin.value;
+//     }
+//     let inputPassword = document.getElementById(
+//       "Funlip-edit-input-PswInfo-text"
+//     );
+//     if (inputPassword) {
+//       passwordValue = inputPassword.value;
+//     }
+//     let mes;
+//     if (loginValue && passwordValue) {
+//       mes = {
+//         requestType: "saveNewPsw",
+//         pwd: passwordValue,
+//         website: url,
+//         account: loginValue,
+//         title,
+//         note,
+//       };
+//     } else {
+//       mes = {
+//         requestType: "saveNewPsw",
+//         pwd: psw,
+//         website: url,
+//         account: userName,
+//         title,
+//         note,
+//       };
+//     }
 
-    chrome.runtime.sendMessage({ mes });
-    setShow("none");
-    sendMessageToBackgroundScript4({});
-  };
+//     chrome.runtime.sendMessage({ mes });
+//     setShow("none");
+//     sendMessageToBackgroundScript4({});
+//   };
 
-  sendMessageToBackgroundScript3({});
-  chrome.runtime.onMessage.addListener(function (
-    request,
-    sender,
-    sendResponse
-  ) {
-    const newUrl = configUrl(window.location.href);
-    setPsw(request.password);
-    setUserName(request.userName);
+//   sendMessageToBackgroundScript3({});
+//   chrome.runtime.onMessage.addListener(function (
+//     request,
+//     sender,
+//     sendResponse
+//   ) {
+//     const newUrl = configUrl(window.location.href);
+//     setPsw(request.password);
+//     setUserName(request.userName);
 
-    let domain = window.location.href;
-    domain = domain.split("/");
-    if (domain[2]) {
-      domain = domain[2];
-    }
-    setUrl(domain);
+//     let domain = window.location.href;
+//     domain = domain.split("/");
+//     if (domain[2]) {
+//       domain = domain[2];
+//     }
+//     setUrl(domain);
 
-    if (request.showUrl.indexOf(newUrl) != -1 || request.showUrl == newUrl) {
-      setShow("block");
-    }
-  });
-  useEffect(() => {
-    //1、获取页面表单和input
-    //针对页面表单事件
-    const pageUrl = configUrl(window.location.href);
-    setUrl(pageUrl);
-    document.onsubmit = function () {
-      //想让他在页面中显示 必须要通过通信改变状态值
+//     if (request.showUrl.indexOf(newUrl) != -1 || request.showUrl == newUrl) {
+//       setShow("block");
+//     }
+//   });
+//   useEffect(() => {
+//     //1、获取页面表单和input
+//     //针对页面表单事件
+//     const pageUrl = configUrl(window.location.href);
+//     setUrl(pageUrl);
+//     document.onsubmit = function () {
+//       //想让他在页面中显示 必须要通过通信改变状态值
 
-      let inputGroup = document.getElementsByTagName("input");
-      let inputArray = [];
-      if (inputGroup.length) {
-        for (let i = 0; i < inputGroup.length; i++) {
-          // alert("第一个的类型:" + inputGroup[i].type);
-          if (inputGroup[i].type === "password") {
-            inputArray.push(inputGroup[i - 1]);
-            inputArray.push(inputGroup[i]);
-          }
-        }
-        if (inputArray.length) {
-          let loginWordText = inputArray[0];
-          let passWordText = inputArray[1];
-          let value = {
-            userName: loginWordText.value,
-            password: passWordText.value,
-          };
-          sendMessageToBackgroundScript5(value);
-        }
-      }
-      if (inputArray.length > 0) {
-        // setShow("block");
-        sendMessageToBackgroundScript02({});
-      }
-    };
+//       let inputGroup = document.getElementsByTagName("input");
+//       let inputArray = [];
+//       if (inputGroup.length) {
+//         for (let i = 0; i < inputGroup.length; i++) {
+//           // alert("第一个的类型:" + inputGroup[i].type);
+//           if (inputGroup[i].type === "password") {
+//             inputArray.push(inputGroup[i - 1]);
+//             inputArray.push(inputGroup[i]);
+//           }
+//         }
+//         if (inputArray.length) {
+//           let loginWordText = inputArray[0];
+//           let passWordText = inputArray[1];
+//           let value = {
+//             userName: loginWordText.value,
+//             password: passWordText.value,
+//           };
+//           sendMessageToBackgroundScript5(value);
+//         }
+//       }
+//       if (inputArray.length > 0) {
+//         // setShow("block");
+//         sendMessageToBackgroundScript02({});
+//       }
+//     };
 
-    //2、针对页面非表单提交（省去input="submit"和"button ="submit"，只需要判断页面的a标签）
-    //对iframe页面的submit表单绑定貌似无法使用，还是要做判断
-    let aCollection = document.getElementsByTagName("a");
-    let aLoginGroup = [];
-    const setOnclick = () => {
-      let inputGroup = document.getElementsByTagName("input");
-      let inputArray = [];
-      let loginWordText;
-      let passWordText;
-      if (inputGroup.length) {
-        for (let i = 0; i < inputGroup.length; i++) {
-          // alert("第一个的类型:" + inputGroup[i].type);
-          if (inputGroup[i].type === "password") {
-            inputArray.push(inputGroup[i - 1]);
-            inputArray.push(inputGroup[i]);
-          }
-        }
-        if (inputArray.length) {
-          loginWordText = inputArray[0];
-          passWordText = inputArray[1];
-          let value = {
-            userName: loginWordText.value,
-            password: passWordText.value,
-          };
-          sendMessageToBackgroundScript5(value);
-        }
-      }
-      if (inputArray.length > 0 && loginWordText.value && passWordText.value) {
-        // setShow("block");
-        sendMessageToBackgroundScript02({});
-      }
-    };
-    //对页面a标签处理
-    for (let i = 0; i < aCollection.length; i++) {
-      if (aCollection[i].id) {
-        if (
-          aCollection[i].id.indexOf("login") != -1 &&
-          aCollection[i].childElementCount == 0
-        ) {
-          aLoginGroup.push(aCollection[i]);
-        }
-      } else if (aCollection[i].className) {
-        if (
-          aCollection[i].className.indexOf("login") != -1 &&
-          aCollection[i].childElementCount == 0 &&
-          aCollection[i].innerText == "登录"
-        ) {
-          aLoginGroup.push(aCollection[i]);
-        }
-      }
-    }
-    if (aLoginGroup.length === 1) {
-      let targetA = aLoginGroup[0];
-      targetA.addEventListener("click", setOnclick, false);
-    }
+//     //2、针对页面非表单提交（省去input="submit"和"button ="submit"，只需要判断页面的a标签）
+//     //对iframe页面的submit表单绑定貌似无法使用，还是要做判断
+//     let aCollection = document.getElementsByTagName("a");
+//     let aLoginGroup = [];
+//     const setOnclick = () => {
+//       let inputGroup = document.getElementsByTagName("input");
+//       let inputArray = [];
+//       let loginWordText;
+//       let passWordText;
+//       if (inputGroup.length) {
+//         for (let i = 0; i < inputGroup.length; i++) {
+//           // alert("第一个的类型:" + inputGroup[i].type);
+//           if (inputGroup[i].type === "password") {
+//             inputArray.push(inputGroup[i - 1]);
+//             inputArray.push(inputGroup[i]);
+//           }
+//         }
+//         if (inputArray.length) {
+//           loginWordText = inputArray[0];
+//           passWordText = inputArray[1];
+//           let value = {
+//             userName: loginWordText.value,
+//             password: passWordText.value,
+//           };
+//           sendMessageToBackgroundScript5(value);
+//         }
+//       }
+//       if (inputArray.length > 0 && loginWordText.value && passWordText.value) {
+//         // setShow("block");
+//         sendMessageToBackgroundScript02({});
+//       }
+//     };
+//     //对页面a标签处理
+//     for (let i = 0; i < aCollection.length; i++) {
+//       if (aCollection[i].id) {
+//         if (
+//           aCollection[i].id.indexOf("login") != -1 &&
+//           aCollection[i].childElementCount == 0
+//         ) {
+//           aLoginGroup.push(aCollection[i]);
+//         }
+//       } else if (aCollection[i].className) {
+//         if (
+//           aCollection[i].className.indexOf("login") != -1 &&
+//           aCollection[i].childElementCount == 0 &&
+//           aCollection[i].innerText == "登录"
+//         ) {
+//           aLoginGroup.push(aCollection[i]);
+//         }
+//       }
+//     }
+//     if (aLoginGroup.length === 1) {
+//       let targetA = aLoginGroup[0];
+//       targetA.addEventListener("click", setOnclick, false);
+//     }
 
-    //对页面button标签进行处理
-    let buttonCollection = document.getElementsByTagName("button");
-    let BtnGroup = [];
-    for (let i = 0; i < buttonCollection.length; i++) {
-      if (buttonCollection[i].id) {
-        if (
-          buttonCollection[i].id.indexOf("login") != -1 &&
-          buttonCollection[i].childElementCount == 0 &&
-          buttonCollection[i].type === "submit"
-        ) {
-          BtnGroup.push(aCollection[i]);
-        }
-      } else if (buttonCollection[i].className) {
-        if (
-          buttonCollection[i].className.indexOf("login") != -1 &&
-          buttonCollection[i].childElementCount == 0 &&
-          buttonCollection[i].type === "submit"
-        ) {
-          BtnGroup.push(aCollection[i]);
-        }
-      }
-    }
+//     //对页面button标签进行处理
+//     let buttonCollection = document.getElementsByTagName("button");
+//     let BtnGroup = [];
+//     for (let i = 0; i < buttonCollection.length; i++) {
+//       if (buttonCollection[i].id) {
+//         if (
+//           buttonCollection[i].id.indexOf("login") != -1 &&
+//           buttonCollection[i].childElementCount == 0 &&
+//           buttonCollection[i].type === "submit"
+//         ) {
+//           BtnGroup.push(aCollection[i]);
+//         }
+//       } else if (buttonCollection[i].className) {
+//         if (
+//           buttonCollection[i].className.indexOf("login") != -1 &&
+//           buttonCollection[i].childElementCount == 0 &&
+//           buttonCollection[i].type === "submit"
+//         ) {
+//           BtnGroup.push(aCollection[i]);
+//         }
+//       }
+//     }
 
-    if (BtnGroup.length === 1) {
-      let targetA = BtnGroup[0];
-      targetA.addEventListener("click", setOnclick, false);
-    }
+//     if (BtnGroup.length === 1) {
+//       let targetA = BtnGroup[0];
+//       targetA.addEventListener("click", setOnclick, false);
+//     }
 
-    //对页面input框进行处理
-    let inputCollection = document.getElementsByTagName("input");
-    let inputGroup = [];
+//     //对页面input框进行处理
+//     let inputCollection = document.getElementsByTagName("input");
+//     let inputGroup = [];
 
-    for (let i = 0; i < inputCollection.length; i++) {
-      if (inputCollection[i].id) {
-        if (
-          inputCollection[i].id.indexOf("login") != -1 &&
-          inputCollection[i].type === "submit"
-        ) {
-          inputGroup.push(inputCollection[i]);
-        }
-      } else if (inputCollection[i].className) {
-        if (
-          inputCollection[i].className.indexOf("login") != -1 &&
-          inputCollection[i].type === "submit"
-        ) {
-          inputGroup.push(inputCollection[i]);
-        }
-      }
-    }
+//     for (let i = 0; i < inputCollection.length; i++) {
+//       if (inputCollection[i].id) {
+//         if (
+//           inputCollection[i].id.indexOf("login") != -1 &&
+//           inputCollection[i].type === "submit"
+//         ) {
+//           inputGroup.push(inputCollection[i]);
+//         }
+//       } else if (inputCollection[i].className) {
+//         if (
+//           inputCollection[i].className.indexOf("login") != -1 &&
+//           inputCollection[i].type === "submit"
+//         ) {
+//           inputGroup.push(inputCollection[i]);
+//         }
+//       }
+//     }
 
-    if (inputGroup.length === 1) {
-      let targetA = inputGroup[0];
-      targetA.addEventListener("click", setOnclick, false);
-    }
-  }, []);
+//     if (inputGroup.length === 1) {
+//       let targetA = inputGroup[0];
+//       targetA.addEventListener("click", setOnclick, false);
+//     }
+//   }, []);
 
-  return (
-    <div className="CRX-content " style={{ display: show }}>
-      <div className="save-psw-wrapper">
-        <div className="save-ps-header">
-          <div className="save-header-left">
-            <div>
-              <img src={logo} alt="logo" className="logo" />
-            </div>
-            <div className="header-text">Funlip</div>
-          </div>
-          <div>
-            <img
-              src={close}
-              alt="close"
-              className="logo-right"
-              onClick={() => {
-                setShow("none");
-                sendMessageToBackgroundScript4({});
-              }}
-            />
-          </div>
-        </div>
-        {detail ? (
-          <React.Fragment>
-            <div className="password-detail-wrapper">
-              <div className="password-detail-header">
-                <img src={`${document.domain}/favicon.ico`} />
-                <div className="password-detail-header-url">{url}</div>
-              </div>
-              <div className="password-detail-form-wrapper">
-                <div className="password-form-inputnewPswText">标题</div>
+//   return (
+//     <div className="CRX-content " style={{ display: show }}>
+//       <div className="save-psw-wrapper">
+//         <div className="save-ps-header">
+//           <div className="save-header-left">
+//             <div>
+//               <img src={logo} alt="logo" className="logo" />
+//             </div>
+//             <div className="header-text">Funlip</div>
+//           </div>
+//           <div>
+//             <img
+//               src={close}
+//               alt="close"
+//               className="logo-right"
+//               onClick={() => {
+//                 setShow("none");
+//                 sendMessageToBackgroundScript4({});
+//               }}
+//             />
+//           </div>
+//         </div>
+//         {detail ? (
+//           <React.Fragment>
+//             <div className="password-detail-wrapper">
+//               <div className="password-detail-header">
+//                 <img src={`${document.domain}/favicon.ico`} />
+//                 <div className="password-detail-header-url">{url}</div>
+//               </div>
+//               <div className="password-detail-form-wrapper">
+//                 <div className="password-form-inputnewPswText">标题</div>
 
-                <input
-                  className="newPsw-card-input"
-                  bordered={false}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    setTitle(value);
-                  }}
-                />
+//                 <input
+//                   className="newPsw-card-input"
+//                   bordered={false}
+//                   onChange={(e) => {
+//                     const value = e.target.value;
+//                     setTitle(value);
+//                   }}
+//                 />
 
-                <div className="password-form-inputnewPswText">账号</div>
-                <input
-                  className="newPsw-card-input"
-                  defaultValue={userName}
-                  id="Funlip-edit-input-info-text"
-                />
+//                 <div className="password-form-inputnewPswText">账号</div>
+//                 <input
+//                   className="newPsw-card-input"
+//                   defaultValue={userName}
+//                   id="Funlip-edit-input-info-text"
+//                 />
 
-                <div className="password-form-inputnewPswText">密码</div>
+//                 <div className="password-form-inputnewPswText">密码</div>
 
-                <input
-                  className="newPsw-card-input "
-                  id="password-input"
-                  type="password"
-                  defaultValue={psw}
-                  id="Funlip-edit-input-PswInfo-text"
-                  // onChange={(e) => {
-                  //   const value = e.target.value;
-                  //   setPsw(value);
-                  // }}
-                  // value={psw}
-                />
-                <div className="password-form-inputnewPswText">备注</div>
+//                 <input
+//                   className="newPsw-card-input "
+//                   id="password-input"
+//                   type="password"
+//                   defaultValue={psw}
+//                   id="Funlip-edit-input-PswInfo-text"
+//                   // onChange={(e) => {
+//                   //   const value = e.target.value;
+//                   //   setPsw(value);
+//                   // }}
+//                   // value={psw}
+//                 />
+//                 <div className="password-form-inputnewPswText">备注</div>
 
-                <textarea
-                  className="content-textarea-setINfo"
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    setNote(value);
-                  }}
-                />
+//                 <textarea
+//                   className="content-textarea-setINfo"
+//                   onChange={(e) => {
+//                     const value = e.target.value;
+//                     setNote(value);
+//                   }}
+//                 />
 
-                <div className="autoMids">
-                  <div className="button-layouts">
-                    <div className="mains ">
-                      <div className="btn-1s ">
-                        <span className="password-form-cancel">取消</span>
-                      </div>
-                    </div>
+//                 <div className="autoMids">
+//                   <div className="button-layouts">
+//                     <div className="mains ">
+//                       <div className="btn-1s ">
+//                         <span className="password-form-cancel">取消</span>
+//                       </div>
+//                     </div>
 
-                    <Button
-                      className="save-wrappers"
-                      shape="round"
-                      onClick={saveNewPwd}
-                    >
-                      保存
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </React.Fragment>
-        ) : (
-          <React.Fragment>
-            <div className="body-text">
-              密码库中没有此网站的记录，是否需要创建一条？
-            </div>
-            <div className="save-psw-body">
-              <div className="body-password">
-                <div className="body-password-left">
-                  <div className="body-password-img">
-                    {/* 获取页面山的图标 */}
-                    <img src={`${window.location.href}/favicon.ico`} />
-                  </div>
-                  <div className="body-left-text">
-                    <div className="body-left-text-url">{url}</div>
-                    {/**想获取密码，还得通信，如何通信？
-                     * 必须考虑的问题：1、发通信的请求在哪个时机？ 只要弹出，content就发消息给popup，并把页面的密码传过来
-                     *                2、密码如何渲染到组件？ 监听content 提前设一个state放密码 只要content传信息过来 更新state就会更新页面
-                     */}
-                    <div>{userName}</div>
-                  </div>
-                </div>
-                <div className="body-right-icon">
-                  <img
-                    src={edit}
-                    className="edit-icon"
-                    onClick={() => {
-                      setDetail(true);
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="autoMid">
-              <div className="button-layout">
-                <div className="main ml-20">
-                  <div className="btn-1 ">
-                    <span className="password-text reset-psw">跳过此网站</span>
-                  </div>
-                </div>
-                <div className="btn-layout mr-20 set-bg" onClick={saveNewPwd}>
-                  <span className="password-text save-text">保存</span>
-                </div>
-              </div>
-            </div>
-          </React.Fragment>
-        )}
-      </div>
-    </div>
-  );
-}
+//                     <Button
+//                       className="save-wrappers"
+//                       shape="round"
+//                       onClick={saveNewPwd}
+//                     >
+//                       保存
+//                     </Button>
+//                   </div>
+//                 </div>
+//               </div>
+//             </div>
+//           </React.Fragment>
+//         ) : (
+//           <React.Fragment>
+//             <div className="body-text">
+//               密码库中没有此网站的记录，是否需要创建一条？
+//             </div>
+//             <div className="save-psw-body">
+//               <div className="body-password">
+//                 <div className="body-password-left">
+//                   <div className="body-password-img">
+//                     {/* 获取页面山的图标 */}
+//                     <img src={`${window.location.href}/favicon.ico`} />
+//                   </div>
+//                   <div className="body-left-text">
+//                     <div className="body-left-text-url">{url}</div>
+//                     {/**想获取密码，还得通信，如何通信？
+//                      * 必须考虑的问题：1、发通信的请求在哪个时机？ 只要弹出，content就发消息给popup，并把页面的密码传过来
+//                      *                2、密码如何渲染到组件？ 监听content 提前设一个state放密码 只要content传信息过来 更新state就会更新页面
+//                      */}
+//                     <div>{userName}</div>
+//                   </div>
+//                 </div>
+//                 <div className="body-right-icon">
+//                   <img
+//                     src={edit}
+//                     className="edit-icon"
+//                     onClick={() => {
+//                       setDetail(true);
+//                     }}
+//                   />
+//                 </div>
+//               </div>
+//             </div>
+//             <div className="autoMid">
+//               <div className="button-layout">
+//                 <div className="main ml-20">
+//                   <div className="btn-1 ">
+//                     <span className="password-text reset-psw">跳过此网站</span>
+//                   </div>
+//                 </div>
+//                 <div className="btn-layout mr-20 set-bg" onClick={saveNewPwd}>
+//                   <span className="password-text save-text">保存</span>
+//                 </div>
+//               </div>
+//             </div>
+//           </React.Fragment>
+//         )}
+//       </div>
+//     </div>
+//   );
+// }
 
-const app = document.createElement("div");
-app.id = "CRX-container";
-document.body.appendChild(app);
-ReactDOM.render(<Content />, app);
+// const app = document.createElement("div");
+// app.id = "CRX-container";
+// document.body.appendChild(app);
+// ReactDOM.render(<Content />, app);
 
-try {
-  let insertScript = document.createElement("script");
-  insertScript.setAttribute("type", "text/javascript");
-  insertScript.src = window.chrome.extension.getURL("insert.js");
-  document.body.appendChild(insertScript);
-  insertScript.id = "Funlip-extension-insertScript-xxxxx";
-} catch (err) {}
+// try {
+//   let insertScript = document.createElement("script");
+//   insertScript.setAttribute("type", "text/javascript");
+//   insertScript.src = window.chrome.extension.getURL("insert.js");
+//   document.body.appendChild(insertScript);
+//   insertScript.id = "Funlip-extension-insertScript-xxxxx";
+// } catch (err) {}
 
-let url = window.location.href;
-let flag = true;
-let data;
-if (url.indexOf("chrome-extension:") != -1) {
-  flag = false;
-}
+// let url = window.location.href;
+// let flag = true;
+// let data;
+// if (url.indexOf("chrome-extension:") != -1) {
+//   flag = false;
+// }
 
-// alert(window.location.href);
+// // alert(window.location.href);
 
-// let input = document.getElementsByTagName("input");
-// alert(input);
-// let i = document.getElementById("u");
-// alert(i);
-// i.value = "123";
-// let inputTest = document.getElementsByTagName("input");
-//
+// // let input = document.getElementsByTagName("input");
+// // alert(input);
+// // let i = document.getElementById("u");
+// // alert(i);
+// // i.value = "123";
+// // let inputTest = document.getElementsByTagName("input");
+// //
 
-// 自动填充，每次打开页面之后都要发送信息给background，这样才能自动填充（因为要在bg里获取用户data）
-function sendMessageToBackgroundScript2(mes) {
-  mes.type = "autofill";
-  chrome.runtime.sendMessage({ mes });
-}
-if (flag) {
-  sendMessageToBackgroundScript2({});
-}
+// // 自动填充，每次打开页面之后都要发送信息给background，这样才能自动填充（因为要在bg里获取用户data）
+// function sendMessageToBackgroundScript2(mes) {
+//   mes.type = "autofill";
+//   chrome.runtime.sendMessage({ mes });
+// }
+// if (flag) {
+//   sendMessageToBackgroundScript2({});
+// }
 
-//跳转新的url
-const goUrl = (url) => {
-  if (url.indexOf("https://") != -1) {
-    window.open(url, "_blank");
-  } else {
-    window.open(`https://${url}`, "_blank");
-  }
-};
+// //跳转新的url
+// const goUrl = (url) => {
+//   if (url.indexOf("https://") != -1) {
+//     window.open(url, "_blank");
+//   } else {
+//     window.open(`https://${url}`, "_blank");
+//   }
+// };
 
-chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-  // 自动填充
-  function autofill() {
-    if (request.test == "autofill") {
-      const configUrl = (url) => {
-        var domain = url.split("/"); //以“/”进行分割
-        if (domain[2]) {
-          domain = domain[2];
-        } else {
-          return url; //如果url不正确就取空
-        }
-        let newDomain = domain.split(".");
-        if (newDomain[2]) {
-          newDomain = newDomain[1] + "." + newDomain[2];
-          return newDomain;
-        } else {
-          return domain;
-        }
-      };
+// chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+//   // 自动填充
+//   function autofill() {
+//     if (request.test == "autofill") {
+//       const configUrl = (url) => {
+//         var domain = url.split("/"); //以“/”进行分割
+//         if (domain[2]) {
+//           domain = domain[2];
+//         } else {
+//           return url; //如果url不正确就取空
+//         }
+//         let newDomain = domain.split(".");
+//         if (newDomain[2]) {
+//           newDomain = newDomain[1] + "." + newDomain[2];
+//           return newDomain;
+//         } else {
+//           return domain;
+//         }
+//       };
 
-      data = request.data;
+//       data = request.data;
 
-      for (let key in data) {
-        const targetUrl = configUrl(data[key].website);
-        let newTargetUrl = targetUrl.split(".");
-        if (newTargetUrl.length == 3) {
-          newTargetUrl = newTargetUrl[1] + "." + newTargetUrl[2];
-        } else {
-          newTargetUrl = targetUrl;
-        }
-        if (newTargetUrl) {
-          if (window.location.href.indexOf(newTargetUrl) != -1) {
-            function test(name, pass) {
-              let inputGroup = document.getElementsByTagName("input");
-              let inputArray = [];
-              if (inputGroup.length) {
-                for (let i = 0; i < inputGroup.length; i++) {
-                  if (inputGroup[i].type === "password") {
-                    console.log(inputGroup[i]);
-                    if (inputGroup[i].style.display == "none") {
-                      inputArray.push(inputGroup[i - 1]);
-                    }
-                    if (
-                      inputGroup[i].style.display != "none" &&
-                      inputGroup[i - 1].style.display != "none"
-                    ) {
-                      inputArray.push(inputGroup[i - 1]);
-                    }
-                    if (inputGroup[i].style.display != "none") {
-                      inputArray.push(inputGroup[i]);
-                    }
-                  }
-                }
-                if (inputArray.length) {
-                  let loginWordText = inputArray[0];
-                  let passWordText = inputArray[1];
+//       for (let key in data) {
+//         const targetUrl = configUrl(data[key].website);
+//         let newTargetUrl = targetUrl.split(".");
+//         if (newTargetUrl.length == 3) {
+//           newTargetUrl = newTargetUrl[1] + "." + newTargetUrl[2];
+//         } else {
+//           newTargetUrl = targetUrl;
+//         }
+//         if (newTargetUrl) {
+//           if (window.location.href.indexOf(newTargetUrl) != -1) {
+//             function test(name, pass) {
+//               let inputGroup = document.getElementsByTagName("input");
+//               let inputArray = [];
+//               if (inputGroup.length) {
+//                 for (let i = 0; i < inputGroup.length; i++) {
+//                   if (inputGroup[i].type === "password") {
+//                     console.log(inputGroup[i]);
+//                     if (inputGroup[i].style.display == "none") {
+//                       inputArray.push(inputGroup[i - 1]);
+//                     }
+//                     if (
+//                       inputGroup[i].style.display != "none" &&
+//                       inputGroup[i - 1].style.display != "none"
+//                     ) {
+//                       inputArray.push(inputGroup[i - 1]);
+//                     }
+//                     if (inputGroup[i].style.display != "none") {
+//                       inputArray.push(inputGroup[i]);
+//                     }
+//                   }
+//                 }
+//                 if (inputArray.length) {
+//                   let loginWordText = inputArray[0];
+//                   let passWordText = inputArray[1];
 
-                  var nativeInputValueSetterPsw = Object.getOwnPropertyDescriptor(
-                    window.HTMLInputElement.prototype,
-                    "value"
-                  ).set;
+//                   var nativeInputValueSetterPsw = Object.getOwnPropertyDescriptor(
+//                     window.HTMLInputElement.prototype,
+//                     "value"
+//                   ).set;
 
-                  var nativeInputValueSetterUserName = Object.getOwnPropertyDescriptor(
-                    window.HTMLInputElement.prototype,
-                    "value"
-                  ).set;
-                  //设置监听用户名input框的修改
+//                   var nativeInputValueSetterUserName = Object.getOwnPropertyDescriptor(
+//                     window.HTMLInputElement.prototype,
+//                     "value"
+//                   ).set;
+//                   //设置监听用户名input框的修改
 
-                  nativeInputValueSetterUserName.call(loginWordText, name);
-                  var ev2 = new Event("input", { bubbles: true });
-                  loginWordText.dispatchEvent(ev2);
+//                   nativeInputValueSetterUserName.call(loginWordText, name);
+//                   var ev2 = new Event("input", { bubbles: true });
+//                   loginWordText.dispatchEvent(ev2);
 
-                  //设置监听密码input框的修改
-                  nativeInputValueSetterPsw.call(passWordText, pass);
-                  var ev2 = new Event("input", { bubbles: true });
-                  passWordText.dispatchEvent(ev2);
-                }
-              }
-            }
-            test(data[key].account, data[key].pwd);
-          }
-        }
-      }
-    }
-  }
-  autofill();
+//                   //设置监听密码input框的修改
+//                   nativeInputValueSetterPsw.call(passWordText, pass);
+//                   var ev2 = new Event("input", { bubbles: true });
+//                   passWordText.dispatchEvent(ev2);
+//                 }
+//               }
+//             }
+//             test(data[key].account, data[key].pwd);
+//           }
+//         }
+//       }
+//     }
+//   }
+//   autofill();
 
-  //手动填充密码
-  function test() {
-    if (request.test == "mesToBackground") {
-      const configUrl = (url) => {
-        var domain = url.split("/"); //以“/”进行分割
-        if (domain[2]) {
-          domain = domain[2];
-        } else {
-          return url; //如果url不正确就取空
-        }
-        let newDomain = domain.split(".");
-        if (newDomain[2]) {
-          newDomain = newDomain[1] + "." + newDomain[2];
-          return newDomain;
-        } else {
-          return domain;
-        }
-      };
+//   //手动填充密码
+//   function test() {
+//     if (request.test == "mesToBackground") {
+//       const configUrl = (url) => {
+//         var domain = url.split("/"); //以“/”进行分割
+//         if (domain[2]) {
+//           domain = domain[2];
+//         } else {
+//           return url; //如果url不正确就取空
+//         }
+//         let newDomain = domain.split(".");
+//         if (newDomain[2]) {
+//           newDomain = newDomain[1] + "." + newDomain[2];
+//           return newDomain;
+//         } else {
+//           return domain;
+//         }
+//       };
 
-      const targetUrl = configUrl(request.website);
+//       const targetUrl = configUrl(request.website);
 
-      let newTargetUrl = targetUrl.split(".");
-      if (newTargetUrl.length == 3) {
-        newTargetUrl = newTargetUrl[1] + "." + newTargetUrl[2];
-      } else {
-        newTargetUrl = targetUrl;
-      }
+//       let newTargetUrl = targetUrl.split(".");
+//       if (newTargetUrl.length == 3) {
+//         newTargetUrl = newTargetUrl[1] + "." + newTargetUrl[2];
+//       } else {
+//         newTargetUrl = targetUrl;
+//       }
 
-      if (newTargetUrl) {
-        if (window.location.href.indexOf(newTargetUrl) != -1) {
-          //   alert("data在循环");
+//       if (newTargetUrl) {
+//         if (window.location.href.indexOf(newTargetUrl) != -1) {
+//           //   alert("data在循环");
 
-          function test(name, pass) {
-            let inputGroup = document.getElementsByTagName("input");
-            let inputArray = [];
+//           function test(name, pass) {
+//             let inputGroup = document.getElementsByTagName("input");
+//             let inputArray = [];
 
-            if (inputGroup.length) {
-              for (let i = 0; i < inputGroup.length; i++) {
-                if (inputGroup[i].type === "password") {
-                  if (inputGroup[i].style.display == "none") {
-                    inputArray.push(inputGroup[i - 1]);
-                  }
-                  if (
-                    inputGroup[i].style.display != "none" &&
-                    inputGroup[i - 1].style.display != "none"
-                  ) {
-                    inputArray.push(inputGroup[i - 1]);
-                  }
-                  if (inputGroup[i].style.display != "none") {
-                    inputArray.push(inputGroup[i]);
-                  }
-                }
-              }
-              if (inputArray.length) {
-                let loginWordText = inputArray[0];
-                let passWordText = inputArray[1];
+//             if (inputGroup.length) {
+//               for (let i = 0; i < inputGroup.length; i++) {
+//                 if (inputGroup[i].type === "password") {
+//                   if (inputGroup[i].style.display == "none") {
+//                     inputArray.push(inputGroup[i - 1]);
+//                   }
+//                   if (
+//                     inputGroup[i].style.display != "none" &&
+//                     inputGroup[i - 1].style.display != "none"
+//                   ) {
+//                     inputArray.push(inputGroup[i - 1]);
+//                   }
+//                   if (inputGroup[i].style.display != "none") {
+//                     inputArray.push(inputGroup[i]);
+//                   }
+//                 }
+//               }
+//               if (inputArray.length) {
+//                 let loginWordText = inputArray[0];
+//                 let passWordText = inputArray[1];
 
-                var nativeInputValueSetterPsw = Object.getOwnPropertyDescriptor(
-                  window.HTMLInputElement.prototype,
-                  "value"
-                ).set;
+//                 var nativeInputValueSetterPsw = Object.getOwnPropertyDescriptor(
+//                   window.HTMLInputElement.prototype,
+//                   "value"
+//                 ).set;
 
-                var nativeInputValueSetterUserName = Object.getOwnPropertyDescriptor(
-                  window.HTMLInputElement.prototype,
-                  "value"
-                ).set;
-                //设置监听用户名input框的修改
+//                 var nativeInputValueSetterUserName = Object.getOwnPropertyDescriptor(
+//                   window.HTMLInputElement.prototype,
+//                   "value"
+//                 ).set;
+//                 //设置监听用户名input框的修改
 
-                nativeInputValueSetterUserName.call(loginWordText, name);
-                var ev2 = new Event("input", { bubbles: true });
-                loginWordText.dispatchEvent(ev2);
+//                 nativeInputValueSetterUserName.call(loginWordText, name);
+//                 var ev2 = new Event("input", { bubbles: true });
+//                 loginWordText.dispatchEvent(ev2);
 
-                //设置监听密码input框的修改
-                nativeInputValueSetterPsw.call(passWordText, pass);
-                var ev2 = new Event("input", { bubbles: true });
-                passWordText.dispatchEvent(ev2);
-              }
-            }
-          }
-          test(request.account, request.pwd);
-        }
-      }
-    }
-  }
-  test();
+//                 //设置监听密码input框的修改
+//                 nativeInputValueSetterPsw.call(passWordText, pass);
+//                 var ev2 = new Event("input", { bubbles: true });
+//                 passWordText.dispatchEvent(ev2);
+//               }
+//             }
+//           }
+//           test(request.account, request.pwd);
+//         }
+//       }
+//     }
+//   }
+//   test();
 
-  //跳转到新页面
-  if (request.type === "goNewUrl") {
-    goUrl(request.toNewUrl);
-  }
+//   //跳转到新页面
+//   if (request.type === "goNewUrl") {
+//     goUrl(request.toNewUrl);
+//   }
 
-  //设置自动锁定
-  // if (request.type === "autolock") {
-  //   var lastTime = new Date().getTime();
-  //   var currentTime = new Date().getTime();
-  //   var timeOut = 0.1 * 60 * 1000; //设置超时时间： 10秒
-  //   document.onmousemove = function () {
-  //     lastTime = new Date().getTime();
-  //   };
-  //   const setLock = window.setInterval(function () {
-  //     currentTime = new Date().getTime(); //更新当前时间
-  //
-  //     if (currentTime - lastTime > timeOut) {
-  //       //判断是否超时
-  //
-  //       // sendMessageToBackgroundScript({ autolock: "auctock" });
-  //       clearInterval(setLock);
-  //     }
-  //   }, 1000);
-  // }
-  // });
+//   //设置自动锁定
+//   // if (request.type === "autolock") {
+//   //   var lastTime = new Date().getTime();
+//   //   var currentTime = new Date().getTime();
+//   //   var timeOut = 0.1 * 60 * 1000; //设置超时时间： 10秒
+//   //   document.onmousemove = function () {
+//   //     lastTime = new Date().getTime();
+//   //   };
+//   //   const setLock = window.setInterval(function () {
+//   //     currentTime = new Date().getTime(); //更新当前时间
+//   //
+//   //     if (currentTime - lastTime > timeOut) {
+//   //       //判断是否超时
+//   //
+//   //       // sendMessageToBackgroundScript({ autolock: "auctock" });
+//   //       clearInterval(setLock);
+//   //     }
+//   //   }, 1000);
+//   // }
+//   // });
 
-  // 设置超时之后锁定;
-  // var lastTime = new Date().getTime();
-  // var currentTime = new Date().getTime();
-  // var timeOut = 0.1 * 60 * 1000; //设置超时时间： 10秒
+//   // 设置超时之后锁定;
+//   // var lastTime = new Date().getTime();
+//   // var currentTime = new Date().getTime();
+//   // var timeOut = 0.1 * 60 * 1000; //设置超时时间： 10秒
 
-  // document.onmousemove = function () {
-  //   lastTime = new Date().getTime();
-  // };
-  // const setLock = window.setInterval(function () {
-  //   currentTime = new Date().getTime(); //更新当前时间
-  //
-  //   if (currentTime - lastTime > timeOut) {
-  //     //判断是否超时,超时就发送信息给background
-  //     sendMessageToBackgroundScript({ autolock: "auctock" });
-  //     clearInterval(setLock);
-  //   }
-  // }, 1000);
+//   // document.onmousemove = function () {
+//   //   lastTime = new Date().getTime();
+//   // };
+//   // const setLock = window.setInterval(function () {
+//   //   currentTime = new Date().getTime(); //更新当前时间
+//   //
+//   //   if (currentTime - lastTime > timeOut) {
+//   //     //判断是否超时,超时就发送信息给background
+//   //     sendMessageToBackgroundScript({ autolock: "auctock" });
+//   //     clearInterval(setLock);
+//   //   }
+//   // }, 1000);
 
-  // function sendMessageToBackgroundScript(mes) {
-  //   mes.type = "first-lock";
-  //   chrome.runtime.sendMessage({ mes });
-  // }
-});
+//   // function sendMessageToBackgroundScript(mes) {
+//   //   mes.type = "first-lock";
+//   //   chrome.runtime.sendMessage({ mes });
+//   // }
+// });

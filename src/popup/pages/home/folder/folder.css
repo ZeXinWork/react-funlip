@@ -1,18 +1,23 @@
 .folder-wrapper {
-  box-sizing: border-box;
   width: 360px;
   height: 580px;
+  position: relative;
+}
+.folder-wrapper input::-webkit-input-placeholder {
+  text-align: center;
+}
+.folder-wrapper input::-webkit-input-placeholder {
+  /* WebKit browsers */
+  color: #b8b9d4 !important;
 }
 .folder-wrapper .reFranch {
-  width: 40px;
-  height: 40px;
+  width: 60px;
+  height: 60px;
   margin-left: 300px;
   margin-top: 24px;
   cursor: pointer;
 }
 .folder-wrapper .folder-collect {
-  display: flex;
-  flex-wrap: wrap;
   height: 410px;
   overflow: auto;
   margin-left: 10px;
@@ -20,12 +25,13 @@
 .folder-wrapper .folder-create {
   width: 138px;
   height: 70px;
+  float: left;
   background: url("createBg.png");
   background-size: 100% 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 15px;
+  margin: 15px 0px 15px 20px;
   border-radius: 3%;
 }
 .folder-wrapper .folder-create .folder-create-item {
@@ -42,7 +48,10 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin: 15px;
+  margin-top: 15px;
+  margin-left: 20px;
+  margin-bottom: 15px;
+  float: left;
   cursor: pointer;
 }
 .folder-wrapper .folder-info .folder-user-info {
@@ -68,4 +77,86 @@
   font-weight: 600;
   color: #3a3f6d;
   line-height: 22px;
+}
+.folder-wrapper .folderModal-wrapper {
+  position: absolute;
+  left: 15%;
+  top: 30%;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: inset 0 0 3px #ccc;
+  box-sizing: border-box;
+}
+.folder-wrapper .folderModal-wrapper .modal-icon {
+  width: 32px;
+  height: 32px;
+  margin-top: 16px;
+  margin-bottom: 8px;
+  margin-left: 108px;
+}
+.folder-wrapper .folderModal-wrapper .modal-text {
+  width: 70px;
+  height: 20px;
+  font-size: 14px;
+  font-family: PingFangSC-Semibold, PingFang SC;
+  font-weight: 600;
+  color: #3a3f6d;
+  line-height: 20px;
+  margin-bottom: 16px;
+  margin-left: 90px;
+}
+.folder-wrapper .folderModal-wrapper .modal-input {
+  border: none;
+  outline: none;
+  caret-color: #b8b9d4;
+  width: 224px;
+  height: 36px;
+  background: #f8f9fc;
+  border-radius: 4px;
+  margin-left: 15px;
+  text-align: center;
+}
+.folder-wrapper .folderModal-wrapper .password-btn-group {
+  width: 100%;
+  margin-top: 24px;
+  display: flex;
+  justify-content: space-between;
+}
+.folder-wrapper .folderModal-wrapper .password-btn-group .main {
+  width: 108px;
+  height: 36px;
+  box-sizing: border-box;
+  padding: 2px;
+  border-radius: 18px;
+  background-image: -webkit-linear-gradient(90deg, #18bff6, #1875f6);
+}
+.folder-wrapper .folderModal-wrapper .password-btn-group .btn-1 {
+  width: 100%;
+  height: 100%;
+  border-radius: 18px;
+  background: #fff;
+  text-align: center;
+  line-height: 30px;
+  cursor: pointer;
+}
+.folder-wrapper .folderModal-wrapper .password-btn-group .set-bg {
+  width: 108px;
+  height: 36px;
+  background: linear-gradient(245deg, #4ca0fe 0%, #8455ff 100%);
+  border-radius: 18px;
+  cursor: pointer;
+}
+.folder-wrapper .folderModal-wrapper .password-btn-group .btn-layout {
+  width: 108px;
+  height: 36px;
+  text-align: center;
+  line-height: 36px;
+}
+.folder-wrapper .folderModal-wrapper .password-btn-group .ml-20 {
+  margin-right: 14px;
+  margin-left: 15px;
+  margin-bottom: 15px;
+}
+.folder-wrapper .folderModal-wrapper .password-btn-group .mr-20 {
+  margin-right: 20px;
 }

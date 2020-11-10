@@ -13,6 +13,11 @@
   margin: 0 24px;
   margin-top: 22px;
 }
+.createPSW-wrapper .createPSW-header .createPSW-header-text {
+  overflow: hidden;
+  white-space: normal;
+  word-break: break-all;
+}
 .createPSW-wrapper .createPSW-body {
   margin-top: 30px;
 }

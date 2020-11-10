@@ -155,7 +155,9 @@ export default class createPSW extends Component {
     };
     return (
       <div className="createPSW-wrapper">
-        <div className="createPSW-header">{this.state.password}</div>
+        <div className="createPSW-header">
+          <p className="createPSW-header-text">{this.state.password}</p>
+        </div>
         <div className="createPSW-body">
           <div className="createPSW-slider-wrapper">
             <span>{this.state.ToolTip}</span>

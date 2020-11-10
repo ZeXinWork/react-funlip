@@ -302,7 +302,9 @@ class createNewPsw extends Component {
             <span className="password-title-info">密码生成器</span>
           </div>
           <div className="password-body">
-            <div className="password-body-num">{this.state.password}</div>
+            <div className="password-body-num">
+              <p className="password-body-num-text"> {this.state.password}</p>
+            </div>
             <div className="password-slider-wrapper">
               <span>{this.state.ToolTip}</span>
               <Slider

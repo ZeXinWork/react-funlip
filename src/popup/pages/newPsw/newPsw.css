@@ -12,7 +12,7 @@
   padding: 0;
 }
 .newPsw-wrappers .ant-form-item-explain {
-  margin-top: -20px;
+  color: #5770ec !important;
 }
 .newPsw-wrappers input {
   outline: none;
@@ -57,12 +57,14 @@
 }
 .newPsw-wrappers .password-modal .password-body .password-body-num {
   width: 230px;
-  height: 36px;
+  height: 66px;
   text-align: center;
   line-height: 18px;
-  white-space: nowrap;
+}
+.newPsw-wrappers .password-modal .password-body .password-body-num .password-body-num-text {
   overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal;
+  word-break: break-all;
 }
 .newPsw-wrappers .password-modal .password-body .password-slider-wrapper {
   height: 16px;

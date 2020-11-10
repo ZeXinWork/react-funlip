@@ -89,26 +89,26 @@ export default class Home extends Component {
       this.props.history.push("/home/folder");
     };
     const _this = this;
-    chrome.extension.onMessage.addListener(function (
-      request,
-      sender,
-      sendResponse
-    ) {
-      if (request == "showImage3") {
-        let flag = true;
-        if (_this.state.img3) {
-          flag = false;
-        }
-        if (flag) {
-          _this.setState({
-            img1: false,
-            img2: false,
-            img3: true,
-            img4: false,
-          });
-        }
-      }
-    });
+    // chrome.extension.onMessage.addListener(function (
+    //   request,
+    //   sender,
+    //   sendResponse
+    // ) {
+    //   if (request == "showImage3") {
+    //     let flag = true;
+    //     if (_this.state.img3) {
+    //       flag = false;
+    //     }
+    //     if (flag) {
+    //       _this.setState({
+    //         img1: false,
+    //         img2: false,
+    //         img3: true,
+    //         img4: false,
+    //       });
+    //     }
+    //   }
+    // });
 
     return (
       <div className="home-wrapper">
