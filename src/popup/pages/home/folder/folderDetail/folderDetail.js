@@ -3,6 +3,7 @@
 import React, { Component } from "react";
 import Success from "./icon_success@2x.png";
 import { handleLocalStorage } from "../../../../../api";
+
 import Lock from "./Lock.png";
 import Folder from "./Folder.png";
 import Up from "./Up.png";
@@ -18,16 +19,11 @@ export default class componentName extends Component {
   };
   componentDidMount() {
     let { passwordList, dataList } = this.props.location.state;
-    let newArray = [dataList];
-    if (passwordList) {
-      handleLocalStorage("set", "passwordList", passwordList);
-    }
 
     if (dataList) {
-      const dataList = handleLocalStorage("get", "passwordList");
-      this.setState({
-        list: [...dataList, ...newArray],
-      });
+      // this.setState({
+      //   list: [...dataList, ...newArray],
+      // });
     } else {
       this.setState({
         list: passwordList,

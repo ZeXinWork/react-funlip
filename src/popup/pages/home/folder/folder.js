@@ -1,10 +1,12 @@
 /* global chrome */
 import React, { Component } from "react";
 import { handleLocalStorage } from "../../../../api/index";
+import localforage from "localforage";
 import iconAdd from "./icon_add_folder@2x.png";
 import folder from "./icon_folder@2x(2).png";
 import reFranch from "./reFreach.png";
 import "./folder.css";
+
 import newFolder from "./icon_new_folder@2x.png";
 
 export default class Folder extends Component {
@@ -24,27 +26,64 @@ export default class Folder extends Component {
       pluginId,
     };
 
-    const sendMessageToContentBackgroundScript = (mes) => {
-      const _this = this;
-      mes.requestType = "getFolderList";
-      chrome.runtime.sendMessage({ mes }, function (response) {
-        let res = JSON.parse(response);
-        //成功获取
-
-        if (res.length > 0) {
-          _this.setState({
-            list: res,
-          });
-        } else {
-          //获取失败
-          alert("获取文件夹失败");
-        }
-
-        // if (res.id && res.name) {
-        // } else {
-        //   alert("新建失败");
-        // }
+    const sendMessageToContentBackgroundScript = async (mes) => {
+      localforage.config({
+        driver: localforage.INDEXEDDB,
+        name: "I-heart-indexDB2",
       });
+
+      const getLocalState = async () => {
+        const res = localforage
+          .getItem("folderList")
+          .then(function (value) {
+            return value;
+          })
+          .catch(function (err) {
+            let error = false;
+            return error;
+          });
+        return res;
+      };
+      const folderList = await getLocalState();
+
+      const getData = async () => {
+        const _this = this;
+        mes.requestType = "getFolderList";
+        chrome.runtime.sendMessage({ mes }, function (response) {
+          let res = JSON.parse(response);
+          //成功获取
+          if (res.length > 0) {
+            _this.setState(
+              {
+                list: res,
+              },
+              () => {
+                localforage
+                  .setItem("folderList", res)
+                  .then(function (value) {})
+                  .catch(function (err) {});
+              }
+            );
+          } else {
+            //获取失败
+
+            alert("获取文件夹失败");
+          }
+
+          // if (res.id && res.name) {
+          // } else {
+          //   alert("新建失败");
+          // }
+        });
+      };
+      if (folderList == null) {
+        getData();
+      } else {
+        const folderList = await getLocalState();
+        this.setState({
+          list: folderList,
+        });
+      }
     };
     sendMessageToContentBackgroundScript(userInfo);
   }

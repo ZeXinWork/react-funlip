@@ -47,11 +47,10 @@ const getDataBaseLen = async () => {
   return res;
 };
 
-//4、获取接口或本地数据 并存在内存data中
+//4、获取接口或本地用户信息数据 并存在内存data中
 const getAllData = async () => {
   const len = await getDataBaseLen();
   let userInfo;
-
   //len不为0，则本地有值，则去本地拿数据
   if (len != 0) {
     const getLocalData = async () => {
@@ -610,7 +609,6 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       .catch((error) => {});
     return true;
   } else if (requestType === "addPswToFolder") {
-    alert("ha?");
     const token = handleLocalStorage("get", "token");
     let { folderId, passwordIds } = message.mes;
 

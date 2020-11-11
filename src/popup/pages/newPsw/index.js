@@ -159,6 +159,7 @@ class createNewPsw extends Component {
                 chrome.runtime.sendMessage({ mes }, function (res) {
                   let responses = JSON.parse(res);
                   if (responses.code == 200) {
+                    console.log(response);
                     _this.props.history.push({
                       pathname: "/folderDetail",
                       state: { dataList: response },
