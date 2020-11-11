@@ -5,7 +5,7 @@ import Arrow from "./icon_arrowright_black@2x.png";
 import copyIcon from "./icon_edit_visible.png";
 import { handleLocalStorage, addNewInfo } from "../../../api/index";
 import radom from "./icon_generate_password.png";
-import axios from "axios";
+
 import close from "./close.png";
 import * as actionCreator from "../../store/actionCreator";
 import { connect } from "react-redux";
@@ -128,41 +128,75 @@ class createNewPsw extends Component {
     //表单验证通过后的回调
     const onFinish = async (values) => {
       let { title, password, tip, url, username } = values;
-      const token = handleLocalStorage("get", "token");
-      let passwordItem = {
-        title: title,
-        pwd: password,
-        note: tip,
-        website: url,
-        account: username,
-        pluginId: pluginID,
-      };
+      let isFolderDetail;
+      let folderId;
+      if (this.props.location.state) {
+        isFolderDetail = this.props.location.state.isFolderDetail;
+        folderId = this.props.location.state.folderId;
+      }
 
-      const sendMessageToContentBackgroundScript = (mes) => {
-        const _this = this;
-        mes.requestType = "saveNewPsw";
-        chrome.runtime.sendMessage({ mes }, function (res) {
-          res = JSON.parse(res);
-          if (res.code === 200) {
-            if (res.id) {
-              _this.props.history.push({
-                pathname: "/home/psd",
-              });
+      if (isFolderDetail) {
+        let passwordItem = {
+          title: title,
+          pwd: password,
+          note: tip,
+          website: url,
+          account: username,
+          pluginId: pluginID,
+        };
+        const sendMessageToContentBackgroundScript = (mes) => {
+          const _this = this;
+          mes.requestType = "saveNewPsw";
+          chrome.runtime.sendMessage({ mes }, function (res) {
+            let response = JSON.parse(res);
+            if (response.id) {
+              let userInfo = {
+                passwordIds: [response.id],
+                folderId,
+              };
+              const sendMessageToContentBackgroundScript2 = (mes) => {
+                mes.requestType = "addPswToFolder";
+                chrome.runtime.sendMessage({ mes }, function (res) {
+                  let responses = JSON.parse(res);
+                  if (responses.code == 200) {
+                    _this.props.history.push({
+                      pathname: "/folderDetail",
+                      state: { dataList: response },
+                    });
+                  }
+                });
+              };
+              sendMessageToContentBackgroundScript2(userInfo);
             }
-          }
-        });
-      };
-      sendMessageToContentBackgroundScript(passwordItem);
+          });
+        };
+        sendMessageToContentBackgroundScript(passwordItem);
+      } else {
+        let passwordItem = {
+          title: title,
+          pwd: password,
+          note: tip,
+          website: url,
+          account: username,
+          pluginId: pluginID,
+        };
 
-      // axios
-      //   .post("/plugin/api/v1/password/store", passwordItem, {
-      //     headers: { ClientType: "plugin", Authorization: token },
-      //   })
-      //   .then((res) => {
-      //     // 添加密码成功之后回到密码页面再次发请求
-      //
-      //     this.props.history.push("/home/psd");
-      //   });
+        const sendMessageToContentBackgroundScript = (mes) => {
+          const _this = this;
+          mes.requestType = "saveNewPsw";
+          chrome.runtime.sendMessage({ mes }, function (res) {
+            res = JSON.parse(res);
+            if (res.code === 200) {
+              if (res.id) {
+                _this.props.history.push({
+                  pathname: "/home/psd",
+                });
+              }
+            }
+          });
+        };
+        sendMessageToContentBackgroundScript(passwordItem);
+      }
     };
 
     //表单验证失败后的回调

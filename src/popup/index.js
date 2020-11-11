@@ -15,6 +15,7 @@ import CnPsw from "./pages/newPsw";
 import PswDetail from "./pages/home/passwordDetail/passworddetial";
 import MyAbout from "./pages/home/about/about";
 import ResetPsw from "./pages/reset/resetPassword";
+import FolderDetail from "./pages/home/folder/folderDetail/folderDetail";
 import "@/content";
 
 function Popup() {
@@ -36,6 +37,7 @@ function Popup() {
           <Route path="/reset" component={ResetPsw} />
           <Route path="/pswNum" component={passwordNumber} />
           <Route path="/pswG" component={PasswordGenerator} />
+          <Route path="/folderDetail" component={FolderDetail} />
           <Redirect to={"/login"} />
         </Switch>
       </BrowserRouter>

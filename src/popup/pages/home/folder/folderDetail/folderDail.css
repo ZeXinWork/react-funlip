@@ -1,0 +1,176 @@
+.psw-wrappers {
+  box-sizing: border-box;
+  width: 360px;
+  height: 600px;
+  position: relative;
+  border: 1px solid transparent;
+}
+.psw-wrappers .psw-success-info-wrapper {
+  display: none;
+  width: 100px;
+  height: 88px;
+  background: #ffffff;
+  box-shadow: 0px 5px 15px 0px rgba(198, 206, 219, 0.8), 1px 1px 4px 0px rgba(255, 255, 255, 0.3), -1px -1px 3px 0px rgba(242, 244, 247, 0.2);
+  border-radius: 8px;
+  position: absolute;
+  left: 120px;
+  top: 210px;
+  z-index: 999;
+}
+.psw-wrappers .psw-success-info-wrapper .psw-success-info {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.psw-wrappers .psw-success-info-wrapper .psw-success-info .success-icon {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 4px;
+  margin-top: 8px;
+}
+.psw-wrappers .psw-success-info-wrapper .psw-success-info .psw-success-text {
+  width: 84px;
+  height: 16px;
+  font-size: 12px;
+  font-family: PingFang-SC-Medium, PingFang-SC;
+  font-weight: 500;
+  color: #5770ec;
+  line-height: 17px;
+  text-align: center;
+}
+.psw-wrappers .folder-icon-header {
+  width: 312px;
+  margin-left: 24px;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 24px;
+}
+.psw-wrappers .folder-icon-header .arrowLeft {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+}
+.psw-wrappers .folder-icon-header .edit {
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+}
+.psw-wrappers .editDetail {
+  position: absolute;
+  width: 88px;
+  height: 98px;
+  top: 70px;
+  left: 250px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #ffffff;
+  box-shadow: 0px 3px 6px 0px rgba(204, 205, 219, 0.8);
+  border-radius: 4px;
+  z-index: 9999;
+}
+.psw-wrappers .editDetail .edit-text-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.psw-wrappers .editDetail .edit-text-wrapper .top-text {
+  margin-top: 16px;
+}
+.psw-wrappers .editDetail .edit-text-wrapper .text-wrapper {
+  width: 56px;
+  height: 20px;
+  font-size: 14px;
+  font-family: PingFang-SC-Medium, PingFang-SC;
+  font-weight: 500;
+  color: #3a3f6d;
+  line-height: 20px;
+  margin-bottom: 4px;
+}
+.psw-wrappers .home-body {
+  width: 360px;
+  height: 420px;
+  margin-left: 5px;
+  overflow: auto;
+  margin-top: 16px;
+}
+.psw-wrappers .home-body .psw-info {
+  display: flex;
+  cursor: pointer;
+  justify-content: space-between;
+  align-items: center;
+  background: #f8f9fc;
+  border-radius: 8px;
+  margin: 15px;
+  margin-left: 10px;
+  border-radius: 3%;
+}
+.psw-wrappers .home-body .psw-info .psw-user-info {
+  margin: 10px;
+}
+.psw-wrappers .home-body .psw-info .psw-icon {
+  cursor: pointer;
+}
+.psw-wrappers .home-body .psw-info .psw-icon .mlr-6 {
+  margin: 0 6px;
+}
+.psw-wrappers .home-body .psw-info .psw-icon .mr-6 {
+  margin-right: 6px;
+}
+.psw-wrappers .home-body .psw-info .psw-icon .lock-icon {
+  width: 40px;
+  height: 40px;
+  margin-right: 16px;
+}
+.psw-wrappers .autoMid {
+  width: 100%;
+  margin-top: 40px;
+}
+.psw-wrappers .autoMid .button-layout {
+  display: flex;
+}
+.psw-wrappers .autoMid .main {
+  width: 148px;
+  height: 40px;
+  box-sizing: border-box;
+  padding: 1px;
+  border-radius: 18px;
+  background-image: -webkit-linear-gradient(90deg, #18bff6, #1875f6);
+}
+.psw-wrappers .autoMid .btn-1 {
+  margin-bottom: 1px;
+  width: 146px;
+  height: 38px;
+  border-radius: 18px;
+  background: #fff;
+  text-align: center;
+  line-height: 30px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.psw-wrappers .autoMid .set-bg {
+  background: linear-gradient(245deg, #4ca0fe 0%, #8455ff 100%);
+  border-radius: 18px;
+  cursor: pointer;
+}
+.psw-wrappers .autoMid .btn-layout {
+  width: 148px;
+  height: 40px;
+  text-align: center;
+  line-height: 40px;
+}
+.psw-wrappers .autoMid .btn-layout .copy-text-info {
+  color: #fff;
+}
+.psw-wrappers .autoMid .ml-20 {
+  margin-left: 20px;
+  margin-right: 14px;
+}
+.psw-wrappers .autoMid .mr-20 {
+  margin-right: 20px;
+  margin-left: 6px;
+}

@@ -73,6 +73,11 @@ class PsdLibrary extends Component {
 
   render() {
     //跳转至密码详情页，并传参
+    let isFolderDetail;
+    if (this.props.location.state) {
+      isFolderDetail = this.props.location.state.isFolderDetail;
+    }
+
     const _this = this;
     const setList = (data) => {
       //流程，根据首字母比较，然后排序 再把数组中的数据加载一个新数组里面 然后更新用户接口面

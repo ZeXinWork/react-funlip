@@ -290,7 +290,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   } else if (requestType === "getNumbers") {
     let { areaCode, phone, type } = message.mes;
     const { NumberType } = message.mes;
-    console.log(NumberType);
+
     if (NumberType) {
       type = "FORGOT_PASSWORD";
     }
@@ -362,6 +362,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       body: userInfo,
     })
       .then((response) => response.text())
+      .then((text) => sendResponse(text))
       .then((text) => addItem(text))
       .catch((error) => {});
     // self.props.history.push("/home/psd");
@@ -552,9 +553,73 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   } else if (requestType === "resetMainPsw") {
     const token = handleLocalStorage("get", "token");
     const { userInfo } = message.mes;
-    console.log(userInfo);
+
     let data = JSON.stringify(userInfo);
     fetch("http://112.74.86.214:8088/plugin/api/v1/mainpass/reset", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ClientType: "plugin",
+        Authorization: token,
+      },
+      body: data,
+    })
+      .then((response) => response.text())
+      .then((text) => sendResponse(text))
+      .catch((error) => {});
+    return true;
+  } else if (requestType === "addNewFolder") {
+    let { pluginId, name } = message.mes;
+    const token = handleLocalStorage("get", "token");
+    let userInfo = {
+      pluginId,
+      name,
+    };
+    data = JSON.stringify(userInfo);
+    fetch("http://112.74.86.214:8088/plugin/api/v1/folder/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ClientType: "plugin",
+        Authorization: token,
+      },
+      body: data,
+    })
+      .then((response) => response.text())
+      .then((text) => sendResponse(text))
+      .catch((error) => {});
+    return true;
+  } else if (requestType === "getFolderList") {
+    let { pluginId } = message.mes;
+    const token = handleLocalStorage("get", "token");
+    let userInfo = {
+      pluginId,
+    };
+    data = JSON.stringify(userInfo);
+    fetch("http://112.74.86.214:8088/plugin/api/v1/folder/list", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ClientType: "plugin",
+        Authorization: token,
+      },
+      body: data,
+    })
+      .then((response) => response.text())
+      .then((text) => sendResponse(text))
+      .catch((error) => {});
+    return true;
+  } else if (requestType === "addPswToFolder") {
+    alert("ha?");
+    const token = handleLocalStorage("get", "token");
+    let { folderId, passwordIds } = message.mes;
+
+    let userInfo = {
+      folderId,
+      passwordIds,
+    };
+    data = JSON.stringify(userInfo);
+    fetch("http://112.74.86.214:8088/plugin/api/v1/password/move/to", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
