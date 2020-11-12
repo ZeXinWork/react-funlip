@@ -88,6 +88,7 @@ export default class Home extends Component {
     const folder = () => {
       this.props.history.push("/home/folder");
     };
+
     const _this = this;
     chrome.extension.onMessage.addListener(function (
       request,

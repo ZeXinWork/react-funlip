@@ -29,6 +29,7 @@ class PsdLibrary extends Component {
       mes.type = "getUserList";
       let loading = document.getElementById("funlip-loading");
       loading.style.display = "block";
+
       chrome.runtime.sendMessage({ mes }, function (response) {});
     };
     sendMessageToContentBackgroundScript({});
@@ -84,6 +85,7 @@ class PsdLibrary extends Component {
       }
       if (request.type == "popupGetData") {
         const { data } = request;
+        console.log(data);
         setList(data);
       }
     });

@@ -94,9 +94,7 @@ const getAllData = async () => {
 
 //往数据库里添加数据，并添加到内存返回给密码库页面
 const addItem = async (value) => {
-  alert("执行");
   value = JSON.parse(value);
-  console.log(value);
   const localState = await localforage
     .getItem("userInfo")
     .then(function (value) {
@@ -106,7 +104,7 @@ const addItem = async (value) => {
     .catch(function (err) {
       // 当出错时，此处代码运行
     });
-  console.log(localState);
+
   localState.push(value);
   localforage
     .setItem("userInfo", localState)
@@ -138,11 +136,9 @@ const addItem = async (value) => {
 const deletePsdItem = async (deleteItem) => {
   let value = JSON.parse(deleteItem);
   let idArrays = [];
-
   value.data.map((item) => {
     idArrays.push(item.id);
   });
-
   const localState = await localforage
     .getItem("userInfo")
     .then(function (value) {
@@ -160,17 +156,42 @@ const deletePsdItem = async (deleteItem) => {
       }
     });
   }
-
   const newData = await localforage
     .setItem("userInfo", localState)
     .then(function (value) {
       return value;
     })
+    .catch(function (err) {});
+  data = newData;
+  const cmd = "deleteSuccess";
+  let targetId = value.data[0].id;
+  handleLocalStorage("set", "deleteFolderId", targetId);
+  const localFolderState = await localforage
+    .getItem("folderList")
+    .then(function (value) {
+      // 当离线仓库中的值被载入时，此处代码运行
+      return value;
+    })
     .catch(function (err) {
       // 当出错时，此处代码运行
     });
-  data = newData;
-  const cmd = "deleteSuccess";
+
+  if (localFolderState) {
+    for (let i = 0; i < localFolderState.length; i++) {
+      for (let j = 0; j < localFolderState[i].passwords.length; j++) {
+        if (localFolderState[i].passwords[j].id == targetId) {
+          localFolderState[i].passwords.splice(j, 1);
+        }
+      }
+    }
+
+    localforage
+      .setItem("folderList", localFolderState)
+      .then(function (value) {
+        return value;
+      })
+      .catch(function (err) {});
+  }
   chrome.runtime.sendMessage(cmd, function (response) {});
 };
 
@@ -249,6 +270,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   } else if (type === "getUserList") {
     const getData = async () => {
       const data = await getAllData();
+
       if (data) {
         sendDataToPopup(data);
       }
@@ -363,8 +385,11 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     })
       .then((response) => response.text())
       .then((text) => {
-        addItem(text);
-        sendResponse(text);
+        const setLocalData = async () => {
+          await addItem(text);
+          sendResponse(text);
+        };
+        setLocalData();
       })
       // .then((text) => addItem(text))
       .catch((error) => {});
@@ -395,7 +420,6 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     return true;
   } else if (requestType === "editNewPsw") {
     const token = handleLocalStorage("get", "token");
-
     const { title, pwd, note, website, account, pluginId } = message.mes;
     let userInfo = {
       title,
@@ -622,6 +646,27 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     };
     data = JSON.stringify(userInfo);
     fetch("http://112.74.86.214:8088/plugin/api/v1/password/move/to", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ClientType: "plugin",
+        Authorization: token,
+      },
+      body: data,
+    })
+      .then((response) => response.text())
+      .then((text) => sendResponse(text))
+      .catch((error) => {});
+    return true;
+  } else if (requestType === "deleteFolder") {
+    const token = handleLocalStorage("get", "token");
+    let { folderId, pluginId } = message.mes;
+    let userInfo = {
+      folderId,
+      pluginId,
+    };
+    data = JSON.stringify(userInfo);
+    fetch("http://112.74.86.214:8088/plugin/api/v1/folder/delete", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

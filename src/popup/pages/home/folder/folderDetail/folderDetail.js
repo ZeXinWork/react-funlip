@@ -19,11 +19,33 @@ export default class componentName extends Component {
     editShow: "none",
   };
   componentDidMount() {
-    let { passwordList, dataList, folderId } = this.props.location.state;
+    let passwordList;
+    let dataList;
+    let folderId;
+    let afterDelete;
+    if (this.props.location.state) {
+      passwordList = this.props.location.state.passwordList;
+      dataList = this.props.location.state.dataList;
+      folderId = this.props.location.state.folderId;
+      afterDelete = this.props.location.state.afterDelete;
+    }
+    //点击空白处关闭弹窗
+    // document
+    //   .getElementsByClassName("psw-wrappers")[0]
+    //   .addEventListener("click", () => {
+    //     this.setState({
+    //       editShow: "none",
+    //     });
+    //   });
+
+    //设置文件夹id
     if (folderId) {
       handleLocalStorage("set", "folderId", folderId);
     }
+    //有新增的dataList，更新视图
     if (dataList) {
+      let loading = document.getElementById("funlip-loading");
+      loading.style.display = "none";
       let newArray = [dataList];
       const getLocalState = async () => {
         const getLocalState = async () => {
@@ -44,7 +66,13 @@ export default class componentName extends Component {
         folderList.map((item) => {
           if (item.id == folderId) {
             let { passwords } = item;
-            targetArray = [...passwords, ...newArray];
+            console.log(passwords);
+            console.log(newArray);
+            if (passwords) {
+              targetArray = [...passwords, ...newArray];
+            } else {
+              targetArray = newArray;
+            }
             this.setState({
               list: targetArray,
             });
@@ -53,8 +81,6 @@ export default class componentName extends Component {
 
         for (let i = 0; i < folderList.length; i++) {
           if (folderList[i].id == folderId) {
-            console.log(folderList[i].id);
-            console.log(folderId);
             folderList[i].passwords = targetArray;
           }
         }
@@ -62,36 +88,69 @@ export default class componentName extends Component {
           .setItem("folderList", folderList)
           .then(function (value) {})
           .catch(function (err) {});
-        // if (folderList == null) {
-        //   this.setState({
-        //     list: [this.state.list, ...newArray],
-        //   });
-        // } else {
-        //   let newArrays = [...folderList, ...newArray];
-        //   this.setState({
-        //     list: newArrays,
-        //   });
-        // }
       };
       getLocalState();
-      // this.setState({
-      //   list: [...dataList, ...newArray],
-      // });
-    } else {
+    } else if (passwordList) {
+      //如果没有更新的，显示父级传过来的passwordList()
       this.setState({
         list: passwordList,
+      });
+    } else if (afterDelete) {
+      let loading = document.getElementById("funlip-loading");
+      loading.style.display = "none";
+      const getLocalState = async () => {
+        const getLocalState = async () => {
+          const res = localforage
+            .getItem("folderList")
+            .then(function (value) {
+              return value;
+            })
+            .catch(function (err) {
+              let error = false;
+              return error;
+            });
+          return res;
+        };
+        let targetArray = [];
+        const folderList = await getLocalState();
+        const folderId = handleLocalStorage("get", "folderId");
+        folderList.map((item) => {
+          if (item.id == folderId) {
+            let { passwords } = item;
+            if (passwords) {
+              targetArray = passwords;
+            } else {
+              targetArray = [];
+            }
+            this.setState({
+              list: targetArray,
+            });
+          }
+        });
+      };
+      getLocalState();
+    } else {
+      this.setState({
+        list: [],
       });
     }
   }
   render() {
-    let { folderId } = this.props.location.state;
+    let folderId;
+    if (this.props.location.state) {
+      folderId = this.props.location.state.folderId;
+    }
+
+    //去密码详情页
+
     const toDetail = (itemDetail) => {
       this.props.history.push({
         pathname: "/PswDetail",
-        state: { itemDetail },
+        state: { itemDetail, isDeleteFolder: true },
       });
     };
 
+    //添加hover效果
     const showHover = (index) => {
       this.setState({
         show: index,
@@ -105,11 +164,13 @@ export default class componentName extends Component {
       });
     };
 
+    //发信息自动填充
     function sendMessageToContentScript(mes) {
       mes.type = "mesToBackground";
       chrome.runtime.sendMessage({ mes }, function (response) {});
     }
 
+    //发信息打开网址
     function sendMessageToContentScript2(url) {
       let mes = {
         url: url,
@@ -118,13 +179,12 @@ export default class componentName extends Component {
       chrome.runtime.sendMessage({ mes }, function (response) {});
     }
 
+    //复制密码
     const Copy = (psw) => {
       const input = document.createElement("input");
-
       let modal = document.getElementsByClassName(
         "psw-success-info-wrapper"
       )[0];
-
       const password = psw;
       if (!password) {
         return;
@@ -140,19 +200,106 @@ export default class componentName extends Component {
       }, 2000);
     };
 
+    //显示操作面板
     const showEditHover = () => {
-      this.setState({
-        editShow: "block",
-      });
+      if (this.state.editShow == "none") {
+        this.setState({
+          editShow: "block",
+        });
+      } else {
+        this.setState({
+          editShow: "none",
+        });
+      }
     };
-
-    const cancelEditHover = () => {
-      this.setState({
-        editShow: "none",
-      });
+    //打开删除页面
+    const showModal2 = () => {
+      this.setState(
+        {
+          editShow: "none",
+        },
+        () => {
+          let Modal = document.getElementsByClassName("password-modal2")[0];
+          Modal.style.display = "block";
+        }
+      );
+    };
+    //删除文件夹
+    const deleteFolder = () => {
+      const pluginID = handleLocalStorage("get", "pluginID");
+      let userInfo = {
+        folderId,
+        pluginId: pluginID,
+      };
+      function sendMessageToContentScript(mes) {
+        mes.requestType = "deleteFolder";
+        const _this = this;
+        chrome.runtime.sendMessage({ mes }, function (response) {
+          let res = JSON.parse(response);
+          if (res.code == 200) {
+            const getLocalSate = async () => {
+              const getLocalState = async () => {
+                const res = localforage
+                  .getItem("folderList")
+                  .then(function (value) {
+                    return value;
+                  })
+                  .catch(function (err) {
+                    let error = false;
+                    return error;
+                  });
+                return res;
+              };
+              const folderList = await getLocalState();
+              for (let i = 0; i < folderList.length; i++) {
+                if (folderList[i].id == folderId) {
+                  folderList.splice(i, 1);
+                }
+              }
+              localforage
+                .setItem("folderList", folderList)
+                .then(function (value) {
+                  closeModal2("homeFolder");
+                })
+                .catch(function (err) {});
+            };
+            getLocalSate();
+          }
+        });
+      }
+      sendMessageToContentScript(userInfo);
+    };
+    const closeModal2 = (mes) => {
+      let Modal = document.getElementsByClassName("password-modal2")[0];
+      if (Modal) {
+        Modal.style.display = "none";
+      }
+      if (mes == "homeFolder") {
+        this.props.history.push("/home/folder");
+      }
     };
     return (
       <div className="psw-wrappers">
+        <div className="password-modal2">
+          <div className="password-title-icon">
+            <img src={Lock} className="lock-icon" />
+          </div>
+          <div className="password-title">
+            <span className="password-title-info">是否确定删除此文件夹?</span>
+          </div>
+          <div className="password-body">
+            <div className="password-btn-group">
+              <div className="main ml-20">
+                <div className="btn-1 " onClick={closeModal2}>
+                  <span className="password-text">取消</span>
+                </div>
+              </div>
+              <div className="btn-layout mr-20 set-bg " onClick={deleteFolder}>
+                <span className="password-text">确认</span>
+              </div>
+            </div>
+          </div>
+        </div>
         <div className="psw-success-info-wrapper">
           <div className="psw-success-info">
             <img
@@ -163,10 +310,22 @@ export default class componentName extends Component {
             <div className="psw-success-text">密码已复制</div>
           </div>
         </div>
-        <div className="editDetail" style={{ display: this.state.editShow }}>
+        <div
+          className="editDetail"
+          style={{ display: this.state.editShow }}
+          onClick={(e) => {
+            if (e && e.stopPropagation) {
+              e.stopPropagation();
+            } else {
+              window.event.cancelBubble = true;
+            }
+          }}
+        >
           <div className="edit-text-wrapper">
             <div className="managePsw text-wrapper top-text">管理密码</div>
-            <div className="deletePsw text-wrapper">删除</div>
+            <div className="deletePsw text-wrapper" onClick={showModal2}>
+              删除
+            </div>
             <div className="reName text-wrapper">重命名</div>
           </div>
         </div>
@@ -175,17 +334,19 @@ export default class componentName extends Component {
             src={arrowLeft}
             className="arrowLeft"
             onClick={() => {
-              this.props.history.goBack();
+              this.props.history.push("/home/folder");
             }}
           />
           <img
             src={Edit}
             className="edit"
-            onMouseOver={() => {
+            onClick={(e) => {
+              if (e && e.stopPropagation) {
+                e.stopPropagation();
+              } else {
+                window.event.cancelBubble = true;
+              }
               showEditHover();
-            }}
-            onMouseLeave={() => {
-              cancelEditHover();
             }}
           />
         </div>

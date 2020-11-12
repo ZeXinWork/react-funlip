@@ -52,7 +52,7 @@ export default class Folder extends Component {
         chrome.runtime.sendMessage({ mes }, function (response) {
           let res = JSON.parse(response);
           //成功获取
-          if (res.length > 0) {
+          if (res.length >= 0) {
             _this.setState(
               {
                 list: res,
@@ -65,8 +65,6 @@ export default class Folder extends Component {
               }
             );
           } else {
-            //获取失败
-
             alert("获取文件夹失败");
           }
 
@@ -111,9 +109,33 @@ export default class Folder extends Component {
         const _this = this;
         chrome.runtime.sendMessage({ mes }, function (response) {
           let res = JSON.parse(response);
+          console.log(res);
           if (res.id && res.name) {
             let newArray = [];
             newArray.push(res);
+            console.log(newArray);
+            const getLocalstates = async () => {
+              const getLocalState = async () => {
+                const res = localforage
+                  .getItem("folderList")
+                  .then(function (value) {
+                    return value;
+                  })
+                  .catch(function (err) {
+                    let error = false;
+                    return error;
+                  });
+                return res;
+              };
+              const folderList = await getLocalState();
+              console.log(newArray[0]);
+              folderList.push(newArray[0]);
+              localforage
+                .setItem("folderList", folderList)
+                .then(function (value) {})
+                .catch(function (err) {});
+            };
+            getLocalstates();
             _this.setState(
               {
                 list: [..._this.state.list, ...newArray],

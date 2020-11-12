@@ -119,6 +119,8 @@ class PasswordDetail extends Component {
     const pluginID = handleLocalStorage("get", "pluginID");
     const token = handleLocalStorage("get", "token");
     let { id } = this.props.location.state.itemDetail;
+    let { isDeleteFolder } = this.props.location.state;
+
     const _this = this;
     //设置密码
     const setValue = (value) => {
@@ -138,7 +140,7 @@ class PasswordDetail extends Component {
 
     //返回上一级子页面
     const goBack = () => {
-      this.props.history.push("/home/folder");
+      this.props.history.push("/home/psd");
     };
 
     //显示\关闭用户设置的密码
@@ -203,7 +205,14 @@ class PasswordDetail extends Component {
         sendResponse
       ) {
         if (request == "deleteSuccess") {
-          _this.props.history.push("/home/psd");
+          if (isDeleteFolder) {
+            _this.props.history.push({
+              pathname: "/folderDetail",
+              state: { afterDelete: true },
+            });
+          } else {
+            _this.props.history.push("/home/psd");
+          }
         }
       });
     };
@@ -238,22 +247,12 @@ class PasswordDetail extends Component {
         mes.requestType = "editNewPsw";
         chrome.runtime.sendMessage({ mes }, (res) => {
           deleteItem();
+          const deleteFolderId = handleLocalStorage("get", "deleteFolderId");
+          if (deleteFolderId) {
+          }
         });
       };
       sendMessageToContentBackgroundScript(passwordItem);
-
-      // if (res) {
-      //   deleteItem();
-      // }
-
-      // axios
-      //   .post("/plugin/api/v1/password/store", passwordItem, {
-      //     headers: { ClientType: "plugin", Authorization: token },
-      //   })
-      //   .then((res) => {
-      //
-      //     deleteItem();
-      //   });
     };
 
     return (
