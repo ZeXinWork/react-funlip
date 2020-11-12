@@ -49,28 +49,27 @@ const getDataBaseLen = async () => {
 
 //4、获取接口或本地用户信息数据 并存在内存data中
 const getAllData = async () => {
-  const len = await getDataBaseLen();
   let userInfo;
-  //len不为0，则本地有值，则去本地拿数据
-  if (len != 0) {
-    const getLocalData = async () => {
-      const res = localforage
-        .getItem("userInfo")
-        .then(function (value) {
-          // 当离线仓库中的值被载入时，此处代码运行
-          return value;
-        })
-        .catch(function (err) {
-          // 当出错时，此处代码运行
-        });
-      return res;
-    };
-    userInfo = await getLocalData();
+
+  const getLocalData = async () => {
+    const res = localforage
+      .getItem("userInfo")
+      .then(function (value) {
+        // 当离线仓库中的值被载入时，此处代码运行
+        return value;
+      })
+      .catch(function (err) {
+        // 当出错时，此处代码运行
+      });
+    return res;
+  };
+  userInfo = await getLocalData();
+
+  if (userInfo) {
     data = userInfo;
   } else {
     const getServeData = async () => {
       //将值设置在本地数据库
-
       const initData = async () => {
         let res = await getData();
         userInfo = res;
@@ -95,7 +94,9 @@ const getAllData = async () => {
 
 //往数据库里添加数据，并添加到内存返回给密码库页面
 const addItem = async (value) => {
+  alert("执行");
   value = JSON.parse(value);
+  console.log(value);
   const localState = await localforage
     .getItem("userInfo")
     .then(function (value) {
@@ -105,6 +106,7 @@ const addItem = async (value) => {
     .catch(function (err) {
       // 当出错时，此处代码运行
     });
+  console.log(localState);
   localState.push(value);
   localforage
     .setItem("userInfo", localState)
@@ -340,7 +342,6 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   } else if (requestType === "saveNewPsw") {
     const pluginId = handleLocalStorage("get", "pluginID");
     const token = handleLocalStorage("get", "token");
-
     const { title, pwd, note, website, account } = message.mes;
     let userInfo = {
       title,
@@ -361,8 +362,11 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       body: userInfo,
     })
       .then((response) => response.text())
-      .then((text) => sendResponse(text))
-      .then((text) => addItem(text))
+      .then((text) => {
+        addItem(text);
+        sendResponse(text);
+      })
+      // .then((text) => addItem(text))
       .catch((error) => {});
     // self.props.history.push("/home/psd");
     return true;

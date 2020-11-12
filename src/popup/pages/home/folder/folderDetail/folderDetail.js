@@ -3,6 +3,7 @@
 import React, { Component } from "react";
 import Success from "./icon_success@2x.png";
 import { handleLocalStorage } from "../../../../../api";
+import localforage from "localforage";
 
 import Lock from "./Lock.png";
 import Folder from "./Folder.png";
@@ -18,9 +19,61 @@ export default class componentName extends Component {
     editShow: "none",
   };
   componentDidMount() {
-    let { passwordList, dataList } = this.props.location.state;
-
+    let { passwordList, dataList, folderId } = this.props.location.state;
+    if (folderId) {
+      handleLocalStorage("set", "folderId", folderId);
+    }
     if (dataList) {
+      let newArray = [dataList];
+      const getLocalState = async () => {
+        const getLocalState = async () => {
+          const res = localforage
+            .getItem("folderList")
+            .then(function (value) {
+              return value;
+            })
+            .catch(function (err) {
+              let error = false;
+              return error;
+            });
+          return res;
+        };
+        let targetArray = [];
+        const folderList = await getLocalState();
+        const folderId = handleLocalStorage("get", "folderId");
+        folderList.map((item) => {
+          if (item.id == folderId) {
+            let { passwords } = item;
+            targetArray = [...passwords, ...newArray];
+            this.setState({
+              list: targetArray,
+            });
+          }
+        });
+
+        for (let i = 0; i < folderList.length; i++) {
+          if (folderList[i].id == folderId) {
+            console.log(folderList[i].id);
+            console.log(folderId);
+            folderList[i].passwords = targetArray;
+          }
+        }
+        localforage
+          .setItem("folderList", folderList)
+          .then(function (value) {})
+          .catch(function (err) {});
+        // if (folderList == null) {
+        //   this.setState({
+        //     list: [this.state.list, ...newArray],
+        //   });
+        // } else {
+        //   let newArrays = [...folderList, ...newArray];
+        //   this.setState({
+        //     list: newArrays,
+        //   });
+        // }
+      };
+      getLocalState();
       // this.setState({
       //   list: [...dataList, ...newArray],
       // });

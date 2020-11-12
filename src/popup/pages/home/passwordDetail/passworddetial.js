@@ -138,7 +138,7 @@ class PasswordDetail extends Component {
 
     //返回上一级子页面
     const goBack = () => {
-      this.props.history.goBack();
+      this.props.history.push("/home/folder");
     };
 
     //显示\关闭用户设置的密码
@@ -188,7 +188,7 @@ class PasswordDetail extends Component {
       const sendMessageToContentBackgroundScript = (mes) => {
         mes.requestType = "deleteItem";
         chrome.runtime.sendMessage({ mes }, function (response) {
-          response = JSON.parse(response);
+          // response = JSON.parse(response);
         });
       };
       sendMessageToContentBackgroundScript(value);

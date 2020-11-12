@@ -19,44 +19,7 @@ class PsdLibrary extends Component {
     show: "",
   };
   componentDidMount() {
-    // const { passwordItem } = this.props.location.state;
-    // axios.get("/api/passwordList.json").then((item) => {
-    //   item.data.push(this.props.location.state.passwordItem);
-    //   this.setState(
-    //     {
-    //       list: [...this.state.list, ...item.data],
-    //     },
-    //     () => {
-    //
-    //     }
-    //   );
-    // });
-    // const value = {
-    //   pluginId: pluginID,
-    // };
-    // axios
-    //   .post("/plugin/api/v1/password/list", value, {
-    //     headers: { ClientType: "plugin", Authorization: token },
-    //   })
-    //   .then((res) => {
-    //     this.setState({
-    //       list: [...this.state.list, ...res.data],
-    //     });
-    //   });
     const setList = (data) => {
-      //流程，根据首字母比较，然后排序 再把数组中的数据加载一个新数组里面 然后更新用户接口面
-      //
-      // let newArray = [];
-      // data.map((item, index) => {
-      //   const first = item.title.charAt(0);
-      //   let key = {
-      //     first,
-      //     index,
-      //     item,
-      //   };
-      //   newArray.push(key);
-      // });
-      //
       this.setState({
         list: data,
       });

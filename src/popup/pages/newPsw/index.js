@@ -134,7 +134,6 @@ class createNewPsw extends Component {
         isFolderDetail = this.props.location.state.isFolderDetail;
         folderId = this.props.location.state.folderId;
       }
-
       if (isFolderDetail) {
         let passwordItem = {
           title: title,
@@ -149,6 +148,7 @@ class createNewPsw extends Component {
           mes.requestType = "saveNewPsw";
           chrome.runtime.sendMessage({ mes }, function (res) {
             let response = JSON.parse(res);
+
             if (response.id) {
               let userInfo = {
                 passwordIds: [response.id],
@@ -159,7 +159,6 @@ class createNewPsw extends Component {
                 chrome.runtime.sendMessage({ mes }, function (res) {
                   let responses = JSON.parse(res);
                   if (responses.code == 200) {
-                    console.log(response);
                     _this.props.history.push({
                       pathname: "/folderDetail",
                       state: { dataList: response },
@@ -181,18 +180,16 @@ class createNewPsw extends Component {
           account: username,
           pluginId: pluginID,
         };
-
         const sendMessageToContentBackgroundScript = (mes) => {
           const _this = this;
           mes.requestType = "saveNewPsw";
           chrome.runtime.sendMessage({ mes }, function (res) {
-            res = JSON.parse(res);
-            if (res.code === 200) {
-              if (res.id) {
-                _this.props.history.push({
-                  pathname: "/home/psd",
-                });
-              }
+            let response = JSON.parse(res);
+            console.log(response);
+            if (response.id) {
+              _this.props.history.push({
+                pathname: "/home/psd",
+              });
             }
           });
         };
