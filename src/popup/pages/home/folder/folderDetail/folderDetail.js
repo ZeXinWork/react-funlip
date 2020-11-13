@@ -257,6 +257,7 @@ export default class componentName extends Component {
     const deleteFolder = (config) => {
       const _this = this;
       const pluginID = handleLocalStorage("get", "pluginID");
+      const folderId = handleLocalStorage("get", "folderId");
       let userInfo = {
         folderId,
         pluginId: pluginID,
@@ -295,7 +296,7 @@ export default class componentName extends Component {
                   });
                 return res;
               };
-
+              let targetIdArray = [];
               const userInfoList = await getuserInfoLocalState();
               if (config) {
                 console.log(userInfoList);
@@ -303,10 +304,21 @@ export default class componentName extends Component {
                 for (let i = 0; i < userInfoList.length; i++) {
                   for (let j = 0; j < _this.state.list.length; j++) {
                     if (userInfoList[i].id == _this.state.list[j].id) {
+                      targetIdArray.push(userInfoList[i].id);
                       userInfoList.splice(i, 1);
                     }
                   }
                 }
+                const pluginID = handleLocalStorage("get", "pluginID");
+                let userInfo = {
+                  pluginId: pluginID,
+                  passwordIds: targetIdArray,
+                };
+                function sendMessageToContentScript2(mes) {
+                  mes.requestType = "deleteItem";
+                  chrome.runtime.sendMessage({ mes }, function (response) {});
+                }
+                sendMessageToContentScript2(userInfo);
                 localforage
                   .setItem("userInfo", userInfoList)
                   .then(function (value) {})
@@ -386,9 +398,13 @@ export default class componentName extends Component {
     };
 
     const showDeleteAllPswModal = () => {
-      this.setState({
-        deleteShow: "block",
-      });
+      if (this.state.list.length > 0) {
+        this.setState({
+          deleteShow: "block",
+        });
+      } else {
+        deleteFolder();
+      }
     };
     const cancelCloseModal3 = () => {
       closeModal2();
