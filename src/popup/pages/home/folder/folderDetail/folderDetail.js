@@ -18,6 +18,7 @@ export default class componentName extends Component {
     show: "",
     editShow: "none",
     folderName: "",
+    deleteShow: "none",
   };
   componentDidMount() {
     let passwordList;
@@ -238,6 +239,7 @@ export default class componentName extends Component {
         });
       }
     };
+
     //打开删除页面
     const showModal2 = () => {
       this.setState(
@@ -250,8 +252,10 @@ export default class componentName extends Component {
         }
       );
     };
+
     //删除文件夹
-    const deleteFolder = () => {
+    const deleteFolder = (config) => {
+      const _this = this;
       const pluginID = handleLocalStorage("get", "pluginID");
       let userInfo = {
         folderId,
@@ -259,7 +263,7 @@ export default class componentName extends Component {
       };
       function sendMessageToContentScript(mes) {
         mes.requestType = "deleteFolder";
-        const _this = this;
+
         chrome.runtime.sendMessage({ mes }, function (response) {
           let res = JSON.parse(response);
           if (res.code == 200) {
@@ -276,7 +280,38 @@ export default class componentName extends Component {
                   });
                 return res;
               };
+
               const folderList = await getLocalState();
+
+              const getuserInfoLocalState = async () => {
+                const res = localforage
+                  .getItem("userInfo")
+                  .then(function (value) {
+                    return value;
+                  })
+                  .catch(function (err) {
+                    let error = false;
+                    return error;
+                  });
+                return res;
+              };
+
+              const userInfoList = await getuserInfoLocalState();
+              if (config) {
+                console.log(userInfoList);
+                console.log(_this.state.list);
+                for (let i = 0; i < userInfoList.length; i++) {
+                  for (let j = 0; j < _this.state.list.length; j++) {
+                    if (userInfoList[i].id == _this.state.list[j].id) {
+                      userInfoList.splice(i, 1);
+                    }
+                  }
+                }
+                localforage
+                  .setItem("userInfo", userInfoList)
+                  .then(function (value) {})
+                  .catch(function (err) {});
+              }
               for (let i = 0; i < folderList.length; i++) {
                 if (folderList[i].id == folderId) {
                   folderList.splice(i, 1);
@@ -295,6 +330,7 @@ export default class componentName extends Component {
       }
       sendMessageToContentScript(userInfo);
     };
+
     const closeModal2 = (mes) => {
       let Modal = document.getElementsByClassName("password-modal2")[0];
       if (Modal) {
@@ -348,6 +384,19 @@ export default class componentName extends Component {
       }
       sendMessageToContentScript(userInfo);
     };
+
+    const showDeleteAllPswModal = () => {
+      this.setState({
+        deleteShow: "block",
+      });
+    };
+    const cancelCloseModal3 = () => {
+      closeModal2();
+      deleteFolder();
+      this.setState({
+        deleteShow: "none",
+      });
+    };
     return (
       <div className="psw-wrappers">
         <div className="password-modal2">
@@ -355,7 +404,7 @@ export default class componentName extends Component {
             <img src={Lock} className="lock-icon" />
           </div>
           <div className="password-title">
-            <span className="password-title-info">是否确定删除此文件夹?</span>
+            <span className="password-title-info">确定删除此文件夹?</span>
           </div>
           <div className="password-body">
             <div className="password-btn-group">
@@ -364,7 +413,40 @@ export default class componentName extends Component {
                   <span className="password-text">取消</span>
                 </div>
               </div>
-              <div className="btn-layout mr-20 set-bg " onClick={deleteFolder}>
+              <div
+                className="btn-layout mr-20 set-bg "
+                onClick={showDeleteAllPswModal}
+              >
+                <span className="password-text">确认</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          className="password-modal3"
+          style={{ display: this.state.deleteShow }}
+        >
+          <div className="password-title-icon">
+            <img src={Lock} className="lock-icon" />
+          </div>
+          <div className="password-title">
+            <span className="password-title-info">
+              是否删除文件夹内所有密码?
+            </span>
+          </div>
+          <div className="password-body">
+            <div className="password-btn-group">
+              <div className="main ml-20">
+                <div className="btn-1 " onClick={cancelCloseModal3}>
+                  <span className="password-text">取消</span>
+                </div>
+              </div>
+              <div
+                className="btn-layout mr-20 set-bg "
+                onClick={() => {
+                  deleteFolder("deleteAllPsw");
+                }}
+              >
                 <span className="password-text">确认</span>
               </div>
             </div>
