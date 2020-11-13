@@ -86,10 +86,10 @@ export default class Folder extends Component {
     sendMessageToContentBackgroundScript(userInfo);
   }
   render() {
-    const goDetail = (passwordList, id) => {
+    const goDetail = (passwordList, id, name) => {
       this.props.history.push({
         pathname: "/folderDetail",
-        state: { passwordList, folderId: id },
+        state: { passwordList, folderId: id, name },
       });
     };
     const canModal = () => {
@@ -169,7 +169,7 @@ export default class Folder extends Component {
               <div
                 className="folder-info"
                 onClick={() => {
-                  goDetail(item.passwords, item.id);
+                  goDetail(item.passwords, item.id, item.name);
                 }}
               >
                 <div className="folder-icon ">

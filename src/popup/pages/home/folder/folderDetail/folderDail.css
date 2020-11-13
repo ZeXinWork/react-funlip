@@ -5,6 +5,17 @@
   position: relative;
   border: 1px solid transparent;
 }
+.psw-wrappers .folder-tag-wrapper {
+  margin-left: 24px;
+}
+.psw-wrappers .folder-tag-wrapper .folder-tag {
+  height: 17px;
+  font-size: 12px;
+  font-family: PingFang-SC-Medium, PingFang-SC;
+  font-weight: 500;
+  color: #5d648b;
+  line-height: 17px;
+}
 .psw-wrappers .password-modal2 {
   display: none;
   position: absolute;

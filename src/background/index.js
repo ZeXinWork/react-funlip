@@ -656,6 +656,10 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   } else if (requestType === "getFolderList") {
     let { pluginId } = message.mes;
     const token = handleLocalStorage("get", "token");
+    const pluginID = handleLocalStorage("get", "pluginID");
+    if (!pluginId) {
+      pluginId = pluginID;
+    }
     let userInfo = {
       pluginId,
     };
@@ -704,6 +708,27 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     };
     data = JSON.stringify(userInfo);
     fetch("http://112.74.86.214:8088/plugin/api/v1/folder/delete", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ClientType: "plugin",
+        Authorization: token,
+      },
+      body: data,
+    })
+      .then((response) => response.text())
+      .then((text) => sendResponse(text))
+      .catch((error) => {});
+    return true;
+  } else if (requestType === "renameFolder") {
+    const token = handleLocalStorage("get", "token");
+    let { folderId, name } = message.mes;
+    let userInfo = {
+      folderId,
+      name,
+    };
+    data = JSON.stringify(userInfo);
+    fetch("http://112.74.86.214:8088/plugin/api/v1/folder/rename", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

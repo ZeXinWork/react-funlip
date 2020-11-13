@@ -1,23 +1,23 @@
 /* global chrome */
 import React, { Component } from "react";
-
-import axios from "axios";
-import { Input, Checkbox } from "antd";
-import { handleLocalStorage, searchPassword } from "../../../../api";
+import localforage from "localforage";
+import { Input, Checkbox, Button } from "antd";
+import { handleLocalStorage, searchPassword } from "../../../../../api";
 import Search from "./Search.png";
-import Lock from "./Lock.png";
-import Folder from "./Folder.png";
-import Up from "./Up.png";
-import Key from "./Key.png";
+import Lock from "../Lock.png";
+import Folder from "../Folder.png";
+import Up from "../Up.png";
+import Key from "../Key.png";
 import Success from "./icon_success@2x.png";
 import arrowLeft from "./icon_arrowright_black@2x.png";
 
-import "./passwordLibrary.css";
+import "./moverFolder.css";
 class PsdLibrary extends Component {
   //设置密码列表
   state = {
     list: [],
     show: "",
+    folderIds: [],
   };
   componentDidMount() {
     const setList = (data) => {
@@ -171,23 +171,72 @@ class PsdLibrary extends Component {
         });
       };
       sendMessageToContentBackgroundScript({});
+    };
+    const addPswToFolder = () => {
+      let myChecked = [];
+      let targetArray = [];
+      let targetIdArray = [];
+      let MyCheckBox = document.getElementsByClassName("folderCheckbox");
+      for (let i = 0; i < MyCheckBox.length; i++) {
+        if (MyCheckBox[i].checked) {
+          myChecked.push(i);
+        }
+      }
+      let list = this.state.list;
+      for (let i = 0; i < list.length; i++) {
+        for (let j = 0; j < myChecked.length; j++) {
+          if (i == myChecked[j]) {
+            targetArray.push(list[i]);
+          }
+        }
+      }
+      for (let i = 0; i < targetArray.length; i++) {
+        targetIdArray.push(targetArray[i].id);
+      }
 
-      // if (res != []) {
-      //   this.setState({
-      //     list: [...res],
-      //   });
-      // }
-      // axios
-      //   .post("/plugin/api/v1/password/search", searchInfo, {
-      //     headers: { ClientType: "plugin", Authorization: token },
-      //   })
-      //   .then((res) => {
-      //     if (res.data != []) {
-      //       this.setState({
-      //         list: [...res.data],
-      //       });
-      //     }
-      //   });
+      let folderId = handleLocalStorage("get", "folderId");
+
+      let userInfo = {
+        passwordIds: targetIdArray,
+        folderId,
+      };
+      const sendMessageToContentBackgroundScript2 = (mes) => {
+        mes.requestType = "addPswToFolder";
+        const _this = this;
+        const pluginId = handleLocalStorage("get", "pluginID");
+
+        chrome.runtime.sendMessage({ mes }, function (res) {
+          let responses = JSON.parse(res);
+          if (responses.code == 200) {
+            mes.requestType = "getFolderList";
+            chrome.runtime.sendMessage({ mes }, function (response) {
+              let res = JSON.parse(response);
+
+              let sendList;
+              //成功获取
+              if (res.length >= 0) {
+                localforage
+                  .setItem("folderList", res)
+                  .then(function (value) {
+                    for (let i = 0; i < value.length; i++) {
+                      if (folderId == value[i].id) {
+                        sendList = value[i].passwords;
+                        _this.props.history.push({
+                          pathname: "/folderDetail",
+                          state: { passwordList: sendList },
+                        });
+                      }
+                    }
+                  })
+                  .catch(function (err) {});
+              } else {
+                alert("获取文件夹失败");
+              }
+            });
+          }
+        });
+      };
+      sendMessageToContentBackgroundScript2(userInfo);
     };
     return (
       <div className="psw-wrapper">
@@ -203,7 +252,15 @@ class PsdLibrary extends Component {
         </div>
         {folderName ? (
           <div className="folderName-wrapper">
-            <img src={arrowLeft} className="folderName-icon" />
+            <img
+              src={arrowLeft}
+              className="folderName-icon"
+              onClick={() => {
+                this.props.history.push({
+                  pathname: "/folderDetail",
+                });
+              }}
+            />
 
             <div className="psw-wrapper-folderName">
               <p className="psw-wrapper-folderName-info">{`文件夹 > ${folderName} >添加密码`}</p>
@@ -244,69 +301,34 @@ class PsdLibrary extends Component {
                   <div>{item.title}</div>
                   <div>{item.account}</div>
                 </div>
-                {folderName ? (
-                  <div className="psw-icon">
-                    <Checkbox
-                      onClick={(e) => {
-                        if (e && e.stopPropagation) {
-                          e.stopPropagation();
-                        } else {
-                          window.event.cancelBubble = true;
-                        }
-                      }}
-                    />
-                  </div>
-                ) : (
-                  <div className="psw-icon">
-                    {this.state.show === index ? (
-                      <div>
-                        <img
-                          src={Key}
-                          className="lock-icon"
-                          onClick={(e) => {
-                            if (e && e.stopPropagation) {
-                              e.stopPropagation();
-                            } else {
-                              window.event.cancelBubble = true;
-                            }
-                            sendMessageToContentScript(item);
-                          }}
-                        />
-                        <img
-                          src={Up}
-                          className="lock-icon"
-                          onClick={(e) => {
-                            const url = item.website;
-                            if (e && e.stopPropagation) {
-                              e.stopPropagation();
-                            } else {
-                              window.event.cancelBubble = true;
-                            }
-                            sendMessageToContentScript2(url);
-                          }}
-                        />
-                        <img
-                          src={Folder}
-                          className="lock-icon"
-                          onClick={(e) => {
-                            const password = item.pwd;
-                            if (e && e.stopPropagation) {
-                              e.stopPropagation();
-                            } else {
-                              window.event.cancelBubble = true;
-                            }
-                            Copy(password);
-                          }}
-                        />
-                      </div>
-                    ) : (
-                      <img src={Lock} className="lock-icon" />
-                    )}
-                  </div>
-                )}
+                <div className="psw-icon">
+                  <Checkbox
+                    className="folderCheckbox"
+                    onClick={(e) => {
+                      if (e && e.stopPropagation) {
+                        e.stopPropagation();
+                      } else {
+                        window.event.cancelBubble = true;
+                      }
+                    }}
+                    onChange={() => {
+                      let MyCheckBox = document.getElementsByClassName(
+                        "folderCheckbox"
+                      )[index];
+                      MyCheckBox.checked
+                        ? (MyCheckBox.checked = false)
+                        : (MyCheckBox.checked = true);
+                    }}
+                  />
+                </div>
               </div>
             );
           })}
+        </div>
+        <div className="btn-group">
+          <Button className="folder-btn" shape="round" onClick={addPswToFolder}>
+            确定
+          </Button>
         </div>
       </div>
     );

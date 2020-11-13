@@ -17,17 +17,43 @@ export default class componentName extends Component {
     list: [],
     show: "",
     editShow: "none",
+    folderName: "",
   };
   componentDidMount() {
     let passwordList;
     let dataList;
     let folderId;
     let afterDelete;
+    let name;
+    const folderName = handleLocalStorage("get", "folderName");
+    if (folderName) {
+      this.setState(
+        {
+          folderName,
+        },
+        () => {
+          handleLocalStorage("remove", "folderName");
+        }
+      );
+    }
+
     if (this.props.location.state) {
       passwordList = this.props.location.state.passwordList;
       dataList = this.props.location.state.dataList;
       folderId = this.props.location.state.folderId;
       afterDelete = this.props.location.state.afterDelete;
+      name = this.props.location.state.name;
+      if (name) {
+        handleLocalStorage("set", "folderName", name);
+        this.setState(
+          {
+            folderName: name,
+          },
+          () => {
+            handleLocalStorage("remove", "folderName");
+          }
+        );
+      }
     }
     //点击空白处关闭弹窗
     // document
@@ -91,6 +117,7 @@ export default class componentName extends Component {
       getLocalState();
     } else if (passwordList) {
       //如果没有更新的，显示父级传过来的passwordList()
+
       this.setState({
         list: passwordList,
       });
@@ -277,6 +304,50 @@ export default class componentName extends Component {
         this.props.history.push("/home/folder");
       }
     };
+
+    const renameFolder = (name) => {
+      let userInfo = {
+        folderId,
+        name,
+      };
+      function sendMessageToContentScript(mes) {
+        mes.requestType = "renameFolder";
+        const _this = this;
+        chrome.runtime.sendMessage({ mes }, function (response) {
+          let res = JSON.parse(response);
+          if (res.code == 200) {
+            const getLocalSate = async () => {
+              const getLocalState = async () => {
+                const res = localforage
+                  .getItem("folderList")
+                  .then(function (value) {
+                    return value;
+                  })
+                  .catch(function (err) {
+                    let error = false;
+                    return error;
+                  });
+                return res;
+              };
+              const folderList = await getLocalState();
+              for (let i = 0; i < folderList.length; i++) {
+                if (folderList[i].id == folderId) {
+                  folderList.splice(i, 1);
+                }
+              }
+              localforage
+                .setItem("folderList", folderList)
+                .then(function (value) {
+                  closeModal2("homeFolder");
+                })
+                .catch(function (err) {});
+            };
+            getLocalSate();
+          }
+        });
+      }
+      sendMessageToContentScript(userInfo);
+    };
     return (
       <div className="psw-wrappers">
         <div className="password-modal2">
@@ -348,6 +419,9 @@ export default class componentName extends Component {
               showEditHover();
             }}
           />
+        </div>
+        <div className="folder-tag-wrapper">
+          <p className="folder-tag">{`文件夹 > ${this.state.folderName}`}</p>
         </div>
         <div className="home-body">
           {this.state.list.map((item, index) => {
@@ -435,7 +509,15 @@ export default class componentName extends Component {
                 <span className=" reset-psw">新建密码</span>
               </div>
             </div>
-            <div className="btn-layout mr-20 set-bg  copy-psw">
+            <div
+              className="btn-layout mr-20 set-bg  copy-psw"
+              onClick={() => {
+                this.props.history.push({
+                  pathname: "/folderAdd",
+                  state: { folderName: this.state.folderName },
+                });
+              }}
+            >
               <span className="copy-text-info">添加密码</span>
             </div>
           </div>
