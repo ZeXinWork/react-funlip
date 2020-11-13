@@ -1,6 +1,8 @@
 /* global chrome */
 import React, { Component } from "react";
 import { Button, Card, Form, Input, Slider, Checkbox } from "antd";
+import localforage from "localforage";
+
 import Arrow from "./icon_arrowright_black@2x.png";
 import copyIcon from "./icon_edit_visible.png";
 import { handleLocalStorage } from "../../../../api";
@@ -180,7 +182,7 @@ class PasswordDetail extends Component {
       Modal.style.display = "none";
     };
     // 发请求删除用户密码信息
-    const deleteItem = async () => {
+    const deleteItem = async (config, targetObj) => {
       const pluginID = handleLocalStorage("get", "pluginID");
       const value = {
         pluginId: pluginID / 1,
@@ -188,6 +190,10 @@ class PasswordDetail extends Component {
       };
 
       const sendMessageToContentBackgroundScript = (mes) => {
+        if (config == "editConfig") {
+          mes.editConfig = "editConfig";
+          mes.targetObj = targetObj;
+        }
         mes.requestType = "deleteItem";
         chrome.runtime.sendMessage({ mes }, function (response) {
           // response = JSON.parse(response);
@@ -246,10 +252,9 @@ class PasswordDetail extends Component {
       const sendMessageToContentBackgroundScript = (mes) => {
         mes.requestType = "editNewPsw";
         chrome.runtime.sendMessage({ mes }, (res) => {
-          deleteItem();
-          const deleteFolderId = handleLocalStorage("get", "deleteFolderId");
-          if (deleteFolderId) {
-          }
+          let response = JSON.parse(res);
+          let config = "editConfig";
+          deleteItem(config, response);
         });
       };
       sendMessageToContentBackgroundScript(passwordItem);

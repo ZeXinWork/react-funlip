@@ -66,8 +66,7 @@ export default class componentName extends Component {
         folderList.map((item) => {
           if (item.id == folderId) {
             let { passwords } = item;
-            console.log(passwords);
-            console.log(newArray);
+
             if (passwords) {
               targetArray = [...passwords, ...newArray];
             } else {

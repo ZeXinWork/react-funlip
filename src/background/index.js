@@ -133,7 +133,7 @@ const addItem = async (value) => {
 };
 
 //删除数据库指定数据,并添加到内存返回给密码库页面
-const deletePsdItem = async (deleteItem) => {
+const deletePsdItem = async (deleteItem, config, targetObj) => {
   let value = JSON.parse(deleteItem);
   let idArrays = [];
   value.data.map((item) => {
@@ -163,35 +163,65 @@ const deletePsdItem = async (deleteItem) => {
     })
     .catch(function (err) {});
   data = newData;
-  const cmd = "deleteSuccess";
   let targetId = value.data[0].id;
-  handleLocalStorage("set", "deleteFolderId", targetId);
-  const localFolderState = await localforage
-    .getItem("folderList")
-    .then(function (value) {
-      // 当离线仓库中的值被载入时，此处代码运行
-      return value;
-    })
-    .catch(function (err) {
-      // 当出错时，此处代码运行
-    });
 
-  if (localFolderState) {
-    for (let i = 0; i < localFolderState.length; i++) {
-      for (let j = 0; j < localFolderState[i].passwords.length; j++) {
-        if (localFolderState[i].passwords[j].id == targetId) {
-          localFolderState[i].passwords.splice(j, 1);
-        }
-      }
-    }
-
-    localforage
-      .setItem("folderList", localFolderState)
+  if (config) {
+    const localFolderState = await localforage
+      .getItem("folderList")
       .then(function (value) {
+        // 当离线仓库中的值被载入时，此处代码运行
         return value;
       })
-      .catch(function (err) {});
+      .catch(function (err) {
+        // 当出错时，此处代码运行
+      });
+    if (localFolderState) {
+      for (let i = 0; i < localFolderState.length; i++) {
+        for (let j = 0; j < localFolderState[i].passwords.length; j++) {
+          if (localFolderState[i].passwords[j].id == targetId) {
+            localFolderState[i].passwords.splice(j, 1);
+            localFolderState[i].passwords.push(targetObj);
+          }
+        }
+      }
+      localforage
+        .setItem("folderList", localFolderState)
+        .then(function (value) {
+          return value;
+        })
+        .catch(function (err) {});
+    }
   }
+  const cmd = "deleteSuccess";
+  if (!config) {
+    const localFolderState = await localforage
+      .getItem("folderList")
+      .then(function (value) {
+        // 当离线仓库中的值被载入时，此处代码运行
+        return value;
+      })
+      .catch(function (err) {
+        // 当出错时，此处代码运行
+      });
+
+    if (localFolderState) {
+      for (let i = 0; i < localFolderState.length; i++) {
+        for (let j = 0; j < localFolderState[i].passwords.length; j++) {
+          if (localFolderState[i].passwords[j].id == targetId) {
+            localFolderState[i].passwords.splice(j, 1);
+          }
+        }
+      }
+
+      localforage
+        .setItem("folderList", localFolderState)
+        .then(function (value) {
+          return value;
+        })
+        .catch(function (err) {});
+    }
+  }
+
   chrome.runtime.sendMessage(cmd, function (response) {});
 };
 
@@ -398,7 +428,8 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   } else if (requestType === "deleteItem") {
     const token = handleLocalStorage("get", "token");
 
-    const { pluginId, passwordIds } = message.mes;
+    const { pluginId, passwordIds, editConfig, targetObj } = message.mes;
+
     let userInfo = {
       pluginId,
       passwordIds,
@@ -414,7 +445,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       body: userInfo,
     })
       .then((response) => response.text())
-      .then((text) => deletePsdItem(text))
+      .then((text) => deletePsdItem(text, editConfig, targetObj))
       .catch((error) => {});
     // self.props.history.push("/home/psd");
     return true;
@@ -441,8 +472,14 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       body: userInfo,
     })
       .then((response) => response.text())
-      .then((text) => editItem(text))
-      .then((res) => sendResponse(res))
+      .then((text) => {
+        const getSet = async () => {
+          await editItem(text);
+          sendResponse(text);
+        };
+        getSet();
+      })
+
       .catch((error) => {});
     // self.props.history.push("/home/psd");
     return true;

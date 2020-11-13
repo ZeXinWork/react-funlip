@@ -85,7 +85,7 @@ class PsdLibrary extends Component {
       }
       if (request.type == "popupGetData") {
         const { data } = request;
-        console.log(data);
+
         setList(data);
       }
     });
