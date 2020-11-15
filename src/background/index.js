@@ -445,7 +445,10 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       body: userInfo,
     })
       .then((response) => response.text())
-      .then((text) => deletePsdItem(text, editConfig, targetObj))
+      .then((text) => {
+        deletePsdItem(text, editConfig, targetObj);
+        sendResponse(text);
+      })
       .catch((error) => {});
     // self.props.history.push("/home/psd");
     return true;
@@ -729,6 +732,27 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     };
     data = JSON.stringify(userInfo);
     fetch("http://112.74.86.214:8088/plugin/api/v1/folder/rename", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ClientType: "plugin",
+        Authorization: token,
+      },
+      body: data,
+    })
+      .then((response) => response.text())
+      .then((text) => sendResponse(text))
+      .catch((error) => {});
+    return true;
+  } else if (requestType === "outFolder") {
+    const token = handleLocalStorage("get", "token");
+    let { folderId, passwordIds } = message.mes;
+    let userInfo = {
+      folderId,
+      passwordIds,
+    };
+    data = JSON.stringify(userInfo);
+    fetch("http://112.74.86.214:8088/plugin/api/v1/password/move/out", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

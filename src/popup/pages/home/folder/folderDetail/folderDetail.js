@@ -4,13 +4,15 @@ import React, { Component } from "react";
 import Success from "./icon_success@2x.png";
 import { handleLocalStorage } from "../../../../../api";
 import localforage from "localforage";
-
+import { Checkbox } from "antd";
 import Lock from "./Lock.png";
 import Folder from "./Folder.png";
 import Up from "./Up.png";
 import Key from "./Key.png";
 import arrowLeft from "./icon_arrowright_black@2x.png";
 import Edit from "./icon_edit@2x.png";
+import deleteIcon from "./icon_home_delete_pre@2x.png";
+import remove from "./icon_home_mobile_pre@2x.png";
 import "./folderDail.css";
 export default class componentName extends Component {
   state = {
@@ -19,6 +21,11 @@ export default class componentName extends Component {
     editShow: "none",
     folderName: "",
     deleteShow: "none",
+    showCheckBox: false,
+    btnShow: "block",
+    editPswShow: "none",
+    removeShow: "none",
+    deletePswShow: "none",
   };
   componentDidMount() {
     let passwordList;
@@ -299,8 +306,6 @@ export default class componentName extends Component {
               let targetIdArray = [];
               const userInfoList = await getuserInfoLocalState();
               if (config) {
-                console.log(userInfoList);
-                console.log(_this.state.list);
                 for (let i = 0; i < userInfoList.length; i++) {
                   for (let j = 0; j < _this.state.list.length; j++) {
                     if (userInfoList[i].id == _this.state.list[j].id) {
@@ -413,6 +418,209 @@ export default class componentName extends Component {
         deleteShow: "none",
       });
     };
+    const editPsw = () => {
+      this.setState({
+        showCheckBox: true,
+        editShow: "none",
+        btnShow: "none",
+        editPswShow: "block",
+      });
+    };
+    const removePsw = () => {
+      this.setState({
+        removeShow: "block",
+      });
+    };
+
+    const deletePsw = () => {
+      this.setState({
+        deletePswShow: "block",
+      });
+    };
+
+    const cancelMove = () => {
+      this.setState({
+        removeShow: "none",
+      });
+    };
+    const removePswFolder = () => {
+      const _this = this;
+      const folderId = handleLocalStorage("get", "folderId");
+      let MyCheckBox = document.getElementsByClassName("folderCheckbox");
+      let myChecked = [];
+      let targetArray = [];
+      let targetIdArray = [];
+      for (let i = 0; i < MyCheckBox.length; i++) {
+        if (MyCheckBox[i].checked) {
+          myChecked.push(i);
+        }
+      }
+      let list = this.state.list;
+      for (let i = 0; i < list.length; i++) {
+        for (let j = 0; j < myChecked.length; j++) {
+          if (i == myChecked[j]) {
+            targetArray.push(list[i]);
+          }
+        }
+      }
+
+      for (let i = 0; i < targetArray.length; i++) {
+        targetIdArray.push(targetArray[i].id);
+      }
+      let userInfo = {
+        passwordIds: targetIdArray,
+        folderId,
+      };
+      const sendMessageToContentBackgroundScript2 = (mes) => {
+        mes.requestType = "outFolder";
+
+        chrome.runtime.sendMessage({ mes }, function (res) {
+          let response = JSON.parse(res);
+          if (response.code == 200) {
+            const getLocalState = async () => {
+              const getLocalState = async () => {
+                const res = localforage
+                  .getItem("folderList")
+                  .then(function (value) {
+                    return value;
+                  })
+                  .catch(function (err) {
+                    let error = false;
+                    return error;
+                  });
+                return res;
+              };
+              let outPsw = response.data;
+
+              const folderList = await getLocalState();
+              for (let i = 0; i < folderList.length; i++) {
+                for (let j = 0; j < folderList[i].passwords.length; j++) {
+                  for (let p = 0; p < outPsw.length; p++) {
+                    if (folderList[i].passwords[j].id == outPsw[p].id) {
+                      folderList[i].passwords.splice(j, 1);
+                    }
+                  }
+                }
+              }
+              let list = _this.state.list;
+              for (let i = 0; i < list.length; i++) {
+                for (let p = 0; p < outPsw.length; p++) {
+                  if (list[i].id == outPsw[p].id) {
+                    list.splice(i, 1);
+                  }
+                }
+              }
+              _this.setState({
+                removeShow: "none",
+                editPswShow: "none",
+              });
+              localforage
+                .setItem("folderList", folderList)
+                .then(function (value) {})
+                .catch(function (err) {});
+            };
+            getLocalState();
+          } else {
+            alert(response.msg);
+            _this.setState({
+              removeShow: "none",
+              editPswShow: "none",
+            });
+          }
+        });
+      };
+      sendMessageToContentBackgroundScript2(userInfo);
+    };
+    const deletePswFolder = () => {
+      const _this = this;
+      const folderId = handleLocalStorage("get", "folderId");
+      let MyCheckBox = document.getElementsByClassName("folderCheckbox");
+      let myChecked = [];
+      let targetArray = [];
+      let targetIdArray = [];
+      for (let i = 0; i < MyCheckBox.length; i++) {
+        if (MyCheckBox[i].checked) {
+          myChecked.push(i);
+        }
+      }
+      let list = this.state.list;
+      for (let i = 0; i < list.length; i++) {
+        for (let j = 0; j < myChecked.length; j++) {
+          if (i == myChecked[j]) {
+            targetArray.push(list[i]);
+          }
+        }
+      }
+
+      for (let i = 0; i < targetArray.length; i++) {
+        targetIdArray.push(targetArray[i].id);
+      }
+
+      const pluginID = handleLocalStorage("get", "pluginID");
+      const value = {
+        pluginId: pluginID / 1,
+        passwordIds: targetIdArray,
+      };
+
+      const sendMessageToContentBackgroundScript = (mes) => {
+        mes.requestType = "deleteItem";
+        chrome.runtime.sendMessage({ mes }, function (response) {
+          let res = JSON.parse(response);
+          let outPsw = res.data;
+          if (res.code == 200) {
+            const getLocalState = async () => {
+              const getLocalState = async () => {
+                const res = localforage
+                  .getItem("folderList")
+                  .then(function (value) {
+                    return value;
+                  })
+                  .catch(function (err) {
+                    let error = false;
+                    return error;
+                  });
+                return res;
+              };
+
+              const folderList = await getLocalState();
+              for (let i = 0; i < folderList.length; i++) {
+                for (let j = 0; j < folderList[i].passwords.length; j++) {
+                  for (let p = 0; p < outPsw.length; p++) {
+                    if (folderList[i].passwords[j].id == outPsw[p].id) {
+                      folderList[i].passwords.splice(j, 1);
+                    }
+                  }
+                }
+              }
+              let list = _this.state.list;
+              for (let i = 0; i < list.length; i++) {
+                for (let p = 0; p < outPsw.length; p++) {
+                  if (list[i].id == outPsw[p].id) {
+                    list.splice(i, 1);
+                  }
+                }
+              }
+              _this.setState({
+                deletePswShow: "none",
+                editPswShow: "none",
+              });
+              localforage
+                .setItem("folderList", folderList)
+                .then(function (value) {})
+                .catch(function (err) {});
+            };
+            getLocalState();
+          }
+        });
+      };
+      sendMessageToContentBackgroundScript(value);
+    };
+    const cancelPswFolder = () => {
+      this.setState({
+        deletePswShow: "none",
+      });
+    };
+
     return (
       <div className="psw-wrappers">
         <div className="password-modal2">
@@ -468,6 +676,58 @@ export default class componentName extends Component {
             </div>
           </div>
         </div>
+        <div
+          className="password-modal4"
+          style={{ display: this.state.removeShow }}
+        >
+          <div className="password-title-icon">
+            <img src={Lock} className="lock-icon" />
+          </div>
+          <div className="password-title">
+            <span className="password-title-info">是否将密码移出文件夹?</span>
+          </div>
+          <div className="password-body">
+            <div className="password-btn-group">
+              <div className="main ml-20">
+                <div className="btn-1 " onClick={cancelMove}>
+                  <span className="password-text">取消</span>
+                </div>
+              </div>
+              <div
+                className="btn-layout mr-20 set-bg "
+                onClick={removePswFolder}
+              >
+                <span className="password-text">确认</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          className="password-modal5"
+          style={{ display: this.state.deletePswShow }}
+        >
+          <div className="password-title-icon">
+            <img src={Lock} className="lock-icon" />
+          </div>
+          <div className="password-title">
+            <span className="password-title-info">是否删除此密码?</span>
+          </div>
+          <div className="password-body">
+            <div className="password-btn-group">
+              <div className="main ml-20">
+                <div className="btn-1 " onClick={cancelPswFolder}>
+                  <span className="password-text">取消</span>
+                </div>
+              </div>
+              <div
+                className="btn-layout mr-20 set-bg "
+                onClick={deletePswFolder}
+              >
+                <span className="password-text">确认</span>
+              </div>
+            </div>
+          </div>
+        </div>
         <div className="psw-success-info-wrapper">
           <div className="psw-success-info">
             <img
@@ -490,7 +750,9 @@ export default class componentName extends Component {
           }}
         >
           <div className="edit-text-wrapper">
-            <div className="managePsw text-wrapper top-text">管理密码</div>
+            <div className="managePsw text-wrapper top-text" onClick={editPsw}>
+              管理密码
+            </div>
             <div className="deletePsw text-wrapper" onClick={showModal2}>
               删除
             </div>
@@ -542,57 +804,84 @@ export default class componentName extends Component {
                   <div>{item.title}</div>
                   <div>{item.account}</div>
                 </div>
-                <div className="psw-icon">
-                  {this.state.show === index ? (
-                    <div>
-                      <img
-                        src={Key}
-                        className="lock-icon"
+                {this.state.showCheckBox ? (
+                  <div>
+                    <div className="psw-icon">
+                      <Checkbox
+                        className="folderCheckbox"
                         onClick={(e) => {
                           if (e && e.stopPropagation) {
                             e.stopPropagation();
                           } else {
                             window.event.cancelBubble = true;
                           }
-                          sendMessageToContentScript(item);
                         }}
-                      />
-                      <img
-                        src={Up}
-                        className="lock-icon"
-                        onClick={(e) => {
-                          const url = item.website;
-                          if (e && e.stopPropagation) {
-                            e.stopPropagation();
-                          } else {
-                            window.event.cancelBubble = true;
-                          }
-                          sendMessageToContentScript2(url);
-                        }}
-                      />
-                      <img
-                        src={Folder}
-                        className="lock-icon"
-                        onClick={(e) => {
-                          const password = item.pwd;
-                          if (e && e.stopPropagation) {
-                            e.stopPropagation();
-                          } else {
-                            window.event.cancelBubble = true;
-                          }
-                          Copy(password);
+                        onChange={() => {
+                          let MyCheckBox = document.getElementsByClassName(
+                            "folderCheckbox"
+                          )[index];
+                          MyCheckBox.checked
+                            ? (MyCheckBox.checked = false)
+                            : (MyCheckBox.checked = true);
                         }}
                       />
                     </div>
-                  ) : (
-                    <img src={Lock} className="lock-icon" />
-                  )}
-                </div>
+                  </div>
+                ) : (
+                  <div>
+                    <div className="psw-icon">
+                      {this.state.show === index ? (
+                        <div>
+                          <img
+                            src={Key}
+                            className="lock-icon"
+                            onClick={(e) => {
+                              if (e && e.stopPropagation) {
+                                e.stopPropagation();
+                              } else {
+                                window.event.cancelBubble = true;
+                              }
+                              sendMessageToContentScript(item);
+                            }}
+                          />
+                          <img
+                            src={Up}
+                            className="lock-icon"
+                            onClick={(e) => {
+                              const url = item.website;
+                              if (e && e.stopPropagation) {
+                                e.stopPropagation();
+                              } else {
+                                window.event.cancelBubble = true;
+                              }
+                              sendMessageToContentScript2(url);
+                            }}
+                          />
+                          <img
+                            src={Folder}
+                            className="lock-icon"
+                            onClick={(e) => {
+                              const password = item.pwd;
+                              if (e && e.stopPropagation) {
+                                e.stopPropagation();
+                              } else {
+                                window.event.cancelBubble = true;
+                              }
+                              Copy(password);
+                            }}
+                          />
+                        </div>
+                      ) : (
+                        <img src={Lock} className="lock-icon" />
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
             );
           })}
         </div>
-        <div className="autoMid">
+        <div className="autoMid" style={{ display: this.state.btnShow }}>
           <div className="button-layout">
             <div
               className="main ml-20"
@@ -620,6 +909,36 @@ export default class componentName extends Component {
             </div>
           </div>
         </div>
+        {this.state.editPswShow == "block" ? (
+          <div className="editPsw-wrapper">
+            <div className="remove-wrapper">
+              <img
+                src={remove}
+                className="remove-wrapper-icon"
+                onClick={() => {
+                  this.setState({
+                    removeShow: "block",
+                  });
+                }}
+              />
+              <p className="remove-wrapper-text" onClick={removePsw}>
+                移出
+              </p>
+            </div>
+            <div className="delete-wrapper">
+              <img
+                src={deleteIcon}
+                className="delete-wrapper-icon "
+                onClick={deletePsw}
+              />
+              <p className="delete-wrapper-text" onClick={deletePsw}>
+                删除
+              </p>
+            </div>
+          </div>
+        ) : (
+          ""
+        )}
       </div>
     );
   }

@@ -195,16 +195,10 @@ class PasswordDetail extends Component {
           mes.targetObj = targetObj;
         }
         mes.requestType = "deleteItem";
-        chrome.runtime.sendMessage({ mes }, function (response) {
-          // response = JSON.parse(response);
-        });
+        chrome.runtime.sendMessage({ mes }, function (response) {});
       };
       sendMessageToContentBackgroundScript(value);
-      // const res = await deletePswItem(value);
-      // if (res.code === 200) {
-      //   this.props.history.push("/home/psd");
-      //   closeModal2();
-      // }
+
       chrome.extension.onMessage.addListener(function (
         request,
         sender,
