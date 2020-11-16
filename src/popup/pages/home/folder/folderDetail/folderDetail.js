@@ -4,7 +4,7 @@ import React, { Component } from "react";
 import Success from "./icon_success@2x.png";
 import { handleLocalStorage } from "../../../../../api";
 import localforage from "localforage";
-import { Checkbox } from "antd";
+import { Checkbox, Input } from "antd";
 import Lock from "./Lock.png";
 import Folder from "./Folder.png";
 import Up from "./Up.png";
@@ -26,6 +26,7 @@ export default class componentName extends Component {
     editPswShow: "none",
     removeShow: "none",
     deletePswShow: "none",
+    renameShow: "none",
   };
   componentDidMount() {
     let passwordList;
@@ -360,14 +361,75 @@ export default class componentName extends Component {
     };
 
     //文件夹重命名
-    const renameFolder = (name) => {
+    // const renameFolder = (name) => {
+    //   let renameInput = document.getElementsByClassName(
+    //     "password-body-Input"
+    //   )[0].value;
+
+    //   let userInfo = {
+    //     folderId,
+    //     name: renameInput,
+    //   };
+    //   function sendMessageToContentScript(mes) {
+    //     mes.requestType = "renameFolder";
+    //     chrome.runtime.sendMessage({ mes }, function (response) {
+    //       let res = JSON.parse(response);
+    //
+    //       // if (res.code == 200) {
+    //       //   const getLocalSate = async () => {
+    //       //     const getLocalState = async () => {
+    //       //       const res = localforage
+    //       //         .getItem("folderList")
+    //       //         .then(function (value) {
+    //       //           return value;
+    //       //         })
+    //       //         .catch(function (err) {
+    //       //           let error = false;
+    //       //           return error;
+    //       //         });
+    //       //       return res;
+    //       //     };
+    //       //     const folderList = await getLocalState();
+    //       //
+    //       //     for (let i = 0; i < folderList.length; i++) {
+    //       //       if (folderList[i].id == folderId) {
+    //       //
+    //       //         folderList[i].name = res.data.name;
+    //       //       }
+    //       //     }
+    //       //
+
+    //       //     localforage
+    //       //       .setItem("folderList", folderList)
+    //       //       .then(function (value) {
+    //       //         closeModal2("homeFolder");
+    //       //       })
+    //       //       .catch(function (err) {});
+    //       //   };
+    //       //   getLocalSate();
+    //       // }
+    //     });
+    //   }
+    //   sendMessageToContentScript(userInfo);
+
+    //   function sendMessageToContentScript(mes) {
+    //     mes.requestType = "renameFolder";
+    //     chrome.runtime.sendMessage({ mes }, function (response) {});
+    //   }
+    //   sendMessageToContentScript(userInfo);
+    // };
+    const renameFolder = () => {
+      const _this = this;
+      let renameInput = document.getElementsByClassName(
+        "password-body-Input"
+      )[0].value;
+
       let userInfo = {
         folderId,
-        name,
+        name: renameInput,
       };
       function sendMessageToContentScript(mes) {
         mes.requestType = "renameFolder";
-        const _this = this;
         chrome.runtime.sendMessage({ mes }, function (response) {
           let res = JSON.parse(response);
           if (res.code == 200) {
@@ -387,13 +449,18 @@ export default class componentName extends Component {
               const folderList = await getLocalState();
               for (let i = 0; i < folderList.length; i++) {
                 if (folderList[i].id == folderId) {
-                  folderList.splice(i, 1);
+                  folderList[i].name = res.data.name;
                 }
               }
+
               localforage
                 .setItem("folderList", folderList)
                 .then(function (value) {
-                  closeModal2("homeFolder");
+                  _this.setState({
+                    renameShow: "none",
+                    folderName: res.data.name,
+                    editShow: "none",
+                  });
                 })
                 .catch(function (err) {});
             };
@@ -403,7 +470,6 @@ export default class componentName extends Component {
       }
       sendMessageToContentScript(userInfo);
     };
-
     //删除文件夹并删除下面所有密码
     const showDeleteAllPswModal = () => {
       if (this.state.list.length > 0) {
@@ -638,8 +704,43 @@ export default class componentName extends Component {
       });
     };
 
+    const closeModal8 = () => {
+      this.setState({
+        renameShow: "none",
+      });
+    };
     return (
       <div className="psw-wrappers">
+        <div
+          className="password-modal8"
+          style={{ display: this.state.renameShow }}
+        >
+          <div className="password-title-icon">
+            <img src={Lock} className="lock-icon" />
+          </div>
+          <div className="password-title">
+            <span className="password-title-info">重命名</span>
+          </div>
+          <div className="password-body">
+            <Input
+              placeholder={this.state.folderName}
+              className="password-body-Input"
+              bordered={false}
+            />
+            <div className="password-btn-group">
+              <div className="main ml-20">
+                <div className="btn-1 " onClick={closeModal8}>
+                  <span className="password-text">取消</span>
+                </div>
+              </div>
+              <div className="btn-layout mr-20 set-bg ">
+                <span className="password-text" onClick={renameFolder}>
+                  确认
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
         <div className="password-modal2">
           <div className="password-title-icon">
             <img src={Lock} className="lock-icon" />
@@ -773,7 +874,17 @@ export default class componentName extends Component {
             <div className="deletePsw text-wrapper" onClick={showModal2}>
               删除
             </div>
-            <div className="reName text-wrapper">重命名</div>
+            <div
+              className="reName text-wrapper"
+              onClick={() => {
+                this.setState({
+                  renameShow: "block",
+                  editShow: "none",
+                });
+              }}
+            >
+              重命名
+            </div>
           </div>
         </div>
         <div className="folder-icon-header">
