@@ -19,10 +19,38 @@ class MySet extends Component {
     option6: true,
     autofill: true,
     autostore: true,
+    show: false,
   };
   componentDidMount() {
     const autoFill = handleLocalStorage("get", "autoFill");
     const autoStore = handleLocalStorage("get", "autoStore");
+    const lockedDelay = handleLocalStorage("get", "lockedDelay");
+
+    if (lockedDelay == 0) {
+      this.setState({
+        option1: false,
+      });
+    } else if (lockedDelay == -1) {
+      this.setState({
+        option6: false,
+      });
+    } else if (lockedDelay == 1) {
+      this.setState({
+        option2: false,
+      });
+    } else if (lockedDelay == 10) {
+      this.setState({
+        option3: false,
+      });
+    } else if (lockedDelay == 30) {
+      this.setState({
+        option4: false,
+      });
+    } else {
+      this.setState({
+        option5: false,
+      });
+    }
     // alert(autofill);
     if (autoFill == 1) {
       this.setState({
@@ -44,7 +72,6 @@ class MySet extends Component {
     }
   }
   render() {
-    const { time, show } = this.props;
     const onChange = (config) => {
       let { autofill, autostore } = this.state;
       const sendMessageToContentBackgroundScript = (mes) => {
@@ -118,19 +145,12 @@ class MySet extends Component {
     const goBack = () => {
       this.props.history.push("./home/account");
     };
-    const { setLockTime, setShow } = this.props;
-    const setTime = (options) => {
-      const { time, num } = options;
-      setLockTime(time);
-      setShow();
-      setColor(num);
-      this.props.history.push("/Myset");
-    };
 
     //设置选中之后的颜色值
     const setColor = (num) => {
-      console.log(num);
-
+      this.setState({
+        show: false,
+      });
       if (num === 0) {
         this.setState(
           {
@@ -289,6 +309,18 @@ class MySet extends Component {
       }
     };
 
+    const setLockDelayTime = (setConfig) => {
+      handleLocalStorage("set", "lockedDelay", setConfig);
+
+      function sendMessageToContentScript(mes) {
+        const pluginID = handleLocalStorage("get", "pluginID");
+        mes.requestType = "setLockDelay";
+        mes.lockedDelay = setConfig;
+        mes.pluginId = pluginID;
+        chrome.runtime.sendMessage({ mes }, function (response) {});
+      }
+      sendMessageToContentScript({});
+    };
     return (
       <div className="myset-wrapper">
         <img src={arrowLeft} className="mySet-form-title" onClick={goBack} />
@@ -327,16 +359,14 @@ class MySet extends Component {
                 className="auto-text "
                 style={{ cursor: "pointer" }}
                 onClick={() => {
-                  setShow();
+                  this.setState({
+                    show: true,
+                  });
                 }}
               >
                 自动锁定
               </span>
-              <div
-                onClick={() => {
-                  setShow();
-                }}
-              >
+              <div onClick={() => {}}>
                 <img
                   src={arrowRight}
                   className="ant-dropdown-link"
@@ -364,16 +394,14 @@ class MySet extends Component {
             </div>
           </div>
         </div>
-        {show ? (
+        {this.state.show ? (
           <div className="auto-lock-wrappers">
             <div className="auto-lock-container">
               <div
-                className="mb-24 mt-5 "
+                className="mb-24 mt-5"
                 onClick={() => {
-                  setTime({
-                    time: "立即锁定",
-                    num: 0,
-                  });
+                  setColor(0);
+                  setLockDelayTime(0);
                 }}
               >
                 <span
@@ -394,10 +422,8 @@ class MySet extends Component {
                       : "auto-lock-text-bold"
                   }
                   onClick={() => {
-                    setTime({
-                      time: "1分钟",
-                      num: 1,
-                    });
+                    setColor(1);
+                    setLockDelayTime(1);
                   }}
                 >
                   1分钟
@@ -411,10 +437,9 @@ class MySet extends Component {
                       : "auto-lock-text-bold"
                   }
                   onClick={() => {
-                    setTime({
-                      time: "10分钟",
-                      num: 2,
-                    });
+                    setColor(2);
+
+                    setLockDelayTime(10);
                   }}
                 >
                   10分钟
@@ -428,13 +453,11 @@ class MySet extends Component {
                       : "auto-lock-text-bold"
                   }
                   onClick={() => {
-                    setTime({
-                      time: "30分钟",
-                      num: 3,
-                    });
+                    setColor(3);
+
+                    setLockDelayTime(30);
                   }}
                 >
-                  {" "}
                   30分钟
                 </span>
               </div>
@@ -446,10 +469,9 @@ class MySet extends Component {
                       : "auto-lock-text-bold"
                   }
                   onClick={() => {
-                    setTime({
-                      time: "4小时",
-                      num: 4,
-                    });
+                    setColor(4);
+
+                    setLockDelayTime(240);
                   }}
                 >
                   4小时
@@ -463,13 +485,10 @@ class MySet extends Component {
                       : "auto-lock-text-bold"
                   }
                   onClick={() => {
-                    setTime({
-                      time: "从不锁定",
-                      num: 5,
-                    });
+                    setColor(5);
+                    setLockDelayTime(-1);
                   }}
                 >
-                  {" "}
                   从不锁定
                 </span>
               </div>
@@ -482,22 +501,5 @@ class MySet extends Component {
     );
   }
 }
-const mapStateToProps = (state) => {
-  return {
-    time: state.time,
-    show: state.show,
-  };
-};
-const mapDispatchToProps = (dispatch) => {
-  return {
-    setLockTime(time) {
-      const action = actionCreator.setLockTimes(time);
-      dispatch(action);
-    },
-    setShow() {
-      const action = actionCreator.setShow();
-      dispatch(action);
-    },
-  };
-};
-export default connect(mapStateToProps, mapDispatchToProps)(MySet);
+
+export default MySet;

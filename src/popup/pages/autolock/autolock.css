@@ -2,10 +2,38 @@
   width: 360px;
   height: 580px;
   box-sizing: border-box;
-  border: 1px solid black;
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+.auto-lock-wrapper .error-message {
+  width: 116px;
+  height: 88px;
+  background: #ffffff;
+  box-shadow: 0px 5px 15px 0px rgba(198, 206, 219, 0.8), 1px 1px 4px 0px rgba(255, 255, 255, 0.3), -1px -1px 3px 0px rgba(242, 244, 247, 0.2);
+  border-radius: 8px;
+  position: absolute;
+  top: 220px;
+  left: 120px;
+  z-index: 999;
+}
+.auto-lock-wrapper .error-message .icon-fail {
+  width: 48px;
+  height: 48px;
+  margin: 0 34px;
+  margin-bottom: 4px;
+  margin-top: 8px;
+}
+.auto-lock-wrapper .error-message .error-text {
+  margin-left: 16px;
+  text-align: center;
+  width: 84px;
+  height: 16px;
+  font-size: 12px;
+  font-family: PingFang-SC-Medium, PingFang-SC;
+  font-weight: 600;
+  color: #5770ec;
+  line-height: 17px;
 }
 .auto-lock-wrapper .auto-lock-logo-wrapper {
   position: relative;
@@ -16,10 +44,10 @@
 }
 .auto-lock-wrapper .auto-lock-logo-wrapper .auto-lock-logo {
   position: absolute;
-  width: 150px;
-  height: 150px;
-  left: 100px;
-  top: 30px;
+  width: 100px;
+  height: 100px;
+  left: 120px;
+  top: 50px;
 }
 .auto-lock-wrapper .auto-lock-body-wrapper {
   display: flex;
@@ -29,26 +57,40 @@
   margin-top: 50px;
 }
 .auto-lock-wrapper .auto-lock-body-wrapper .auto-lock-body-text {
-  width: 50%;
   text-align: center;
   margin-bottom: 20px;
-  color: #3f4471;
-  margin-right: 8px;
+  margin-right: 25px;
+  width: 96px;
+  height: 22px;
+  font-size: 16px;
+  font-family: PingFang-SC-Medium, PingFang-SC;
+  font-weight: 500;
+  color: #3a3f6d;
+  line-height: 22px;
 }
 .auto-lock-wrapper .auto-lock-body-wrapper .auto-lock-body-input {
   display: flex;
 }
 .auto-lock-wrapper .auto-lock-body-wrapper .auto-lock-body-input Input {
-  width: 45px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
   margin: 2px;
   border-radius: 10%;
+  caret-color: #5770ec;
+  text-align: center;
 }
 .auto-lock-wrapper .auto-lock-btn-wrapper {
-  margin-top: 150px;
+  margin-top: 140px;
 }
 .auto-lock-wrapper .auto-lock-btn-wrapper .auto-lock-btn {
+  width: 70px;
+  height: 20px;
+  font-size: 14px;
+  font-family: PingFang-SC-Medium, PingFang-SC;
+  font-weight: 500;
+  color: #5d648b;
+  line-height: 20px;
   outline: none;
   border: none;
-  color: #697095;
+  margin-right: 30px;
 }

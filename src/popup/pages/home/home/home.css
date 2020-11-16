@@ -38,6 +38,7 @@
   width: 360px;
 }
 .home-wrapper .home-classification .lock-wrapper .lock-item-wrapper {
+  cursor: pointer;
   width: 79px;
   height: 40px;
   background: #ffffff;

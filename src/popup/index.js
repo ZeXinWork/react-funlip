@@ -1,5 +1,5 @@
 /* global chrome */
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 import Login from "./pages/login";
 import mySet from "./pages/set/set";
@@ -18,8 +18,10 @@ import ResetPsw from "./pages/reset/resetPassword";
 import FolderDetail from "./pages/home/folder/folderDetail/folderDetail";
 import FolderAdd from "./pages/home/folder/moveFolder/moverFolder";
 import "@/content";
-
 function Popup() {
+  useEffect(() => {
+    var port = chrome.runtime.connect();
+  }, []);
   return (
     <Fragment>
       <BrowserRouter>
@@ -46,5 +48,4 @@ function Popup() {
     </Fragment>
   );
 }
-
 export default Popup;

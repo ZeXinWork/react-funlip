@@ -2,7 +2,7 @@
 import React, { Component } from "react";
 import localforage from "localforage";
 import { Input, Checkbox, Button } from "antd";
-import { handleLocalStorage, searchPassword } from "../../../../../api";
+import { handleLocalStorage } from "../../../../../api";
 import Search from "./Search.png";
 import Lock from "../Lock.png";
 import Folder from "../Folder.png";
@@ -172,6 +172,8 @@ class PsdLibrary extends Component {
       };
       sendMessageToContentBackgroundScript({});
     };
+
+    //添加密码到文件夹下
     const addPswToFolder = () => {
       let myChecked = [];
       let targetArray = [];
@@ -238,6 +240,7 @@ class PsdLibrary extends Component {
       };
       sendMessageToContentBackgroundScript2(userInfo);
     };
+
     return (
       <div className="psw-wrapper">
         <div className="psw-success-info-wrapper">
@@ -334,13 +337,5 @@ class PsdLibrary extends Component {
     );
   }
 }
-
-const mapStateToProps = (state) => {
-  return {};
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return {};
-};
 
 export default PsdLibrary;

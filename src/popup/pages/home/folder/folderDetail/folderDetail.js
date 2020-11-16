@@ -348,6 +348,7 @@ export default class componentName extends Component {
       sendMessageToContentScript(userInfo);
     };
 
+    //关闭Modal2
     const closeModal2 = (mes) => {
       let Modal = document.getElementsByClassName("password-modal2")[0];
       if (Modal) {
@@ -358,6 +359,7 @@ export default class componentName extends Component {
       }
     };
 
+    //文件夹重命名
     const renameFolder = (name) => {
       let userInfo = {
         folderId,
@@ -402,6 +404,7 @@ export default class componentName extends Component {
       sendMessageToContentScript(userInfo);
     };
 
+    //删除文件夹并删除下面所有密码
     const showDeleteAllPswModal = () => {
       if (this.state.list.length > 0) {
         this.setState({
@@ -411,6 +414,8 @@ export default class componentName extends Component {
         deleteFolder();
       }
     };
+
+    //删除文件夹但是不删除文件夹下的密码
     const cancelCloseModal3 = () => {
       closeModal2();
       deleteFolder();
@@ -418,6 +423,8 @@ export default class componentName extends Component {
         deleteShow: "none",
       });
     };
+
+    //打开编辑模块
     const editPsw = () => {
       this.setState({
         showCheckBox: true,
@@ -426,23 +433,29 @@ export default class componentName extends Component {
         editPswShow: "block",
       });
     };
+
+    //打开移出密码modal
     const removePsw = () => {
       this.setState({
         removeShow: "block",
       });
     };
 
+    //删除密码modal
     const deletePsw = () => {
       this.setState({
         deletePswShow: "block",
       });
     };
 
+    //取消密码移出
     const cancelMove = () => {
       this.setState({
         removeShow: "none",
       });
     };
+
+    //将密码移出文件夹
     const removePswFolder = () => {
       const _this = this;
       const folderId = handleLocalStorage("get", "folderId");
@@ -531,6 +544,8 @@ export default class componentName extends Component {
       };
       sendMessageToContentBackgroundScript2(userInfo);
     };
+
+    //将密码从文件夹删除
     const deletePswFolder = () => {
       const _this = this;
       const folderId = handleLocalStorage("get", "folderId");
@@ -615,6 +630,8 @@ export default class componentName extends Component {
       };
       sendMessageToContentBackgroundScript(value);
     };
+
+    //取消删除密码
     const cancelPswFolder = () => {
       this.setState({
         deletePswShow: "none",

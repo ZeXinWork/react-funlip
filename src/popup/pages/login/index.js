@@ -18,6 +18,7 @@ export default class componentName extends Component {
     const token = handleLocalStorage("get", "token");
     const isSetMainPsw = handleLocalStorage("get", "isSetMainPsw");
     const resetMainPsw = handleLocalStorage("get", "resetMainPsw");
+    const autoLock = handleLocalStorage("get", "autoLock");
     if (isSetMainPsw) {
       this.props.history.push({
         pathname: "/setMP",
@@ -28,6 +29,8 @@ export default class componentName extends Component {
         pathname: "/setMP",
         state: { id: "reset" },
       });
+    } else if (autoLock) {
+      this.props.history.push("/autoLock");
     } else if (token) {
       this.props.history.push("/home");
     }

@@ -1,6 +1,5 @@
 /*global chrome*/
 import { handleLocalStorage, getCaptcha } from "../api";
-
 import localforage from "localforage";
 import qs from "qs";
 let passwordItem;
@@ -8,7 +7,8 @@ let data;
 let url = "";
 let userName = "";
 let password = "";
-
+let setIntervalFlag = true;
+let firstInterval;
 //获取用户数据流程 （内存-》本地-》接口）
 // 1、建立一个本地仓库（同步执行）
 localforage.config({
@@ -272,8 +272,9 @@ chrome.runtime.onInstalled.addListener(function () {
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   let { type } = message.mes;
   let { requestType } = message.mes;
-  const autoFill = handleLocalStorage("get", "autoFill");
+  const autoFill = handleLocalStorage("get", "autoFill"); //设置是否自动填充
   const autoStore = handleLocalStorage("get", "autoStore");
+  let BASE = "106.53.103.199:8088";
   if (type === "autofill") {
     if (autoFill == 1) {
       let userInfoData = { data };
@@ -347,7 +348,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     if (NumberType) {
       type = "FORGOT_PASSWORD";
     }
-    fetch("http://112.74.86.214:8088/plugin/api/v1/captcha/send", {
+    fetch("http://106.53.103.199:8088/plugin/api/v1/captcha/send", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -379,7 +380,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       device_name,
     };
     userInfo = qs.stringify(userInfo);
-    fetch("http://112.74.86.214:8088/app/api/login/sms", {
+    fetch("http://106.53.103.199:8088/app/api/login/sms", {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
@@ -404,7 +405,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       pluginId,
     };
     userInfo = JSON.stringify(userInfo);
-    fetch("http://112.74.86.214:8088/plugin/api/v1/password/store", {
+    fetch("http://106.53.103.199:8088/plugin/api/v1/password/store", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -435,7 +436,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       passwordIds,
     };
     userInfo = JSON.stringify(userInfo);
-    fetch("http://112.74.86.214:8088/plugin/api/v1/password/delete", {
+    fetch("http://106.53.103.199:8088/plugin/api/v1/password/delete", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -465,7 +466,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     };
     const finished = "finished";
     userInfo = JSON.stringify(userInfo);
-    fetch("http://112.74.86.214:8088/plugin/api/v1/password/store", {
+    fetch("http://106.53.103.199:8088/plugin/api/v1/password/store", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -488,7 +489,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     return true;
   } else if (requestType === "outLogin") {
     const token = handleLocalStorage("get", "token");
-    fetch("http://112.74.86.214:8088/app/api/logout", {
+    fetch("http://106.53.103.199:8088/app/api/logout", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -505,7 +506,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     const token = handleLocalStorage("get", "token");
     const { password } = message.mes;
     let mainPass = JSON.stringify(password);
-    fetch("http://112.74.86.214:8088/plugin/api/v1/mainpass/set", {
+    fetch("http://106.53.103.199:8088/plugin/api/v1/mainpass/set", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -528,7 +529,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 
     let reqData = JSON.stringify(searchInfo);
 
-    fetch("http://112.74.86.214:8088/plugin/api/v1/password/search", {
+    fetch("http://106.53.103.199:8088/plugin/api/v1/password/search", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -557,7 +558,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     };
 
     let data = JSON.stringify(userInfo);
-    fetch("http://112.74.86.214:8088/plugin/api/v1/setting/update", {
+    fetch("http://106.53.103.199:8088/plugin/api/v1/setting/update", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -584,7 +585,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       setting: config,
     };
     let data = JSON.stringify(userInfo);
-    fetch("http://112.74.86.214:8088/plugin/api/v1/setting/update", {
+    fetch("http://106.53.103.199:8088/plugin/api/v1/setting/update", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -604,7 +605,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       mainPass,
     };
     let data = JSON.stringify(userInfo);
-    fetch("http://112.74.86.214:8088/plugin/api/v1/mainpass/verify", {
+    fetch("http://106.53.103.199:8088/plugin/api/v1/mainpass/verify", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -622,7 +623,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     const { userInfo } = message.mes;
 
     let data = JSON.stringify(userInfo);
-    fetch("http://112.74.86.214:8088/plugin/api/v1/mainpass/reset", {
+    fetch("http://106.53.103.199:8088/plugin/api/v1/mainpass/reset", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -643,7 +644,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       name,
     };
     data = JSON.stringify(userInfo);
-    fetch("http://112.74.86.214:8088/plugin/api/v1/folder/create", {
+    fetch("http://106.53.103.199:8088/plugin/api/v1/folder/create", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -667,7 +668,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       pluginId,
     };
     data = JSON.stringify(userInfo);
-    fetch("http://112.74.86.214:8088/plugin/api/v1/folder/list", {
+    fetch("http://106.53.103.199:8088/plugin/api/v1/folder/list", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -689,7 +690,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       passwordIds,
     };
     data = JSON.stringify(userInfo);
-    fetch("http://112.74.86.214:8088/plugin/api/v1/password/move/to", {
+    fetch("http://106.53.103.199:8088/plugin/api/v1/password/move/to", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -710,7 +711,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       pluginId,
     };
     data = JSON.stringify(userInfo);
-    fetch("http://112.74.86.214:8088/plugin/api/v1/folder/delete", {
+    fetch("http://106.53.103.199:8088/plugin/api/v1/folder/delete", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -731,7 +732,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       name,
     };
     data = JSON.stringify(userInfo);
-    fetch("http://112.74.86.214:8088/plugin/api/v1/folder/rename", {
+    fetch("http://106.53.103.199:8088/plugin/api/v1/folder/rename", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -752,7 +753,28 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       passwordIds,
     };
     data = JSON.stringify(userInfo);
-    fetch("http://112.74.86.214:8088/plugin/api/v1/password/move/out", {
+    fetch("http://106.53.103.199:8088/plugin/api/v1/password/move/out", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ClientType: "plugin",
+        Authorization: token,
+      },
+      body: data,
+    })
+      .then((response) => response.text())
+      .then((text) => sendResponse(text))
+      .catch((error) => {});
+    return true;
+  } else if (requestType === "setLockDelay") {
+    const token = handleLocalStorage("get", "token");
+    let { pluginId, lockedDelay } = message.mes;
+    let userInfo = {
+      lockedDelay,
+      pluginId,
+    };
+    data = JSON.stringify(userInfo);
+    fetch("http://106.53.103.199:8088/plugin/api/v1/setting/update/locked", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -769,20 +791,100 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   return true;
 });
 
-// chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-//   let type = message.mes.type;
-//   if (type === "mesToBackground") {
-//     alert("kaishi");
-//     passwordItem = message.mes;
-//     alert("接收到来自于popup的消息:" + passwordItem);o
-//     alert("我想发送消息给content");
-//     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-//       chrome.tabs.sendMessage(tabs[0].id, { passwordItem }, function (
-//         response
-//       ) {
-//
-//       });
-//     });
-//     alert("结束");
-//   }
-// });
+//监听用户关闭Popup页面 然后根据用户设置的数据进行锁定
+chrome.runtime.onConnect.addListener(function (externalPort) {
+  externalPort.onDisconnect.addListener(function () {
+    // var ignoreError = chrome.runtime.lastError;
+    const autoLock = handleLocalStorage("get", "autoLock");
+    if (autoLock) {
+      return;
+    } else {
+      let count = 0;
+      let targetTime = handleLocalStorage("get", "lockedDelay");
+
+      if (targetTime == 4) {
+        targetTime = targetTime * 60 * 60;
+      } else {
+        targetTime = targetTime * 60;
+      }
+      if (targetTime == 0) {
+        handleLocalStorage("set", "autoLock", true);
+      } else if (targetTime == -1) {
+        return;
+      } else if (setIntervalFlag) {
+        setIntervalFlag = false;
+
+        let mid = setInterval(() => {
+          let targetTime = handleLocalStorage("get", "lockedDelay");
+          if (targetTime == 4) {
+            targetTime = targetTime * 60 * 60;
+          } else {
+            targetTime = targetTime * 60;
+          }
+          if (!firstInterval) {
+            firstInterval = targetTime;
+          }
+          console.log(firstInterval);
+          console.log(targetTime);
+          if (firstInterval != targetTime) {
+            firstInterval = targetTime;
+            clearInterval(mid);
+            secondInterval();
+            return;
+          }
+          console.log("执行");
+          if (count == targetTime) {
+            handleLocalStorage("set", "autoLock", true);
+            clearInterval(mid);
+            setIntervalFlag = true;
+          }
+        }, 1000);
+      }
+    }
+  });
+});
+const secondInterval = () => {
+  let count = 0;
+
+  let targetTime = handleLocalStorage("get", "lockedDelay");
+  if (targetTime == 4) {
+    targetTime = targetTime * 60 * 60;
+  } else if (targetTime == 0) {
+    handleLocalStorage("set", "autoLock", true);
+    return;
+  } else if (targetTime == -1) {
+    return;
+  } else {
+    targetTime = targetTime * 60;
+  }
+  if (targetTime > 0) {
+    let mid = setInterval(() => {
+      let targetTime = handleLocalStorage("get", "lockedDelay");
+      if (targetTime == 4) {
+        targetTime = targetTime * 60 * 60;
+      } else {
+        targetTime = targetTime * 60;
+      }
+      console.log(firstInterval);
+      console.log(targetTime);
+      if (firstInterval != targetTime) {
+        firstInterval = targetTime;
+        clearInterval(mid);
+        secondInterval();
+        return;
+      }
+
+      console.log("我执行");
+
+      count++;
+      if (count == targetTime) {
+        handleLocalStorage("set", "autoLock", true);
+        clearInterval(mid);
+        setIntervalFlag = true;
+        firstInterval = "";
+      }
+    }, 1000);
+  } else {
+    secondInterval();
+  }
+};

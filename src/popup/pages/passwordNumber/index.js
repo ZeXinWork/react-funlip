@@ -31,17 +31,11 @@ export default class MyAbout extends Component {
         t.setAttribute("readonly", true);
         t.onkeyup = function () {
           const myValue = this.value;
-
           var next = this.index + 1;
-
-          if (next > inputGroup.length - 1) return;
-
-          if (myValue) {
+          if (myValue && inputGroup[next]) {
             inputGroup[next].focus();
           }
-
           let k = window.event.keyCode;
-
           if (k == 8 || k == 46) {
             let pre = this.index - 1;
             if (pre < 0) {
@@ -110,6 +104,7 @@ export default class MyAbout extends Component {
         );
       }, 1000);
     };
+
     const setCount3 = () => {
       let space = document.getElementsByClassName("number-count-long")[0];
       space.className = "number-count";
@@ -167,6 +162,7 @@ export default class MyAbout extends Component {
         );
       }
     };
+
     const setCount = () => {
       let mid = setInterval(() => {
         this.setState(
@@ -189,6 +185,7 @@ export default class MyAbout extends Component {
         );
       }, 1000);
     };
+
     setCount();
   }
 
@@ -224,7 +221,7 @@ export default class MyAbout extends Component {
             res = JSON.parse(res);
             if (res.code === 200) {
               const { plugin, token, user } = res.data;
-              const { autoFill, autoLogin, autoStore } = plugin;
+              const { autoFill, autoLogin, autoStore, lockedDelay } = plugin;
               const { id } = plugin;
               let { firstTimeLogin, nickName } = user;
               handleLocalStorage("set", "pluginID", id);
@@ -234,6 +231,7 @@ export default class MyAbout extends Component {
               handleLocalStorage("set", "autoLogin", autoLogin);
               handleLocalStorage("set", "autoStore", autoStore);
               handleLocalStorage("set", "phone", tele);
+              handleLocalStorage("set", "lockedDelay", lockedDelay);
               handleLocalStorage("remove", "verificationMainCode");
               if (firstTimeLogin) {
                 handleLocalStorage("set", "isSetMainPsw", true);

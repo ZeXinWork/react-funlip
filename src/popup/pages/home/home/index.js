@@ -18,6 +18,7 @@ import me_no from "./icon_me_nor@2x.png";
 import addIcon from "./btn_add@2x.png";
 
 import "./home.css";
+import { handleLocalStorage } from "../../../../api";
 
 export default class Home extends Component {
   state = {
@@ -89,6 +90,10 @@ export default class Home extends Component {
       this.props.history.push("/home/folder");
     };
 
+    const setLock = () => {
+      handleLocalStorage("set", "autoLock", true);
+      this.props.history.push("/autoLock");
+    };
     const _this = this;
     chrome.extension.onMessage.addListener(function (
       request,
@@ -126,7 +131,7 @@ export default class Home extends Component {
           <div className="item-classification">
             <div className="home-classification">
               <div className="lock-wrapper">
-                <div className="lock-item-wrapper">
+                <div className="lock-item-wrapper" onClick={setLock}>
                   <img src={lock} className="lock-icon" />
                   <span className="lock-text">锁定</span>
                 </div>

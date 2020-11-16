@@ -666,48 +666,4 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.type === "goNewUrl") {
     goUrl(request.toNewUrl);
   }
-
-  //设置自动锁定
-  // if (request.type === "autolock") {
-  //   var lastTime = new Date().getTime();
-  //   var currentTime = new Date().getTime();
-  //   var timeOut = 0.1 * 60 * 1000; //设置超时时间： 10秒
-  //   document.onmousemove = function () {
-  //     lastTime = new Date().getTime();
-  //   };
-  //   const setLock = window.setInterval(function () {
-  //     currentTime = new Date().getTime(); //更新当前时间
-  //
-  //     if (currentTime - lastTime > timeOut) {
-  //       //判断是否超时
-  //
-  //       // sendMessageToBackgroundScript({ autolock: "auctock" });
-  //       clearInterval(setLock);
-  //     }
-  //   }, 1000);
-  // }
-  // });
-
-  // 设置超时之后锁定;
-  // var lastTime = new Date().getTime();
-  // var currentTime = new Date().getTime();
-  // var timeOut = 0.1 * 60 * 1000; //设置超时时间： 10秒
-
-  // document.onmousemove = function () {
-  //   lastTime = new Date().getTime();
-  // };
-  // const setLock = window.setInterval(function () {
-  //   currentTime = new Date().getTime(); //更新当前时间
-  //
-  //   if (currentTime - lastTime > timeOut) {
-  //     //判断是否超时,超时就发送信息给background
-  //     sendMessageToBackgroundScript({ autolock: "auctock" });
-  //     clearInterval(setLock);
-  //   }
-  // }, 1000);
-
-  // function sendMessageToBackgroundScript(mes) {
-  //   mes.type = "first-lock";
-  //   chrome.runtime.sendMessage({ mes });
-  // }
 });
