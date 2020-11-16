@@ -22,7 +22,7 @@ const getData = async () => {
   const value = {
     pluginId: pluginID,
   };
-  return fetch("http://112.74.86.214:8088/plugin/api/v1/password/list", {
+  return fetch("http://106.53.103.199:8088/plugin/api/v1/password/list", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -824,15 +824,14 @@ chrome.runtime.onConnect.addListener(function (externalPort) {
           if (!firstInterval) {
             firstInterval = targetTime;
           }
-          console.log(firstInterval);
-          console.log(targetTime);
+
           if (firstInterval != targetTime) {
             firstInterval = targetTime;
             clearInterval(mid);
             secondInterval();
             return;
           }
-          console.log("执行");
+
           if (count == targetTime) {
             handleLocalStorage("set", "autoLock", true);
             clearInterval(mid);
@@ -865,16 +864,13 @@ const secondInterval = () => {
       } else {
         targetTime = targetTime * 60;
       }
-      console.log(firstInterval);
-      console.log(targetTime);
+
       if (firstInterval != targetTime) {
         firstInterval = targetTime;
         clearInterval(mid);
         secondInterval();
         return;
       }
-
-      console.log("我执行");
 
       count++;
       if (count == targetTime) {
