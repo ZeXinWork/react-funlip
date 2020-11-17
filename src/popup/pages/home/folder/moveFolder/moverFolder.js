@@ -205,7 +205,6 @@ class PsdLibrary extends Component {
       const sendMessageToContentBackgroundScript2 = (mes) => {
         mes.requestType = "addPswToFolder";
         const _this = this;
-        const pluginId = handleLocalStorage("get", "pluginID");
 
         chrome.runtime.sendMessage({ mes }, function (res) {
           let responses = JSON.parse(res);

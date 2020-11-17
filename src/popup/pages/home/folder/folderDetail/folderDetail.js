@@ -181,7 +181,7 @@ export default class componentName extends Component {
     const toDetail = (itemDetail) => {
       this.props.history.push({
         pathname: "/PswDetail",
-        state: { itemDetail, isDeleteFolder: true },
+        state: { itemDetail, isDeleteFolder: true, folderId },
       });
     };
 
@@ -361,63 +361,6 @@ export default class componentName extends Component {
     };
 
     //文件夹重命名
-    // const renameFolder = (name) => {
-    //   let renameInput = document.getElementsByClassName(
-    //     "password-body-Input"
-    //   )[0].value;
-
-    //   let userInfo = {
-    //     folderId,
-    //     name: renameInput,
-    //   };
-    //   function sendMessageToContentScript(mes) {
-    //     mes.requestType = "renameFolder";
-    //     chrome.runtime.sendMessage({ mes }, function (response) {
-    //       let res = JSON.parse(response);
-    //
-    //       // if (res.code == 200) {
-    //       //   const getLocalSate = async () => {
-    //       //     const getLocalState = async () => {
-    //       //       const res = localforage
-    //       //         .getItem("folderList")
-    //       //         .then(function (value) {
-    //       //           return value;
-    //       //         })
-    //       //         .catch(function (err) {
-    //       //           let error = false;
-    //       //           return error;
-    //       //         });
-    //       //       return res;
-    //       //     };
-    //       //     const folderList = await getLocalState();
-    //       //
-    //       //     for (let i = 0; i < folderList.length; i++) {
-    //       //       if (folderList[i].id == folderId) {
-    //       //
-    //       //         folderList[i].name = res.data.name;
-    //       //       }
-    //       //     }
-    //       //
-
-    //       //     localforage
-    //       //       .setItem("folderList", folderList)
-    //       //       .then(function (value) {
-    //       //         closeModal2("homeFolder");
-    //       //       })
-    //       //       .catch(function (err) {});
-    //       //   };
-    //       //   getLocalSate();
-    //       // }
-    //     });
-    //   }
-    //   sendMessageToContentScript(userInfo);
-
-    //   function sendMessageToContentScript(mes) {
-    //     mes.requestType = "renameFolder";
-    //     chrome.runtime.sendMessage({ mes }, function (response) {});
-    //   }
-    //   sendMessageToContentScript(userInfo);
-    // };
     const renameFolder = () => {
       const _this = this;
       let renameInput = document.getElementsByClassName(
@@ -470,6 +413,7 @@ export default class componentName extends Component {
       }
       sendMessageToContentScript(userInfo);
     };
+
     //删除文件夹并删除下面所有密码
     const showDeleteAllPswModal = () => {
       if (this.state.list.length > 0) {
@@ -614,7 +558,7 @@ export default class componentName extends Component {
     //将密码从文件夹删除
     const deletePswFolder = () => {
       const _this = this;
-      const folderId = handleLocalStorage("get", "folderId");
+
       let MyCheckBox = document.getElementsByClassName("folderCheckbox");
       let myChecked = [];
       let targetArray = [];
@@ -642,7 +586,18 @@ export default class componentName extends Component {
         pluginId: pluginID / 1,
         passwordIds: targetIdArray,
       };
-
+      const folderId = handleLocalStorage("get", "folderId");
+      const userInfo = {
+        folderId,
+        passwordIds: targetIdArray,
+      };
+      function sendMessageToContentScript2(mes) {
+        mes.requestType = "outFolder";
+        chrome.runtime.sendMessage({ mes }, function (response) {
+          let res = JSON.parse(response);
+        });
+      }
+      sendMessageToContentScript2(userInfo);
       const sendMessageToContentBackgroundScript = (mes) => {
         mes.requestType = "deleteItem";
         chrome.runtime.sendMessage({ mes }, function (response) {
@@ -704,6 +659,7 @@ export default class componentName extends Component {
       });
     };
 
+    //关闭重命名模块
     const closeModal8 = () => {
       this.setState({
         renameShow: "none",
@@ -892,6 +848,11 @@ export default class componentName extends Component {
             src={arrowLeft}
             className="arrowLeft"
             onClick={() => {
+              function sendMessageToContentScript(mes) {
+                mes.type = "showImage2";
+                chrome.runtime.sendMessage({ mes }, function (response) {});
+              }
+              sendMessageToContentScript({});
               this.props.history.push("/home/folder");
             }}
           />

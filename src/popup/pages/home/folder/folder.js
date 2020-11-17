@@ -87,6 +87,7 @@ export default class Folder extends Component {
   }
   render() {
     const goDetail = (passwordList, id, name) => {
+      handleLocalStorage("set", "folderId", id);
       this.props.history.push({
         pathname: "/folderDetail",
         state: { passwordList, folderId: id, name },

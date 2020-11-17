@@ -1,6 +1,41 @@
 .forgot-form-title {
   cursor: pointer;
 }
+.ant-form-item-explain {
+  display: none;
+}
+.error-message {
+  width: 116px;
+  height: 88px;
+  background: #ffffff;
+  box-shadow: 0px 5px 15px 0px rgba(198, 206, 219, 0.8),
+    1px 1px 4px 0px rgba(255, 255, 255, 0.3),
+    -1px -1px 3px 0px rgba(242, 244, 247, 0.2);
+  border-radius: 8px;
+  position: absolute;
+  top: 120px;
+  left: 120px;
+  z-index: 999;
+
+  .icon-fail {
+    width: 48px;
+    height: 48px;
+    margin: 0 34px;
+    margin-bottom: 4px;
+    margin-top: 8px;
+  }
+  .error-text {
+    margin-left: 16px;
+    text-align: center;
+    width: 84px;
+    height: 16px;
+    font-size: 12px;
+    font-family: PingFang-SC-Medium, PingFang-SC;
+    font-weight: 600;
+    color: #5770ec;
+    line-height: 17px;
+  }
+}
 .forgot-card-wrapper {
   box-sizing: border-box;
   // border: 1px solid black;
@@ -10,6 +45,7 @@
     margin: 0;
     padding: 0;
   }
+
   .forgot-form-title {
     margin-bottom: 32px;
     margin-left: 24px;
@@ -38,23 +74,27 @@
       color: #4e5278;
       line-height: 20px;
       margin-top: 40px;
+      outline: none;
     }
     .forgot-card-input {
+      border: none;
       border-bottom: 1px solid #ececec;
       width: 312px;
       outline: transparent;
       margin-top: 30px;
     }
     .forgot-form-btn {
-      background: url("./btn_bg@3x.png") no-repeat;
-      background-size: 100% 100%;
       width: 312px;
-      height: 60px;
+      height: 50px;
       line-height: 1px;
-      color: #fff;
-      border-style: none;
-      outline: none;
-      margin-top: 80px;
+      background: linear-gradient(244deg, #4ca0fe 0%, #8455ff 100%);
+      margin-top: 55px;
+      font-size: 16px;
+      font-family: PingFangSC-Semibold, PingFang SC;
+      font-weight: 600;
+      color: #ffffff;
+      line-height: 22px;
+      letter-spacing: 1px;
     }
     .getVCode {
       border: 1px solid #c9c9c9;

@@ -1,18 +1,80 @@
 .home-about-wrapper {
-  width: 358px;
-  height: 523px;
+  width: 360px;
+  height: 580px;
   box-sizing: border-box;
-}
-.home-about-wrapper .home-about-title {
-  height: 45px;
-}
-.home-about-wrapper .pd-10 {
-  padding: 10px;
-}
-.home-about-wrapper .bd-ccc {
-  border-bottom: 1px solid #ccc;
-}
-.home-about-wrapper .layout {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  padding-left: 12px;
+  padding-top: 24px;
+}
+.home-about-wrapper .home-about-aboutUs {
+  width: 360px;
+  display: flex;
+  margin-bottom: 36px;
+}
+.home-about-wrapper .home-about-aboutUs .home-about-arrowRights {
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+  margin-right: 10px;
+}
+.home-about-wrapper .home-about-aboutUs .home-about-version-text {
+  width: 32px;
+  height: 20px;
+  font-size: 14px;
+  font-family: PingFang-SC-Medium, PingFang-SC;
+  font-weight: 500;
+  color: #7881a9;
+  line-height: 20px;
+  margin-right: 6px;
+}
+.home-about-wrapper .home-about-aboutUs .home-about-version {
+  display: flex;
+  height: 20px;
+}
+.home-about-wrapper .home-about-aboutUs .home-about-arrowRight {
+  width: 16px;
+  height: 16px;
+  margin-right: 10px;
+}
+.home-about-wrapper .home-about-aboutUs .home-about-icon {
+  width: 24px;
+  height: 24px;
+  margin-right: 8px;
+}
+.home-about-wrapper .home-about-aboutUs .home-about-text {
+  margin-right: 220px;
+  margin-top: 3px;
+  height: 20px;
+  font-size: 14px;
+  font-family: PingFangSC-Semibold, PingFang SC;
+  font-weight: 600;
+  color: #5d648b;
+  line-height: 20px;
+}
+.home-about-wrapper .home-about-aboutUs .home-about-texts {
+  margin-right: 150px;
+  margin-top: 3px;
+  height: 20px;
+  font-size: 14px;
+  font-family: PingFangSC-Semibold, PingFang SC;
+  font-weight: 600;
+  color: #5d648b;
+  line-height: 20px;
+}
+.home-about-wrapper .home-about-aboutUs .home-about-textss {
+  margin-right: 180px;
+  margin-top: 1px;
+  height: 20px;
+  font-size: 14px;
+  font-family: PingFangSC-Semibold, PingFang SC;
+  font-weight: 600;
+  color: #5d648b;
+  line-height: 20px;
+}
+.home-about-wrapper .home-about-titleIcon {
+  width: 24px;
+  height: 24px;
+  margin-bottom: 40px;
+  cursor: pointer;
 }

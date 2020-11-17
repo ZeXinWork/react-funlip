@@ -11,7 +11,7 @@ import Up from "./Up.png";
 import Key from "./Key.png";
 import Success from "./icon_success@2x.png";
 import arrowLeft from "./icon_arrowright_black@2x.png";
-
+import robot from "./robot.png";
 import "./passwordLibrary.css";
 class PsdLibrary extends Component {
   //设置密码列表

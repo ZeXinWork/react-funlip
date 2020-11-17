@@ -143,6 +143,11 @@ class MySet extends Component {
       this.props.history.push("/reset");
     };
     const goBack = () => {
+      function sendMessageToContentScript(mes) {
+        mes.type = "showImage4";
+        chrome.runtime.sendMessage({ mes }, function (response) {});
+      }
+      sendMessageToContentScript({});
       this.props.history.push("./home/account");
     };
 

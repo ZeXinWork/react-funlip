@@ -113,6 +113,32 @@ export default class Home extends Component {
             img4: false,
           });
         }
+      } else if (request == "showImage2") {
+        let flag = true;
+        if (_this.state.img2) {
+          flag = false;
+        }
+        if (flag) {
+          _this.setState({
+            img1: false,
+            img2: true,
+            img3: false,
+            img4: false,
+          });
+        }
+      } else if (request == "showImage4") {
+        let flag = true;
+        if (_this.state.img4) {
+          flag = false;
+        }
+        if (flag) {
+          _this.setState({
+            img1: false,
+            img2: false,
+            img3: false,
+            img4: true,
+          });
+        }
       }
     });
 
