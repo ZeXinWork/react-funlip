@@ -44,7 +44,7 @@ class PsdLibrary extends Component {
 
   render() {
     //跳转至密码详情页，并传参
-    console.log(this.state.showRobot);
+
     let isFolderDetail;
     let folderName;
     if (this.props.location.state) {

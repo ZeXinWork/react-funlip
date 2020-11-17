@@ -10,6 +10,48 @@
   /* WebKit browsers */
   color: #b8b9d4 !important;
 }
+.folder-wrapper .home-body .robot-icon {
+  width: 190px;
+  height: 167px;
+  margin-top: 15px;
+  margin-bottom: 24px;
+  margin-left: 79px;
+}
+.folder-wrapper .home-body .robot-text {
+  width: 112px;
+  height: 20px;
+  font-size: 14px;
+  font-family: PingFang-SC-Medium, PingFang-SC;
+  font-weight: 500;
+  color: #8f96b6;
+  line-height: 20px;
+  margin-left: 124px;
+}
+.folder-wrapper .home-body .robot-add-wrapper {
+  cursor: pointer;
+  width: 123px;
+  height: 42px;
+  background: linear-gradient(244deg, #4ca0fe 0%, #8455ff 100%);
+  border-radius: 4px;
+  margin-left: 119px;
+  margin-top: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.folder-wrapper .home-body .robot-add-wrapper .robot-add-icon {
+  width: 16px;
+  height: 16px;
+}
+.folder-wrapper .home-body .robot-add-wrapper .robot-add-text {
+  height: 20px;
+  font-size: 14px;
+  font-family: PingFangSC-Medium, PingFang SC;
+  font-weight: 500;
+  color: #ffffff;
+  line-height: 20px;
+  margin-left: 8px;
+}
 .folder-wrapper .reFranch {
   width: 60px;
   height: 60px;
@@ -38,6 +80,8 @@
   width: 40px;
   height: 40px;
   cursor: pointer;
+  margin-left: 50px;
+  margin-top: 20px;
 }
 .folder-wrapper .folder-info {
   width: 138px;

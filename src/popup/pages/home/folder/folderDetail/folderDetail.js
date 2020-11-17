@@ -356,7 +356,13 @@ export default class componentName extends Component {
         Modal.style.display = "none";
       }
       if (mes == "homeFolder") {
-        this.props.history.push("/home/folder");
+        const _this = this;
+        function sendMessageToContentScript(mes) {
+          mes.type = "showImage2";
+          _this.props.history.push("/home/folder");
+          chrome.runtime.sendMessage({ mes }, function (response) {});
+        }
+        sendMessageToContentScript({});
       }
     };
 
@@ -429,6 +435,11 @@ export default class componentName extends Component {
     const cancelCloseModal3 = () => {
       closeModal2();
       deleteFolder();
+      function sendMessageToContentScript(mes) {
+        mes.type = "showImage2";
+        chrome.runtime.sendMessage({ mes }, function (response) {});
+      }
+      sendMessageToContentScript({});
       this.setState({
         deleteShow: "none",
       });
@@ -544,7 +555,6 @@ export default class componentName extends Component {
             };
             getLocalState();
           } else {
-            alert(response.msg);
             _this.setState({
               removeShow: "none",
               editPswShow: "none",
