@@ -1,6 +1,6 @@
 /* global chrome */
 import React, { Component } from "react";
-
+import localforage from "localforage";
 import axios from "axios";
 import { Input, Checkbox } from "antd";
 import { handleLocalStorage, searchPassword } from "../../../../api";
@@ -12,14 +12,17 @@ import Key from "./Key.png";
 import Success from "./icon_success@2x.png";
 import arrowLeft from "./icon_arrowright_black@2x.png";
 import robot from "./robot.png";
+import add from "./icon_btn_add@2x.png";
 import "./passwordLibrary.css";
 class PsdLibrary extends Component {
   //设置密码列表
   state = {
     list: [],
     show: "",
+    showRobot: false,
   };
-  componentDidMount() {
+
+  componentWillMount() {
     const setList = (data) => {
       this.setState({
         list: data,
@@ -29,6 +32,9 @@ class PsdLibrary extends Component {
     const sendMessageToContentBackgroundScript = (mes) => {
       mes.type = "getUserList";
       let loading = document.getElementById("funlip-loading");
+      this.setState({
+        showRobot: false,
+      });
       loading.style.display = "block";
 
       chrome.runtime.sendMessage({ mes }, function (response) {});
@@ -38,7 +44,7 @@ class PsdLibrary extends Component {
 
   render() {
     //跳转至密码详情页，并传参
-
+    console.log(this.state.showRobot);
     let isFolderDetail;
     let folderName;
     if (this.props.location.state) {
@@ -48,28 +54,27 @@ class PsdLibrary extends Component {
 
     const _this = this;
     const setList = (data) => {
-      //流程，根据首字母比较，然后排序 再把数组中的数据加载一个新数组里面 然后更新用户接口面
-      //
-      // let newArray = [];
-      // data.map((item, index) => {
-      //   const first = item.title.charAt(0);
-      //   let key = {
-      //     first,
-      //     index,
-      //     item,
-      //   };
-      //   newArray.push(key);
-      // });
-      //
-      this.setState(
-        {
-          list: data,
-        },
-        () => {
-          let loading = document.getElementById("funlip-loading");
-          loading.style.display = "none";
-        }
-      );
+      if (data.length == 0) {
+        this.setState(
+          {
+            showRobot: true,
+          },
+          () => {
+            let loading = document.getElementById("funlip-loading");
+            loading.style.display = "none";
+          }
+        );
+      } else {
+        this.setState(
+          {
+            list: data,
+          },
+          () => {
+            let loading = document.getElementById("funlip-loading");
+            loading.style.display = "none";
+          }
+        );
+      }
     };
     const pluginID = handleLocalStorage("get", "pluginID");
     const toDetail = (itemDetail) => {
@@ -189,125 +194,167 @@ class PsdLibrary extends Component {
       //     }
       //   });
     };
+    // && this.state.showRobot == true
     return (
-      <div className="psw-wrapper">
-        <div className="psw-success-info-wrapper">
-          <div className="psw-success-info">
-            <img
-              src={Success}
-              className="success-icon"
-              alt="psw-success-info"
-            />
-            <div className="psw-success-text">密码已复制</div>
-          </div>
-        </div>
-        {folderName ? (
-          <div className="folderName-wrapper">
-            <img src={arrowLeft} className="folderName-icon" />
-
-            <div className="psw-wrapper-folderName">
-              <p className="psw-wrapper-folderName-info">{`文件夹 > ${folderName} >添加密码`}</p>
+      <div>
+        {!this.state.showRobot ? (
+          <div className="psw-wrapper">
+            <div className="psw-success-info-wrapper">
+              <div className="psw-success-info">
+                <img
+                  src={Success}
+                  className="success-icon"
+                  alt="psw-success-info"
+                />
+                <div className="psw-success-text">密码已复制</div>
+              </div>
             </div>
-          </div>
-        ) : (
-          ""
-        )}
+            {folderName ? (
+              <div className="folderName-wrapper">
+                <img src={arrowLeft} className="folderName-icon" />
 
-        <div className="home-search">
-          <Input
-            prefix={<img src={Search} className="icon-search" />}
-            className="home-search-input"
-            placeholder="   搜索密码"
-            onChange={(e) => {
-              searChPsd(e);
-            }}
-          />
-        </div>
-        <div className="home-body">
-          {this.state.list.map((item, index) => {
-            return (
-              <div
-                className="psw-info"
-                key={item.title}
-                onClick={() => {
-                  toDetail(item);
-                }}
-                onMouseOver={() => {
-                  showHover(index);
-                }}
-                onMouseLeave={() => {
-                  cancelHover(index);
-                }}
-                key={index}
-              >
-                <div className="psw-user-info">
-                  <div>{item.title}</div>
-                  <div>{item.account}</div>
+                <div className="psw-wrapper-folderName">
+                  <p className="psw-wrapper-folderName-info">{`文件夹 > ${folderName} >添加密码`}</p>
                 </div>
-                {folderName ? (
-                  <div className="psw-icon">
-                    <Checkbox
-                      onClick={(e) => {
-                        if (e && e.stopPropagation) {
-                          e.stopPropagation();
-                        } else {
-                          window.event.cancelBubble = true;
-                        }
-                      }}
-                    />
-                  </div>
-                ) : (
-                  <div className="psw-icon">
-                    {this.state.show === index ? (
-                      <div>
-                        <img
-                          src={Key}
-                          className="lock-icon"
+              </div>
+            ) : (
+              ""
+            )}
+
+            <div className="home-search">
+              <Input
+                prefix={<img src={Search} className="icon-search" />}
+                className="home-search-input"
+                placeholder="   搜索密码"
+                onChange={(e) => {
+                  searChPsd(e);
+                }}
+              />
+            </div>
+            <div className="home-body">
+              {this.state.list.map((item, index) => {
+                return (
+                  <div
+                    className="psw-info"
+                    key={item.title}
+                    onClick={() => {
+                      toDetail(item);
+                    }}
+                    onMouseOver={() => {
+                      showHover(index);
+                    }}
+                    onMouseLeave={() => {
+                      cancelHover(index);
+                    }}
+                    key={index}
+                  >
+                    <div className="psw-user-info">
+                      <div>{item.title}</div>
+                      <div>{item.account}</div>
+                    </div>
+                    {folderName ? (
+                      <div className="psw-icon">
+                        <Checkbox
                           onClick={(e) => {
                             if (e && e.stopPropagation) {
                               e.stopPropagation();
                             } else {
                               window.event.cancelBubble = true;
                             }
-                            sendMessageToContentScript(item);
-                          }}
-                        />
-                        <img
-                          src={Up}
-                          className="lock-icon"
-                          onClick={(e) => {
-                            const url = item.website;
-                            if (e && e.stopPropagation) {
-                              e.stopPropagation();
-                            } else {
-                              window.event.cancelBubble = true;
-                            }
-                            sendMessageToContentScript2(url);
-                          }}
-                        />
-                        <img
-                          src={Folder}
-                          className="lock-icon"
-                          onClick={(e) => {
-                            const password = item.pwd;
-                            if (e && e.stopPropagation) {
-                              e.stopPropagation();
-                            } else {
-                              window.event.cancelBubble = true;
-                            }
-                            Copy(password);
                           }}
                         />
                       </div>
                     ) : (
-                      <img src={Lock} className="lock-icon" />
+                      <div className="psw-icon">
+                        {this.state.show === index ? (
+                          <div>
+                            <img
+                              src={Key}
+                              className="lock-icon"
+                              onClick={(e) => {
+                                if (e && e.stopPropagation) {
+                                  e.stopPropagation();
+                                } else {
+                                  window.event.cancelBubble = true;
+                                }
+                                sendMessageToContentScript(item);
+                              }}
+                            />
+                            <img
+                              src={Up}
+                              className="lock-icon"
+                              onClick={(e) => {
+                                const url = item.website;
+                                if (e && e.stopPropagation) {
+                                  e.stopPropagation();
+                                } else {
+                                  window.event.cancelBubble = true;
+                                }
+                                sendMessageToContentScript2(url);
+                              }}
+                            />
+                            <img
+                              src={Folder}
+                              className="lock-icon"
+                              onClick={(e) => {
+                                const password = item.pwd;
+                                if (e && e.stopPropagation) {
+                                  e.stopPropagation();
+                                } else {
+                                  window.event.cancelBubble = true;
+                                }
+                                Copy(password);
+                              }}
+                            />
+                          </div>
+                        ) : (
+                          <img src={Lock} className="lock-icon" />
+                        )}
+                      </div>
                     )}
                   </div>
-                )}
+                );
+              })}
+            </div>
+          </div>
+        ) : (
+          <div className="psw-wrapper">
+            {folderName ? (
+              <div className="folderName-wrapper">
+                <img src={arrowLeft} className="folderName-icon" />
+                <div className="psw-wrapper-folderName">
+                  <p className="psw-wrapper-folderName-info">{`文件夹 > ${folderName} >添加密码`}</p>
+                </div>
               </div>
-            );
-          })}
-        </div>
+            ) : (
+              ""
+            )}
+
+            <div className="home-search">
+              <Input
+                prefix={<img src={Search} className="icon-search" />}
+                className="home-search-input"
+                placeholder="   搜索密码"
+                onChange={(e) => {
+                  searChPsd(e);
+                }}
+              />
+            </div>
+            <div className="home-body">
+              <img src={robot} className="robot-icon" />
+              <p className="robot-text">还没有密码记录哦</p>
+              <div
+                className="robot-add-wrapper"
+                onClick={() => {
+                  this.props.history.push("/newPsw");
+                }}
+              >
+                <img src={add} className="robot-add-icon" />
+                <span className="robot-add-text">现在创建</span>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }

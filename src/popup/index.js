@@ -7,7 +7,7 @@ import passwordNumber from "./pages/passwordNumber";
 import AutoLock from "./pages/autolock";
 import Fogot from "./pages/forgot";
 import PasswordGenerator from "./common/passwordGenerator";
-import SavePsw from "./pages/savePsw";
+
 import CheckNumber from "./pages/checkNumber/index";
 import setMainPsw from "./pages/setMainPsw";
 import Home from "./pages/home/home";
@@ -29,7 +29,6 @@ function Popup() {
           <Route path="/login" component={Login} />
           <Route path="/home" component={Home} />
           <Route path="/forgot" component={Fogot} />
-          <Route path="/savePsw" component={SavePsw} />
           <Route path="/autoLock" component={AutoLock} />
           <Route path="/setMP" component={setMainPsw} />
           <Route path="/newPsw" component={CnPsw} />

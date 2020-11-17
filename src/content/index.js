@@ -9,6 +9,7 @@ import "antd/es/button/style/index.css";
 import logo from "./images/icon_WePass_logo备份@2x.png";
 import edit from "./images/icon_edit@2x.png";
 import close from "./images/close.png";
+
 import "./antd-diy.css";
 import "./savePsw.css";
 
