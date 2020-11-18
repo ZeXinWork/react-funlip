@@ -91,7 +91,9 @@ export default class Folder extends Component {
           await noRobt();
         });
       };
-      if (folderList.length == 0) {
+      if (folderList == null) {
+        getData();
+      } else if (folderList.length == 0) {
         getData();
       } else {
         const folderList = await getLocalState();
