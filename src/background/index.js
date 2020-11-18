@@ -114,7 +114,7 @@ const addItem = async (value, isFolderAdd) => {
     .then(function (value) {
       data = value;
       let cmd;
-      console.log(isFolderAdd);
+
       if (!isFolderAdd) {
         cmd = "addSuccess";
         chrome.runtime.sendMessage(cmd, function (response) {});
@@ -798,6 +798,45 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         "Content-Type": "application/json",
         ClientType: "plugin",
         Authorization: token,
+      },
+      body: data,
+    })
+      .then((response) => response.text())
+      .then((text) => sendResponse(text))
+      .catch((error) => {});
+    return true;
+  } else if (requestType === "getCodeUrl") {
+    let { clientIp, expired, loginKey } = message.mes;
+    let userInfo = {
+      clientIp,
+      expired,
+      loginKey,
+    };
+    data = JSON.stringify(userInfo);
+    fetch("http://106.53.103.199:8088/plugin/api/login/scancode/generate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ClientType: "plugin",
+      },
+      body: data,
+    })
+      .then((response) => response.text())
+      .then((text) => sendResponse(text))
+      .catch((error) => {});
+    return true;
+  } else if (requestType === "checkNumberTime") {
+    let { authToken, loginKey } = message.mes;
+    let userInfo = {
+      authToken,
+      loginKey,
+    };
+    data = JSON.stringify(userInfo);
+    fetch("http://106.53.103.199:8088/plugin/api/login/scancode/status", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ClientType: "plugin",
       },
       body: data,
     })

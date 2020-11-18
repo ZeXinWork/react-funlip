@@ -4,8 +4,8 @@ import React, { Component } from "react";
 import { Button, Form, Select } from "antd";
 import iconFall from "./icon_fail@2x.png";
 import bg from "./bgg.png";
+import axios from "axios";
 
-import localIp from "fez-local-ip";
 import Phone from "./phone@2x.png";
 import { handleLocalStorage } from "../../../api";
 import QRCode from "qrcode.react";
@@ -18,14 +18,111 @@ export default class componentName extends Component {
     FormatShow: "none",
     already: "none",
     showPhone: false,
+    maskShow: "none",
+    authToken: "",
+    showCode: true,
+  };
+  codeLogin = () => {
+    const authToken = handleLocalStorage("get", "loginToken");
+
+    if (authToken && !this.state.showPhone) {
+      this.setState({
+        authToken,
+        maskShow: "block",
+      });
+    } else if (!this.state.showPhone) {
+      function randomString(len) {
+        len = len || 32;
+        var $chars =
+          "ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678"; /****默认去掉了容易混淆的字符oOLl,9gq,Vv,Uu,I1****/
+        var maxPos = $chars.length;
+        var pwd = "";
+        for (let i = 0; i < len; i++) {
+          pwd += $chars.charAt(Math.floor(Math.random() * maxPos));
+        }
+        return pwd;
+      }
+      const myString = randomString(10);
+      this.setState(
+        {
+          loginKey: myString,
+        },
+        () => {
+          let userInfo = {
+            clientIp: "106.122.113.106",
+            expired: 30,
+            loginKey: myString,
+          };
+
+          const sendMessageToContentBackgroundScript = (mes) => {
+            const _this = this;
+            mes.requestType = "getCodeUrl";
+            chrome.runtime.sendMessage({ mes }, function (res) {
+              let response = JSON.parse(res);
+              const { authToken } = response;
+              console.log(authToken);
+              _this.setState(
+                {
+                  authToken,
+                },
+                () => {
+                  clearInterval(mid);
+                  let mid = setInterval(() => {
+                    let userInfo = {
+                      authToken: _this.state.authToken,
+                      loginKey: _this.state.loginKey,
+                    };
+                    const sendMessageToContentBackgroundScript = (mes) => {
+                      mes.requestType = "checkNumberTime";
+                      chrome.runtime.sendMessage({ mes }, function (res) {
+                        let response = JSON.parse(res);
+                        console.log(response);
+                        let { loginStatus } = response;
+                        if (loginStatus == "LOGIN_KEY_EXPIRED") {
+                          _this.setState(
+                            {
+                              maskShow: true,
+                            },
+                            () => {
+                              handleLocalStorage(
+                                "set",
+                                "loginToken",
+                                _this.state.authToken
+                              );
+                              clearInterval(mid);
+                            }
+                          );
+                        } else if (loginStatus == "CANCEL_LOGIN") {
+                          _this.setState({
+                            showCode: false,
+                          });
+                          clearInterval(mid);
+                          alert("取消登录");
+                        }
+                        //成功登录
+                        else if (loginStatus == "LOGGED_IN") {
+                          clearInterval(mid);
+                          alert("登录成功");
+                        }
+                      });
+                    };
+                    sendMessageToContentBackgroundScript(userInfo);
+                  }, 1000);
+                }
+              );
+            });
+          };
+          sendMessageToContentBackgroundScript(userInfo);
+        }
+      );
+    }
   };
   componentDidMount() {
     const token = handleLocalStorage("get", "token");
     const isSetMainPsw = handleLocalStorage("get", "isSetMainPsw");
     const resetMainPsw = handleLocalStorage("get", "resetMainPsw");
     const autoLock = handleLocalStorage("get", "autoLock");
-    const res = localIp.getLocalIP4();
-    console.log(res);
+
     if (isSetMainPsw) {
       this.props.history.push({
         pathname: "/setMP",
@@ -41,24 +138,15 @@ export default class componentName extends Component {
     } else if (token) {
       this.props.history.push("/home");
     }
+    this.codeLogin();
   }
+
   render() {
     const { Option } = Select;
     const lock = handleLocalStorage("get", "autolock");
     if (lock) {
       this.props.history.push("/autoLock");
     }
-    const goCheck = () => {
-      handleLocalStorage("set", "userName", "Tom");
-      this.props.history.push({
-        pathname: "/setMP",
-        state: { id: "set" },
-      });
-    };
-
-    const goForgot = () => {
-      this.props.history.push("/forgot");
-    };
 
     //表单通过后的回调
     const onFinish = async (values) => {
@@ -209,8 +297,25 @@ export default class componentName extends Component {
           </div>
         ) : (
           <div className="login-code-wrapper">
-            <div className="mask-wrapper">
-              <img src={refurbish} className="mask-wrapper-icon" />
+            <div
+              className="mask-wrapper"
+              style={{ display: this.state.maskShow }}
+            >
+              <img
+                src={refurbish}
+                className="mask-wrapper-icon"
+                onClick={() => {
+                  this.setState(
+                    {
+                      maskShow: "none",
+                    },
+                    () => {
+                      handleLocalStorage("remove", "loginToken");
+                      this.codeLogin();
+                    }
+                  );
+                }}
+              />
             </div>
             <p className="code-title-wrapper">快速安全登录</p>
             <p className="code-explain-wrapper">
@@ -218,13 +323,17 @@ export default class componentName extends Component {
             </p>
             <div className="code-download"> {`前往官网下载 >`}</div>
             <div className="code-area">
-              <QRCode
-                id="qrCode"
-                value="https://www.jianshu.com/u/992656e8a8a6"
-                size={128} // 二维码的大小
-                fgColor="#4E5278" // 二维码的颜色
-                style={{ margin: "auto" }}
-              />
+              {this.state.showCode ? (
+                <QRCode
+                  id="qrCode"
+                  value={`http://facebook.github.io/react/${this.state.authToken}"`}
+                  size={128} // 二维码的大小
+                  fgColor="#4E5278" // 二维码的颜色
+                  style={{ margin: "auto" }}
+                />
+              ) : (
+                ""
+              )}
             </div>
             <div className="switch-phone-login">
               <img src={Phone} className="phone-logo"></img>

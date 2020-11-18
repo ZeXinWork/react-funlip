@@ -20,7 +20,7 @@ import FolderAdd from "./pages/home/folder/moveFolder/moverFolder";
 import "@/content";
 function Popup() {
   useEffect(() => {
-    // var port = chrome.runtime.connect();
+    var port = chrome.runtime.connect();
   }, []);
   return (
     <Fragment>

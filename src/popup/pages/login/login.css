@@ -173,6 +173,7 @@
   height: 32px;
   margin-left: 60px;
   margin-top: 30px;
+  cursor: pointer;
 }
 .login-form-wrapper .login-code-wrapper .code-title-wrapper {
   height: 22px;
