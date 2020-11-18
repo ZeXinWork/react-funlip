@@ -1,24 +1,31 @@
 /* global chrome */
 
 import React, { Component } from "react";
-import { Button, Input, Form, Select } from "antd";
+import { Button, Form, Select } from "antd";
 import iconFall from "./icon_fail@2x.png";
 import bg from "./bgg.png";
 
-import { handleLocalStorage, getCaptcha } from "../../../api";
+import localIp from "fez-local-ip";
+import Phone from "./phone@2x.png";
+import { handleLocalStorage } from "../../../api";
+import QRCode from "qrcode.react";
+import erCode from "./ercode.png";
+import refurbish from "./refurbish.png";
 import "./login.css";
-import axios from "axios";
 
 export default class componentName extends Component {
   state = {
     FormatShow: "none",
     already: "none",
+    showPhone: false,
   };
   componentDidMount() {
     const token = handleLocalStorage("get", "token");
     const isSetMainPsw = handleLocalStorage("get", "isSetMainPsw");
     const resetMainPsw = handleLocalStorage("get", "resetMainPsw");
     const autoLock = handleLocalStorage("get", "autoLock");
+    const res = localIp.getLocalIP4();
+    console.log(res);
     if (isSetMainPsw) {
       this.props.history.push({
         pathname: "/setMP",
@@ -93,23 +100,6 @@ export default class componentName extends Component {
         });
       };
       sendMessageToContentBackgroundScript(userInfo);
-
-      // let value = JSON.stringify(userInfo);
-
-      // axios
-      //   .post("/plugin/api/v1/captcha/send", userInfo, {
-      //     headers: { ClientType: "plugin" },
-      //   })
-      //   .then((res) => {
-      //
-      //     if (res.data.code === 200) {
-      //       const { verificationCode } = res.data.data;
-      //       this.props.history.push({
-      //         pathname: "/pswNum",
-      //         state: { tele: tele, number: verificationCode },
-      //       });
-      //     }
-      //   });
     };
     //表单失败的回调
     const onFinishFailed = (errorInfo) => {
@@ -139,63 +129,118 @@ export default class componentName extends Component {
         <div className="login-form-image-wrapper">
           <img src={bg} alt="logo" className="login-form-logo" />
         </div>
-        <div
-          className="error-message"
-          style={{ display: this.state.FormatShow }}
-        >
-          <img src={iconFall} className="icon-fail" />
-          <div className="error-text">手机号格式错误</div>
-        </div>
-        <div className="error-message" style={{ display: this.state.already }}>
-          <img src={iconFall} className="icon-fail" />
-          <div className="error-text">验证码已发送</div>
-        </div>
-        <Form
-          name="login-from"
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
-        >
-          <div className="login-form-input-wrapper">
-            <Select defaultValue="+86" bordered={false} className="form-select">
-              <Option value="china">+86</Option>
-            </Select>
-            <Form.Item
-              label=""
-              name="tele"
-              rules={[
-                ({ getFieldValue }) => ({
-                  validator(rule, value) {
-                    const myReg = /^1(?:3\d{3}|5[^4\D]\d{2}|8\d{3}|7(?:[235-8]\d{2}|4(?:0\d|1[0-2]|9\d))|9[0-35-9]\d{2}|66\d{2})\d{6}$/;
-                    if (!myReg.test(value)) {
-                      return Promise.reject("");
-                    } else {
-                      return Promise.resolve();
-                    }
-                  },
-                }),
-              ]}
+        {this.state.showPhone ? (
+          <div>
+            <div
+              className="error-message"
+              style={{ display: this.state.FormatShow }}
             >
-              <input
-                placeholder="请输入手机号"
-                className="login-form-input-number"
-              />
-            </Form.Item>
-          </div>
-          <Form.Item>
-            <div className="login-form-buttonGroup">
-              <Button
-                shape="round"
-                htmlType="submit"
-                className="login-form-submit"
-              >
-                获取验证码
-              </Button>
+              <img src={iconFall} className="icon-fail" />
+              <div className="error-text">手机号格式错误</div>
             </div>
-          </Form.Item>
-        </Form>
-        <div className="login-notice">
-          若您没有Funlip账号，第一次登录后将自动完成注册
-        </div>
+            <div
+              className="error-message"
+              style={{ display: this.state.already }}
+            >
+              <img src={iconFall} className="icon-fail" />
+              <div className="error-text">验证码已发送</div>
+            </div>
+            <Form
+              name="login-from"
+              onFinish={onFinish}
+              onFinishFailed={onFinishFailed}
+            >
+              <div className="login-form-input-wrapper">
+                <Select
+                  defaultValue="+86"
+                  bordered={false}
+                  className="form-select"
+                >
+                  <Option value="china">+86</Option>
+                </Select>
+                <Form.Item
+                  label=""
+                  name="tele"
+                  rules={[
+                    ({ getFieldValue }) => ({
+                      validator(rule, value) {
+                        const myReg = /^1(?:3\d{3}|5[^4\D]\d{2}|8\d{3}|7(?:[235-8]\d{2}|4(?:0\d|1[0-2]|9\d))|9[0-35-9]\d{2}|66\d{2})\d{6}$/;
+                        if (!myReg.test(value)) {
+                          return Promise.reject("");
+                        } else {
+                          return Promise.resolve();
+                        }
+                      },
+                    }),
+                  ]}
+                >
+                  <input
+                    placeholder="请输入手机号"
+                    className="login-form-input-number"
+                  />
+                </Form.Item>
+              </div>
+              <Form.Item>
+                <div className="login-form-buttonGroup">
+                  <Button
+                    shape="round"
+                    htmlType="submit"
+                    className="login-form-submit"
+                  >
+                    获取验证码
+                  </Button>
+                </div>
+              </Form.Item>
+            </Form>
+            <div
+              className="erCode-wrapper"
+              onClick={() => {
+                this.setState({
+                  showPhone: false,
+                });
+              }}
+            >
+              <img src={erCode} className="erCode-icon" />
+              <span className="erCoder-text">扫码登录</span>
+            </div>
+            <div className="login-notice">
+              若您没有Funlip账号，第一次登录后将自动完成注册
+            </div>
+          </div>
+        ) : (
+          <div className="login-code-wrapper">
+            <div className="mask-wrapper">
+              <img src={refurbish} className="mask-wrapper-icon" />
+            </div>
+            <p className="code-title-wrapper">快速安全登录</p>
+            <p className="code-explain-wrapper">
+              请使用Funlip移动端扫描二维码登录
+            </p>
+            <div className="code-download"> {`前往官网下载 >`}</div>
+            <div className="code-area">
+              <QRCode
+                id="qrCode"
+                value="https://www.jianshu.com/u/992656e8a8a6"
+                size={128} // 二维码的大小
+                fgColor="#4E5278" // 二维码的颜色
+                style={{ margin: "auto" }}
+              />
+            </div>
+            <div className="switch-phone-login">
+              <img src={Phone} className="phone-logo"></img>
+              <span
+                className="phone-text"
+                onClick={() => {
+                  this.setState({
+                    showPhone: true,
+                  });
+                }}
+              >
+                手机号登录
+              </span>
+            </div>
+          </div>
+        )}
       </div>
     );
   }

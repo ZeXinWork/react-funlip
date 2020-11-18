@@ -812,61 +812,64 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 //监听用户关闭Popup页面 然后根据用户设置的数据进行锁定
 chrome.runtime.onConnect.addListener(function (externalPort) {
   externalPort.onDisconnect.addListener(function () {
-    count = 0;
-    firstInterval = null;
-    const clickTime = () => {
-      const autoLock = handleLocalStorage("get", "autoLock");
-      if (autoLock) {
-        return;
-      } else {
-        let targetTime = handleLocalStorage("get", "lockedDelay");
-
-        if (targetTime == 4) {
-          targetTime = targetTime * 60 * 60;
-        } else {
-          targetTime = targetTime * 60;
-        }
-        if (targetTime == 0) {
-          handleLocalStorage("set", "autoLock", true);
-        } else if (targetTime == -1) {
+    const token = handleLocalStorage("get", "token");
+    if (token) {
+      count = 0;
+      firstInterval = null;
+      const clickTime = () => {
+        const autoLock = handleLocalStorage("get", "autoLock");
+        if (autoLock) {
           return;
         } else {
-          if (!setIntervalFlag) {
-            setIntervalFlag = true;
+          let targetTime = handleLocalStorage("get", "lockedDelay");
 
+          if (targetTime == 4) {
+            targetTime = targetTime * 60 * 60;
+          } else {
+            targetTime = targetTime * 60;
+          }
+          if (targetTime == 0) {
+            handleLocalStorage("set", "autoLock", true);
+          } else if (targetTime == -1) {
             return;
           } else {
-            let mid = setInterval(() => {
-              setIntervalFlag = false;
-              let targetTime = handleLocalStorage("get", "lockedDelay");
-              if (targetTime == 4) {
-                targetTime = targetTime * 60 * 60;
-              } else {
-                targetTime = targetTime * 60;
-              }
-              if (!firstInterval) {
-                firstInterval = targetTime;
-              }
+            if (!setIntervalFlag) {
+              setIntervalFlag = true;
 
-              if (firstInterval != targetTime) {
-                firstInterval = targetTime;
-                count = 0;
-                clearInterval(mid);
-                clickTime();
-                return;
-              }
-              count++;
+              return;
+            } else {
+              let mid = setInterval(() => {
+                setIntervalFlag = false;
+                let targetTime = handleLocalStorage("get", "lockedDelay");
+                if (targetTime == 4) {
+                  targetTime = targetTime * 60 * 60;
+                } else {
+                  targetTime = targetTime * 60;
+                }
+                if (!firstInterval) {
+                  firstInterval = targetTime;
+                }
 
-              if (count == targetTime) {
-                handleLocalStorage("set", "autoLock", true);
-                clearInterval(mid);
-                setIntervalFlag = true;
-              }
-            }, 1000);
+                if (firstInterval != targetTime) {
+                  firstInterval = targetTime;
+                  count = 0;
+                  clearInterval(mid);
+                  clickTime();
+                  return;
+                }
+                count++;
+
+                if (count == targetTime) {
+                  handleLocalStorage("set", "autoLock", true);
+                  clearInterval(mid);
+                  setIntervalFlag = true;
+                }
+              }, 1000);
+            }
           }
         }
-      }
-    };
-    clickTime();
+      };
+      clickTime();
+    }
   });
 });

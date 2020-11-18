@@ -106,8 +106,26 @@
   color: #9398b2;
   line-height: 17px;
   margin-left: 25px;
-  margin-top: 135px;
+  margin-top: 100px;
   letter-spacing: 1px;
+}
+.login-form-wrapper .erCode-wrapper {
+  margin-left: 146px;
+}
+.login-form-wrapper .erCode-wrapper .erCode-icon {
+  width: 16px;
+  height: 16px;
+  margin-bottom: 2px;
+}
+.login-form-wrapper .erCode-wrapper .erCoder-text {
+  cursor: pointer;
+  height: 20px;
+  font-size: 14px;
+  font-family: PingFangSC-Semibold, PingFang SC;
+  font-weight: 600;
+  color: #5791fe;
+  line-height: 20px;
+  margin-left: 4px;
 }
 .login-form-wrapper .error-message {
   width: 116px;
@@ -137,4 +155,76 @@
   font-weight: 600;
   color: #5770ec;
   line-height: 17px;
+}
+.login-form-wrapper .login-code-wrapper {
+  box-sizing: border-box;
+  position: relative;
+}
+.login-form-wrapper .login-code-wrapper .mask-wrapper {
+  position: absolute;
+  width: 148px;
+  height: 148px;
+  background: rgba(0, 0, 0, 0.5);
+  left: 100px;
+  top: 100px;
+}
+.login-form-wrapper .login-code-wrapper .mask-wrapper .mask-wrapper-icon {
+  width: 32px;
+  height: 32px;
+  margin-left: 60px;
+  margin-top: 30px;
+}
+.login-form-wrapper .login-code-wrapper .code-title-wrapper {
+  height: 22px;
+  font-size: 16px;
+  font-family: PingFangSC-Semibold, PingFang SC;
+  font-weight: 600;
+  color: #4e5278;
+  line-height: 22px;
+  margin-left: 128px;
+  margin-bottom: 8px;
+}
+.login-form-wrapper .login-code-wrapper .code-explain-wrapper {
+  height: 17px;
+  font-size: 12px;
+  font-family: PingFang-SC-Medium, PingFang-SC;
+  font-weight: 500;
+  color: #606583;
+  line-height: 17px;
+  margin-left: 81px;
+  margin-bottom: 22px;
+}
+.login-form-wrapper .login-code-wrapper .code-download {
+  height: 17px;
+  font-size: 12px;
+  font-family: PingFang-SC-Medium, PingFang-SC;
+  font-weight: 500;
+  color: #5791fe;
+  line-height: 17px;
+  margin-left: 137px;
+}
+.login-form-wrapper .login-code-wrapper .code-area {
+  width: 128px;
+  height: 128px;
+  margin-top: 26px;
+  margin-left: 112px;
+}
+.login-form-wrapper .login-code-wrapper .switch-phone-login {
+  margin-top: 56px;
+}
+.login-form-wrapper .login-code-wrapper .switch-phone-login .phone-logo {
+  margin-left: 128px;
+  width: 16px;
+  height: 16px;
+  margin-bottom: 2px;
+}
+.login-form-wrapper .login-code-wrapper .switch-phone-login .phone-text {
+  cursor: pointer;
+  height: 20px;
+  font-size: 14px;
+  font-family: PingFangSC-Semibold, PingFang SC;
+  font-weight: 600;
+  color: #5791fe;
+  line-height: 20px;
+  margin-left: 4px;
 }
