@@ -96,7 +96,7 @@ const getAllData = async () => {
 };
 
 //往数据库里添加数据，并添加到内存返回给密码库页面
-const addItem = async (value) => {
+const addItem = async (value, isFolderAdd) => {
   value = JSON.parse(value);
   const localState = await localforage
     .getItem("userInfo")
@@ -113,8 +113,12 @@ const addItem = async (value) => {
     .setItem("userInfo", localState)
     .then(function (value) {
       data = value;
-      const cmd = "addSuccess";
-      chrome.runtime.sendMessage(cmd, function (response) {});
+      let cmd;
+      console.log(isFolderAdd);
+      if (!isFolderAdd) {
+        cmd = "addSuccess";
+        chrome.runtime.sendMessage(cmd, function (response) {});
+      }
     })
     .catch(function (err) {
       // 当出错时，此处代码运行
@@ -196,6 +200,7 @@ const deletePsdItem = async (deleteItem, config, targetObj) => {
     }
   }
   const cmd = "deleteSuccess";
+
   if (!config) {
     const localFolderState = await localforage
       .getItem("folderList")
@@ -206,12 +211,13 @@ const deletePsdItem = async (deleteItem, config, targetObj) => {
       .catch(function (err) {
         // 当出错时，此处代码运行
       });
-
-    if (localFolderState) {
+    if (localFolderState && localFolderState.length > 0) {
       for (let i = 0; i < localFolderState.length; i++) {
-        for (let j = 0; j < localFolderState[i].passwords.length; j++) {
-          if (localFolderState[i].passwords[j].id == targetId) {
-            localFolderState[i].passwords.splice(j, 1);
+        if (localFolderState[i].passwords) {
+          for (let j = 0; j < localFolderState[i].passwords.length; j++) {
+            if (localFolderState[i].passwords[j].id == targetId) {
+              localFolderState[i].passwords.splice(j, 1);
+            }
           }
         }
       }
@@ -224,8 +230,10 @@ const deletePsdItem = async (deleteItem, config, targetObj) => {
         .catch(function (err) {});
     }
   }
-
-  chrome.runtime.sendMessage(cmd, function (response) {});
+  function sendCmd() {
+    chrome.runtime.sendMessage(cmd, function (response) {});
+  }
+  sendCmd();
 };
 
 const editItem = async (value) => {
@@ -404,7 +412,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   } else if (requestType === "saveNewPsw") {
     const pluginId = handleLocalStorage("get", "pluginID");
     const token = handleLocalStorage("get", "token");
-    const { title, pwd, note, website, account } = message.mes;
+    const { title, pwd, note, website, account, isFolderAdd } = message.mes;
     let userInfo = {
       title,
       pwd,
@@ -426,7 +434,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       .then((response) => response.text())
       .then((text) => {
         const setLocalData = async () => {
-          await addItem(text);
+          await addItem(text, isFolderAdd);
           sendResponse(text);
         };
         setLocalData();
@@ -823,10 +831,9 @@ chrome.runtime.onConnect.addListener(function (externalPort) {
         } else if (targetTime == -1) {
           return;
         } else {
-          console.log("进来");
           if (!setIntervalFlag) {
             setIntervalFlag = true;
-            console.log("拜拜");
+
             return;
           } else {
             let mid = setInterval(() => {
@@ -849,7 +856,7 @@ chrome.runtime.onConnect.addListener(function (externalPort) {
                 return;
               }
               count++;
-              console.log("执行");
+
               if (count == targetTime) {
                 handleLocalStorage("set", "autoLock", true);
                 clearInterval(mid);

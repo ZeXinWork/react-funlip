@@ -16,22 +16,27 @@ export default class setMP extends Component {
 
     //表单验证通过后的回调
     const onFinish = (values) => {
-      const _this = this;
-      let password = { mainPass: values.password };
-      const sendMessageToContentBackgroundScript = (mes) => {
-        mes.requestType = "saveMainPassword";
-        mes.password = password;
-        chrome.runtime.sendMessage({ mes }, function (response) {
-          let res = JSON.parse(response);
-          if (res.code === 200) {
-            handleLocalStorage("remove", "isSetMainPsw");
-            _this.props.history.push("/home/psd");
-          } else {
-            alert(res.msg);
-          }
-        });
-      };
-      sendMessageToContentBackgroundScript({});
+      const { setPassword } = values;
+      if (setPassword.length != 6) {
+        alert("主密码长度必须为6位");
+      } else {
+        const _this = this;
+        let password = { mainPass: values.password };
+        const sendMessageToContentBackgroundScript = (mes) => {
+          mes.requestType = "saveMainPassword";
+          mes.password = password;
+          chrome.runtime.sendMessage({ mes }, function (response) {
+            let res = JSON.parse(response);
+            if (res.code === 200) {
+              handleLocalStorage("remove", "isSetMainPsw");
+              _this.props.history.push("/home/psd");
+            } else {
+              alert(res.msg);
+            }
+          });
+        };
+        sendMessageToContentBackgroundScript({});
+      }
     };
     //重置主密码的验证接口
     const setMainPsw = () => {
@@ -39,43 +44,47 @@ export default class setMP extends Component {
       let oldPsw = document.getElementById("oldPsw").value;
       let newPsw = document.getElementById("newPassword").value;
       let conFirmPsw = document.getElementById("conFirmPsw").value;
-      const sendMessageToContentBackgroundScript = (mes) => {
-        mes.requestType = "verifyPassword";
-        mes.mainPass = oldPsw;
-        chrome.runtime.sendMessage({ mes }, function (response) {
-          let res = JSON.parse(response);
-          if (res.code === 200) {
-            const phone = handleLocalStorage("get", "phone");
-            let oldMainPass = oldPsw;
-            let newMainPass = newPsw;
-            let userInfo = {
-              verificationCode: verificationMainCode,
-              phone,
-              oldMainPass,
-              newMainPass,
-            };
-            const sendMessageToContentBackgroundScript2 = (mes) => {
-              mes.requestType = "resetMainPsw";
-              mes.userInfo = userInfo;
-              chrome.runtime.sendMessage({ mes }, function (response) {
-                let res = JSON.parse(response);
-                if (res.code === 200) {
-                  alert("重置主密码成功");
-                  _this.props.history.push("/home/psd");
-                } else {
-                  alert(res.msg);
-                }
-              });
-            };
-            sendMessageToContentBackgroundScript2({});
-          } else if (res.code === 707) {
-            alert(res.msg);
-          } else {
-            alert(res.msg);
-          }
-        });
-      };
-      sendMessageToContentBackgroundScript({});
+      if (newPsw.length != 6) {
+        alert("主密码长度必须为6位");
+      } else {
+        const sendMessageToContentBackgroundScript = (mes) => {
+          mes.requestType = "verifyPassword";
+          mes.mainPass = oldPsw;
+          chrome.runtime.sendMessage({ mes }, function (response) {
+            let res = JSON.parse(response);
+            if (res.code === 200) {
+              const phone = handleLocalStorage("get", "phone");
+              let oldMainPass = oldPsw;
+              let newMainPass = newPsw;
+              let userInfo = {
+                verificationCode: verificationMainCode,
+                phone,
+                oldMainPass,
+                newMainPass,
+              };
+              const sendMessageToContentBackgroundScript2 = (mes) => {
+                mes.requestType = "resetMainPsw";
+                mes.userInfo = userInfo;
+                chrome.runtime.sendMessage({ mes }, function (response) {
+                  let res = JSON.parse(response);
+                  if (res.code === 200) {
+                    alert("重置主密码成功");
+                    _this.props.history.push("/home/psd");
+                  } else {
+                    alert(res.msg);
+                  }
+                });
+              };
+              sendMessageToContentBackgroundScript2({});
+            } else if (res.code === 707) {
+              alert(res.msg);
+            } else {
+              alert(res.msg);
+            }
+          });
+        };
+        sendMessageToContentBackgroundScript({});
+      }
     };
     return id === "set" ? (
       <div className="set-wrapper">
@@ -89,7 +98,7 @@ export default class setMP extends Component {
         <Form name="setMainPassword" onFinish={onFinish} className="from">
           <div className="form-text">请输入主密码</div>
           <Form.Item
-            name="password"
+            name="setPassword"
             rules={[{ required: true, message: "请输入你的主密码！" }]}
           >
             <input className="set-body-input" />
@@ -104,7 +113,7 @@ export default class setMP extends Component {
               },
               ({ getFieldValue }) => ({
                 validator(rule, value) {
-                  if (!value || getFieldValue("password") === value) {
+                  if (!value || getFieldValue("setPassword") === value) {
                     return Promise.resolve();
                   }
                   return Promise.reject("两次输入的密码不一致!");

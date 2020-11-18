@@ -106,9 +106,11 @@ export default class Folder extends Component {
   render() {
     const goDetail = (passwordList, id, name) => {
       handleLocalStorage("set", "folderId", id);
+      handleLocalStorage("set", "folderName", name);
+
       this.props.history.push({
         pathname: "/folderDetail",
-        state: { passwordList, folderId: id, name },
+        state: { passwordList, folderId: id },
       });
     };
     const canModal = () => {
@@ -180,7 +182,7 @@ export default class Folder extends Component {
       };
       sendMessageToContentBackgroundScript(userInfo);
     };
-    console.log(this.state.showRobot);
+
     return (
       <div>
         {this.state.showRobot ? (

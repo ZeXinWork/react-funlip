@@ -189,7 +189,7 @@ class PasswordDetail extends Component {
         passwordIds: [id],
       };
       const folderId = handleLocalStorage("get", "folderId");
-      console.log(folderId);
+
       if (isDeleteFolder) {
         const userInfo = {
           folderId,
@@ -199,7 +199,6 @@ class PasswordDetail extends Component {
           mes.requestType = "outFolder";
           chrome.runtime.sendMessage({ mes }, function (response) {
             let res = JSON.parse(response);
-            console.log(res);
           });
         }
         sendMessageToContentScript(userInfo);

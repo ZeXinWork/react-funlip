@@ -33,16 +33,14 @@ export default class componentName extends Component {
     let dataList;
     let folderId;
     let afterDelete;
-    let name;
+
     const folderName = handleLocalStorage("get", "folderName");
     if (folderName) {
       this.setState(
         {
           folderName,
         },
-        () => {
-          handleLocalStorage("remove", "folderName");
-        }
+        () => {}
       );
     }
 
@@ -51,18 +49,6 @@ export default class componentName extends Component {
       dataList = this.props.location.state.dataList;
       folderId = this.props.location.state.folderId;
       afterDelete = this.props.location.state.afterDelete;
-      name = this.props.location.state.name;
-      if (name) {
-        handleLocalStorage("set", "folderName", name);
-        this.setState(
-          {
-            folderName: name,
-          },
-          () => {
-            handleLocalStorage("remove", "folderName");
-          }
-        );
-      }
     }
     //点击空白处关闭弹窗
     // document

@@ -134,7 +134,6 @@ class createNewPsw extends Component {
         isFolderDetail = this.props.location.state.isFolderDetail;
         folderId = this.props.location.state.folderId;
       }
-
       if (isFolderDetail) {
         let passwordItem = {
           title: title,
@@ -147,6 +146,7 @@ class createNewPsw extends Component {
         const sendMessageToContentBackgroundScript = (mes) => {
           const _this = this;
           mes.requestType = "saveNewPsw";
+          mes.isFolderAdd = true;
           chrome.runtime.sendMessage({ mes }, function (res) {
             let response = JSON.parse(res);
             if (response.id) {
@@ -161,7 +161,6 @@ class createNewPsw extends Component {
                 mes.requestType = "addPswToFolder";
                 chrome.runtime.sendMessage({ mes }, function (res) {
                   let responses = JSON.parse(res);
-
                   if (responses.code == 200) {
                     _this.props.history.push({
                       pathname: "/folderDetail",
