@@ -48,7 +48,7 @@ export default class Folder extends Component {
         return res;
       };
       const folderList = await getLocalState();
-
+      console.log(folderList);
       const getData = async () => {
         const _this = this;
         mes.requestType = "getFolderList";
@@ -81,7 +81,19 @@ export default class Folder extends Component {
                 () => {
                   localforage
                     .setItem("folderList", res)
-                    .then(function (value) {})
+                    .then(function (value) {
+                      _this.setState(
+                        {
+                          showCreate: "block",
+                        },
+                        () => {
+                          let loading = document.getElementById(
+                            "funlip-loading"
+                          );
+                          loading.style.display = "none";
+                        }
+                      );
+                    })
                     .catch(function (err) {});
                 }
               );
@@ -92,6 +104,8 @@ export default class Folder extends Component {
           await noRobt();
         });
       };
+      if (folderList && folderList.length > 0) {
+      }
       if (folderList == null) {
         getData();
       } else if (folderList.length == 0) {
@@ -137,7 +151,8 @@ export default class Folder extends Component {
           if (res.id && res.name) {
             let newArray = [];
             newArray.push(res);
-
+            newArray[0].fileNum = 0;
+            newArray[0].passwords = [];
             const getLocalstates = async () => {
               const getLocalState = async () => {
                 const res = localforage
@@ -152,7 +167,7 @@ export default class Folder extends Component {
                 return res;
               };
               const folderList = await getLocalState();
-
+              console.log(newArray[0]);
               folderList.push(newArray[0]);
               localforage
                 .setItem("folderList", folderList)
@@ -245,11 +260,12 @@ export default class Folder extends Component {
                       goDetail(item.passwords, item.id, item.name);
                     }}
                   >
+                    <Badge.Ribbon
+                      className="folder-banner-icon"
+                      text={item.fileNum}
+                    />
                     <div className="folder-icon ">
                       <img src={folder} className="mr-6" />
-                    </div>
-                    <div className="folder-banner">
-                      <Badge.Ribbon className="folder-banner-icon" />
                     </div>
                     <div className="folder-user-info">
                       <p className="folder-text">{item.name}</p>

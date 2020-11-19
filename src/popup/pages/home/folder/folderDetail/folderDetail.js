@@ -104,6 +104,9 @@ export default class componentName extends Component {
             folderList[i].passwords = targetArray;
           }
         }
+        for (let i = 0; i < folderList.length; i++) {
+          folderList[i].fileNum = folderList[i].passwords.length;
+        }
         localforage
           .setItem("folderList", folderList)
           .then(function (value) {})
@@ -521,6 +524,9 @@ export default class componentName extends Component {
                     }
                   }
                 }
+              }
+              for (let i = 0; i < folderList.length; i++) {
+                folderList[i].fileNum = folderList[i].passwords.length;
               }
               let list = _this.state.list;
               for (let i = 0; i < list.length; i++) {

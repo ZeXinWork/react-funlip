@@ -88,31 +88,33 @@
   height: 72px;
   background: #f8f9fc;
   border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
   align-items: center;
   margin-top: 15px;
   margin-left: 20px;
   margin-bottom: 15px;
   float: left;
   cursor: pointer;
+  position: relative;
 }
 .folder-wrapper .folder-info .folder-user-info {
   margin: 5px 10px 0px 10px;
   width: 138px;
   height: 30px;
-  position: relative;
 }
-.folder-wrapper .folder-info .folder-banner .folder-banner-icon {
-  color: linear-gradient(222deg, #4ca0fe 0%, #8455ff 100%);
+.folder-wrapper .folder-info .folder-banner-icon {
+  position: absolute;
+  right: 0;
+  top: 0;
+  text-align: center;
+  background: linear-gradient(222deg, #4ca0fe 0%, #8455ff 100%);
   width: 30px;
   height: 16px;
+  line-height: 16px;
   border-radius: 100px 0px 0px 100px;
 }
 .folder-wrapper .folder-info .folder-icon {
   margin-top: 5px;
-  margin-left: 5px;
+  margin-left: 45px;
 }
 .folder-wrapper .folder-info .folder-icon .mlr-6 {
   margin: 0 6px;
@@ -129,7 +131,7 @@
   font-weight: 600;
   color: #3a3f6d;
   line-height: 22px;
-  margin-left: 50px;
+  margin-left: 40px;
 }
 .folder-wrapper .folderModal-wrapper {
   position: absolute;

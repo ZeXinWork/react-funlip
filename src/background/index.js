@@ -192,6 +192,9 @@ const deletePsdItem = async (deleteItem, config, targetObj) => {
           }
         }
       }
+      for (let i = 0; i < localFolderState.length; i++) {
+        localFolderState[i].fileNum = localFolderState[i].passwords.length;
+      }
       localforage
         .setItem("folderList", localFolderState)
         .then(function (value) {
@@ -221,6 +224,9 @@ const deletePsdItem = async (deleteItem, config, targetObj) => {
             }
           }
         }
+      }
+      for (let i = 0; i < localFolderState.length; i++) {
+        localFolderState[i].fileNum = localFolderState[i].passwords.length;
       }
 
       localforage
