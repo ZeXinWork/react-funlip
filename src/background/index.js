@@ -10,6 +10,7 @@ let url = "";
 let userName = "";
 let password = "";
 let setIntervalFlag = true;
+let timeFlag = true;
 let firstInterval;
 
 //获取用户数据流程 （内存-》本地-》接口）
@@ -341,7 +342,6 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     password = "";
   } else if (type === "goUrl") {
     const { url } = message.mes;
-
     const gonewURL = {
       toNewUrl: url,
       type: "goNewUrl",
@@ -384,7 +384,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   } else if (requestType === "checkNumber") {
     const {
       captcha,
-      client_ip,
+
       device_name,
       phone,
       phone_area_code,
@@ -392,7 +392,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     let userInfo = {
       phone,
       captcha,
-      client_ip,
+
       phone_area_code,
       device_name,
     };
@@ -806,9 +806,8 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       .catch((error) => {});
     return true;
   } else if (requestType === "getCodeUrl") {
-    let { clientIp, expired, loginKey } = message.mes;
+    let { expired, loginKey } = message.mes;
     let userInfo = {
-      clientIp,
       expired,
       loginKey,
     };
@@ -844,15 +843,39 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       .then((text) => sendResponse(text))
       .catch((error) => {});
     return true;
+  } else if (requestType === "forgotPsw") {
+    const token = handleLocalStorage("get", "token");
+    let { newMainPass, phone, verificationCode } = message.mes;
+    let userInfo = {
+      newMainPass,
+      phone,
+      verificationCode,
+    };
+    data = JSON.stringify(userInfo);
+    fetch("http://106.53.103.199:8088/plugin/api/v1/mainpass/modify", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ClientType: "plugin",
+        Authorization: token,
+      },
+      body: data,
+    })
+      .then((response) => response.text())
+      .then((text) => sendResponse(text))
+      .catch((error) => {});
+    return true;
   }
   return true;
 });
 
 //监听用户关闭Popup页面 然后根据用户设置的数据进行锁定
 chrome.runtime.onConnect.addListener(function (externalPort) {
+  timeFlag = false;
   externalPort.onDisconnect.addListener(function () {
     const token = handleLocalStorage("get", "token");
     if (token) {
+      timeFlag = true;
       count = 0;
       firstInterval = null;
       const clickTime = () => {
@@ -872,39 +895,36 @@ chrome.runtime.onConnect.addListener(function (externalPort) {
           } else if (targetTime == -1) {
             return;
           } else {
-            if (!setIntervalFlag) {
-              setIntervalFlag = true;
+            let mid = setInterval(() => {
+              if (!timeFlag) {
+                clearInterval(mid);
+                return;
+              }
+              setIntervalFlag = false;
+              let targetTime = handleLocalStorage("get", "lockedDelay");
+              if (targetTime == 4) {
+                targetTime = targetTime * 60 * 60;
+              } else {
+                targetTime = targetTime * 60;
+              }
+              if (!firstInterval) {
+                firstInterval = targetTime;
+              }
 
-              return;
-            } else {
-              let mid = setInterval(() => {
-                setIntervalFlag = false;
-                let targetTime = handleLocalStorage("get", "lockedDelay");
-                if (targetTime == 4) {
-                  targetTime = targetTime * 60 * 60;
-                } else {
-                  targetTime = targetTime * 60;
-                }
-                if (!firstInterval) {
-                  firstInterval = targetTime;
-                }
-
-                if (firstInterval != targetTime) {
-                  firstInterval = targetTime;
-                  count = 0;
-                  clearInterval(mid);
-                  clickTime();
-                  return;
-                }
-                count++;
-
-                if (count == targetTime) {
-                  handleLocalStorage("set", "autoLock", true);
-                  clearInterval(mid);
-                  setIntervalFlag = true;
-                }
-              }, 1000);
-            }
+              if (firstInterval != targetTime) {
+                firstInterval = targetTime;
+                count = 0;
+                clearInterval(mid);
+                clickTime();
+                return;
+              }
+              count++;
+              if (count == targetTime) {
+                handleLocalStorage("set", "autoLock", true);
+                clearInterval(mid);
+                setIntervalFlag = true;
+              }
+            }, 1000);
           }
         }
       };

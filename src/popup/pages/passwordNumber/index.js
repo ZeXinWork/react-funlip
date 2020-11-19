@@ -194,7 +194,13 @@ export default class MyAbout extends Component {
       this.props.history.goBack();
     };
     //获取用户手机号 验证码
-    let { tele, number, resetMainPsw } = this.props.location.state;
+    let {
+      tele,
+      number,
+      resetMainPsw,
+      isForgotPsw,
+      forgotNumber,
+    } = this.props.location.state;
     const verificationCode = handleLocalStorage("get", "verificationCode");
     if (verificationCode) {
       number = verificationCode;
@@ -203,7 +209,6 @@ export default class MyAbout extends Component {
       const value = {
         phone: tele,
         captcha: number,
-        client_ip: "192.168.1.2",
         phone_area_code: "+86",
         device_name: "test",
       };
@@ -211,7 +216,12 @@ export default class MyAbout extends Component {
       if (resetMainPsw) {
         this.props.history.push({
           pathname: "/setMP",
-          state: { id: "reset", verificationMainCode: number },
+          state: { id: "reset", verificationMainCode: number, tele },
+        });
+      } else if (isForgotPsw) {
+        this.props.history.push({
+          pathname: "/forgot",
+          state: { id: "forgot", phone: tele, forgotNumber },
         });
       } else {
         const _this = this;
@@ -221,8 +231,13 @@ export default class MyAbout extends Component {
             res = JSON.parse(res);
             if (res.code === 200) {
               const { plugin, token, user } = res.data;
-              const { autoFill, autoLogin, autoStore, lockedDelay } = plugin;
-              const { id } = plugin;
+              const {
+                autoFill,
+                autoLogin,
+                autoStore,
+                lockedDelay,
+                id,
+              } = plugin;
               let { firstTimeLogin, nickName } = user;
               handleLocalStorage("set", "pluginID", id);
               handleLocalStorage("set", "token", token);
@@ -230,7 +245,6 @@ export default class MyAbout extends Component {
               handleLocalStorage("set", "autoFill", autoFill);
               handleLocalStorage("set", "autoLogin", autoLogin);
               handleLocalStorage("set", "autoStore", autoStore);
-              handleLocalStorage("set", "phone", tele);
               handleLocalStorage("set", "lockedDelay", lockedDelay);
               handleLocalStorage("remove", "verificationMainCode");
               if (firstTimeLogin) {

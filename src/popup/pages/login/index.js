@@ -21,16 +21,10 @@ export default class componentName extends Component {
     maskShow: "none",
     authToken: "",
     showCode: true,
+    clickTime: true,
   };
   codeLogin = () => {
-    const authToken = handleLocalStorage("get", "loginToken");
-
-    if (authToken && !this.state.showPhone) {
-      this.setState({
-        authToken,
-        maskShow: "block",
-      });
-    } else if (!this.state.showPhone) {
+    if (!this.state.showPhone) {
       function randomString(len) {
         len = len || 32;
         var $chars =
@@ -49,7 +43,6 @@ export default class componentName extends Component {
         },
         () => {
           let userInfo = {
-            clientIp: "106.122.113.106",
             expired: 30,
             loginKey: myString,
           };
@@ -66,48 +59,123 @@ export default class componentName extends Component {
                   authToken,
                 },
                 () => {
-                  clearInterval(mid);
-                  let mid = setInterval(() => {
-                    let userInfo = {
-                      authToken: _this.state.authToken,
-                      loginKey: _this.state.loginKey,
-                    };
-                    const sendMessageToContentBackgroundScript = (mes) => {
-                      mes.requestType = "checkNumberTime";
-                      chrome.runtime.sendMessage({ mes }, function (res) {
-                        let response = JSON.parse(res);
-                        console.log(response);
-                        let { loginStatus } = response;
-                        if (loginStatus == "LOGIN_KEY_EXPIRED") {
-                          _this.setState(
-                            {
-                              maskShow: true,
-                            },
-                            () => {
-                              handleLocalStorage(
-                                "set",
-                                "loginToken",
-                                _this.state.authToken
-                              );
-                              clearInterval(mid);
-                            }
-                          );
-                        } else if (loginStatus == "CANCEL_LOGIN") {
-                          _this.setState({
-                            showCode: false,
+                  if (_this.state.clickTime) {
+                    _this.setState(
+                      {
+                        clickTime: false,
+                      },
+                      () => {
+                        let mid = setInterval(() => {
+                          let PhoneBtn = document.getElementsByClassName(
+                            "phone-text"
+                          )[0];
+                          PhoneBtn.addEventListener("click", () => {
+                            _this.setState(
+                              {
+                                clickTime: true,
+                              },
+                              () => {
+                                clearInterval(mid);
+                              }
+                            );
                           });
-                          clearInterval(mid);
-                          alert("取消登录");
-                        }
-                        //成功登录
-                        else if (loginStatus == "LOGGED_IN") {
-                          clearInterval(mid);
-                          alert("登录成功");
-                        }
-                      });
-                    };
-                    sendMessageToContentBackgroundScript(userInfo);
-                  }, 1000);
+                          let userInfo = {
+                            authToken: _this.state.authToken,
+                            loginKey: _this.state.loginKey,
+                          };
+                          const sendMessageToContentBackgroundScript = (
+                            mes
+                          ) => {
+                            mes.requestType = "checkNumberTime";
+                            chrome.runtime.sendMessage({ mes }, function (res) {
+                              let response = JSON.parse(res);
+                              console.log(response);
+                              let { loginStatus } = response;
+                              if (loginStatus == "LOGIN_KEY_EXPIRED") {
+                                _this.setState(
+                                  {
+                                    maskShow: true,
+                                    clickTime: true,
+                                  },
+                                  () => {
+                                    clearInterval(mid);
+                                  }
+                                );
+                              }
+
+                              //取消登录
+                              else if (loginStatus == "CANCEL_LOGIN") {
+                                _this.setState(
+                                  {
+                                    clickTime: true,
+                                  },
+                                  () => {
+                                    clearInterval(mid);
+                                    this.codeLogin();
+                                  }
+                                );
+                              }
+                              //登陆成功
+                              else if (loginStatus == "LOGGED_IN") {
+                                _this.setState({
+                                  clickTime: true,
+                                });
+                                const { loginToken, token, user } = response;
+                                const { plugin } = loginToken;
+                                const {
+                                  autoFill,
+                                  autoLogin,
+                                  autoStore,
+                                  lockedDelay,
+                                  id,
+                                  userId,
+                                  createdAt,
+                                  updatedAt,
+                                } = plugin;
+                                let { firstTimeLogin, nickName } = user;
+                                handleLocalStorage("set", "pluginID", id);
+                                handleLocalStorage("set", "token", token);
+                                handleLocalStorage("set", "userName", nickName);
+                                handleLocalStorage("set", "autoFill", autoFill);
+                                handleLocalStorage(
+                                  "set",
+                                  "autoLogin",
+                                  autoLogin
+                                );
+                                handleLocalStorage(
+                                  "set",
+                                  "autoStore",
+                                  autoStore
+                                );
+                                handleLocalStorage(
+                                  "set",
+                                  "lockedDelay",
+                                  lockedDelay
+                                );
+                                if (firstTimeLogin) {
+                                  handleLocalStorage(
+                                    "set",
+                                    "isSetMainPsw",
+                                    true
+                                  );
+                                  _this.props.history.push({
+                                    pathname: "/setMP",
+                                    state: { id: "set" },
+                                  });
+                                } else {
+                                  _this.props.history.push({
+                                    pathname: "/home/psd",
+                                  });
+                                }
+                                clearInterval(mid);
+                              }
+                            });
+                          };
+                          sendMessageToContentBackgroundScript(userInfo);
+                        }, 1000);
+                      }
+                    );
+                  }
                 }
               );
             });
@@ -280,16 +348,23 @@ export default class componentName extends Component {
                 </div>
               </Form.Item>
             </Form>
-            <div
-              className="erCode-wrapper"
-              onClick={() => {
-                this.setState({
-                  showPhone: false,
-                });
-              }}
-            >
+            <div className="erCode-wrapper">
               <img src={erCode} className="erCode-icon" />
-              <span className="erCoder-text">扫码登录</span>
+              <span
+                className="erCoder-text"
+                onClick={() => {
+                  this.setState(
+                    {
+                      showPhone: false,
+                    },
+                    () => {
+                      this.codeLogin();
+                    }
+                  );
+                }}
+              >
+                扫码登录
+              </span>
             </div>
             <div className="login-notice">
               若您没有Funlip账号，第一次登录后将自动完成注册
@@ -321,12 +396,26 @@ export default class componentName extends Component {
             <p className="code-explain-wrapper">
               请使用Funlip移动端扫描二维码登录
             </p>
-            <div className="code-download"> {`前往官网下载 >`}</div>
+            <div
+              className="code-download"
+              onClick={() => {
+                function sendMessageToContentScript2() {
+                  let mes = {
+                    url: "https://funlip.xmwefun.com/",
+                    type: "goUrl",
+                  };
+                  chrome.runtime.sendMessage({ mes }, function (response) {});
+                }
+                sendMessageToContentScript2();
+              }}
+            >
+              {`前往官网下载 >`}
+            </div>
             <div className="code-area">
               {this.state.showCode ? (
                 <QRCode
                   id="qrCode"
-                  value={`http://facebook.github.io/react/${this.state.authToken}"`}
+                  value={`https://funlip.xmwefun.com?scanningLoginKey=${this.state.loginKey}`}
                   size={128} // 二维码的大小
                   fgColor="#4E5278" // 二维码的颜色
                   style={{ margin: "auto" }}

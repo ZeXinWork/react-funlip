@@ -1,5 +1,6 @@
 /* global chrome */
 import React, { Component } from "react";
+import { Badge } from "antd";
 import { handleLocalStorage } from "../../../../api/index";
 import localforage from "localforage";
 import iconAdd from "./icon_add_folder@2x.png";
@@ -246,6 +247,9 @@ export default class Folder extends Component {
                   >
                     <div className="folder-icon ">
                       <img src={folder} className="mr-6" />
+                    </div>
+                    <div className="folder-banner">
+                      <Badge.Ribbon className="folder-banner-icon" />
                     </div>
                     <div className="folder-user-info">
                       <p className="folder-text">{item.name}</p>

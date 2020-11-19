@@ -203,6 +203,7 @@
   color: #5791fe;
   line-height: 17px;
   margin-left: 137px;
+  cursor: pointer;
 }
 .login-form-wrapper .login-code-wrapper .code-area {
   width: 128px;

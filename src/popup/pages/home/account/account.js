@@ -34,6 +34,7 @@ export default class componentName extends Component {
       //发请求登出账号
       const sendMessageToContentBackgroundScript = (mes) => {
         mes.requestType = "outLogin";
+
         chrome.runtime.sendMessage({ mes }, function (response) {
           let res = JSON.parse(response);
           if (res.code == 200) {
@@ -44,6 +45,10 @@ export default class componentName extends Component {
             handleLocalStorage("remove", "autoLogin");
             handleLocalStorage("remove", "autoStore");
             handleLocalStorage("remove", "phone");
+            handleLocalStorage("remove", "loginToken");
+            handleLocalStorage("remove", "folderId");
+            handleLocalStorage("remove", "folderName");
+            handleLocalStorage("remove", "lockedDelay");
             const token = handleLocalStorage("get", "token");
             if (!token) {
               history.push("/login");
@@ -54,18 +59,6 @@ export default class componentName extends Component {
         });
       };
       sendMessageToContentBackgroundScript({});
-      // axios
-      //   .post("/app/api/logout", "", {
-      //     headers: { ClientType: "plugin", Authorization: token },
-      //   })
-      //   .then((res) => {
-      //
-      //     if (res.data.code === 200) {
-      //       handleLocalStorage("remove", "token");
-      //       history.push("/login");
-      //     }
-      //   });
-      this.props.history.push("/login");
     };
 
     const goSet = () => {

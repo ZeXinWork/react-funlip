@@ -54,9 +54,13 @@ export default class AutoLock extends Component {
   render() {
     const _this = this;
     const goForgot = () => {
+      // /forgot
+      // this.props.history.push({
+      //   pathname: "/setMP",
+      //   state: { id: "reset" },
+      // });
       this.props.history.push({
-        pathname: "/setMP",
-        state: { id: "reset" },
+        pathname: "/forgot",
       });
     };
     const getInputValue = (num, e) => {
