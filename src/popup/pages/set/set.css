@@ -5,6 +5,9 @@
   background: #ffffff;
   position: relative;
 }
+.myset-wrapper .skip-text {
+  cursor: pointer;
+}
 .myset-wrapper .mySet-form-title {
   width: 24px;
   height: 24px;

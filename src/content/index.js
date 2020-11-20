@@ -501,7 +501,6 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   // 自动填充
   function autofill() {
     if (request.test == "autofill") {
-      console.log("填充");
       const configUrl = (url) => {
         var domain = url.split("/"); //以“/”进行分割
         if (domain[2]) {
@@ -529,7 +528,6 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
           newTargetUrl = targetUrl;
         }
         if (newTargetUrl) {
-          console.log("匹配到用户url");
           if (window.location.href.indexOf(newTargetUrl) != -1) {
             function test(name, pass) {
               let inputGroup = document.getElementsByTagName("input");
@@ -537,7 +535,6 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
               if (inputGroup.length) {
                 for (let i = 0; i < inputGroup.length; i++) {
                   if (inputGroup[i].type === "password") {
-                    console.log(inputGroup[i]);
                     if (inputGroup[i].style.display == "none") {
                       inputArray.push(inputGroup[i - 1]);
                     }

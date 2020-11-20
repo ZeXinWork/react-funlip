@@ -326,17 +326,30 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     getData();
   } else if (type === "showSave") {
     //判断当前是否应该打开自动保存页面
+
+    isRealShow = true;
     if (autoStore == 1) {
       url = message.mes.url;
     }
   } else if (type === "isShowSave") {
     //判断当前是否应该打开自动保存页面
+    let realSend = true;
+    for (let i = 0; i < data.length; i++) {
+      if (data[i].website.indexOf(url) != -1) {
+        console.log(data[i].account);
+        console.log(userName);
+        if (data[i].account == userName) {
+          realSend = false;
+        }
+      }
+    }
     let sendUrl = {
       showUrl: url,
       password: password,
       userName: userName,
     };
-    if (autoStore == 1 && isRealShow) {
+
+    if (autoStore == 1 && isRealShow && realSend) {
       chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
         chrome.tabs.sendMessage(tabs[0].id, sendUrl, function (response) {});
       });
@@ -877,6 +890,26 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       .then((text) => sendResponse(text))
       .catch((error) => {});
     return true;
+  } else if (requestType === "getSkipList") {
+    const token = handleLocalStorage("get", "token");
+    let { pluginId } = message.mes;
+    let userInfo = {
+      pluginId,
+    };
+    data = JSON.stringify(userInfo);
+    fetch("http://106.53.103.199:8088/plugin/api/v1/setting/skipping/list", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ClientType: "plugin",
+        Authorization: token,
+      },
+      body: data,
+    })
+      .then((response) => response.text())
+      .then((text) => sendResponse(text))
+      .catch((error) => {});
+    return true;
   }
   return true;
 });
@@ -899,13 +932,13 @@ chrome.runtime.onConnect.addListener(function (externalPort) {
 
           if (targetTime == 4) {
             targetTime = targetTime * 60 * 60;
+          } else if (targetTime == -1) {
+            return;
           } else {
             targetTime = targetTime * 60;
           }
           if (targetTime == 0) {
             handleLocalStorage("set", "autoLock", true);
-          } else if (targetTime == -1) {
-            return;
           } else {
             let mid = setInterval(() => {
               if (!timeFlag) {
@@ -930,7 +963,7 @@ chrome.runtime.onConnect.addListener(function (externalPort) {
                 clickTime();
                 return;
               }
-              console.log("count");
+
               count++;
               if (count == targetTime) {
                 handleLocalStorage("set", "autoLock", true);

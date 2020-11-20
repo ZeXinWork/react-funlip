@@ -1,0 +1,37 @@
+.passSaveWebsite-wrapper {
+  width: 360px;
+  box-sizing: border-box;
+  height: 580px;
+}
+.passSaveWebsite-wrapper .passSaveWebsite-logo {
+  width: 24px;
+  height: 24px;
+  margin-bottom: 16px;
+  margin-top: 24px;
+  margin-left: 24px;
+}
+.passSaveWebsite-wrapper .passSaveWebsite-item-wrapper {
+  width: 312px;
+  border-radius: 8px;
+  margin-left: 24px;
+  display: flex;
+  align-items: center;
+}
+.passSaveWebsite-wrapper .passSaveWebsite-item-wrapper .passSaveWebsite-item {
+  background: #f8f9fc;
+  height: 64px;
+  margin-bottom: 16px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.passSaveWebsite-wrapper .passSaveWebsite-item-wrapper .passSaveWebsite-item .passSaveWebsite-item-url {
+  margin-left: 16px;
+}
+.passSaveWebsite-wrapper .passSaveWebsite-item-wrapper .passSaveWebsite-item .passSaveWebsite-item-delete {
+  margin-right: 24px;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}

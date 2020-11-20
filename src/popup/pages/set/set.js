@@ -388,7 +388,14 @@ class MySet extends Component {
               </span>
             </div>
             <div className="skip-management autofloat mr-6">
-              <span className="skip-text auto-text">跳过保存网站管理</span>
+              <span
+                className="skip-text auto-text"
+                onClick={() => {
+                  this.props.history.push("/passSaveWebsite");
+                }}
+              >
+                跳过保存网站管理
+              </span>
               <span>
                 <img
                   src={arrowRight}

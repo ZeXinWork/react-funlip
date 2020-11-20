@@ -43,7 +43,7 @@ export default class componentName extends Component {
         },
         () => {
           let userInfo = {
-            expired: 30,
+            // expired: 30,
             loginKey: myString,
           };
 

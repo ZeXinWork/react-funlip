@@ -17,6 +17,7 @@ import MyAbout from "./pages/home/about/about";
 import ResetPsw from "./pages/reset/resetPassword";
 import FolderDetail from "./pages/home/folder/folderDetail/folderDetail";
 import FolderAdd from "./pages/home/folder/moveFolder/moverFolder";
+import PassSaveWebsite from "./pages/passSaveWebsite";
 import "@/content";
 function Popup() {
   useEffect(() => {
@@ -41,6 +42,8 @@ function Popup() {
           <Route path="/pswG" component={PasswordGenerator} />
           <Route path="/folderDetail" component={FolderDetail} />
           <Route path="/folderAdd" component={FolderAdd} />
+          <Route path="/passSaveWebsite" component={PassSaveWebsite} />
+
           <Redirect to={"/login"} />
         </Switch>
       </BrowserRouter>
