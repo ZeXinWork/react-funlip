@@ -13,6 +13,7 @@ import arrowLeft from "./icon_arrowright_black@2x.png";
 import Edit from "./icon_edit@2x.png";
 import deleteIcon from "./icon_home_delete_pre@2x.png";
 import remove from "./icon_home_mobile_pre@2x.png";
+import sadIcon from "./icon_sad.png";
 import "./folderDail.css";
 export default class componentName extends Component {
   state = {
@@ -27,14 +28,16 @@ export default class componentName extends Component {
     removeShow: "none",
     deletePswShow: "none",
     renameShow: "none",
+    noPasswordShow: "none",
   };
   componentDidMount() {
     let passwordList;
     let dataList;
     let folderId;
     let afterDelete;
-
     const folderName = handleLocalStorage("get", "folderName");
+    let loading = document.getElementById("funlip-loading");
+    loading.style.display = "none";
     if (folderName) {
       this.setState(
         {
@@ -50,14 +53,21 @@ export default class componentName extends Component {
       folderId = this.props.location.state.folderId;
       afterDelete = this.props.location.state.afterDelete;
     }
-    //点击空白处关闭弹窗
-    // document
-    //   .getElementsByClassName("psw-wrappers")[0]
-    //   .addEventListener("click", () => {
+    // 点击空白处关闭弹窗
+    // document.addEventListener("click", (e) => {
+    //   if (e && e.stopPropagation) {
+    //     e.stopPropagation();
+    //   } else {
+    //     e.cancelBubble = true;
+    //   }
+    //   if (e.target.className == "folderCheckbox") {
+    //     return;
+    //   } else {
     //     this.setState({
     //       editShow: "none",
     //     });
-    //   });
+    //   }
+    // });
 
     //设置文件夹id
     if (folderId) {
@@ -226,6 +236,7 @@ export default class componentName extends Component {
 
     //显示操作面板
     const showEditHover = () => {
+      console.log(this.state.editShow);
       if (this.state.editShow == "none") {
         this.setState({
           editShow: "block",
@@ -436,14 +447,28 @@ export default class componentName extends Component {
 
     //打开编辑模块
     const editPsw = () => {
-      this.setState({
-        showCheckBox: true,
-        editShow: "none",
-        btnShow: "none",
-        editPswShow: "block",
-      });
+      if (this.state.list.length > 0) {
+        this.setState({
+          showCheckBox: true,
+          editShow: "none",
+          btnShow: "none",
+          editPswShow: "block",
+        });
+      } else {
+        this.setState(
+          {
+            noPasswordShow: "block",
+          },
+          () => {
+            setTimeout(() => {
+              this.setState({
+                noPasswordShow: "none",
+              });
+            }, 1000);
+          }
+        );
+      }
     };
-
     //打开移出密码modal
     const removePsw = () => {
       this.setState({
@@ -641,6 +666,7 @@ export default class componentName extends Component {
               _this.setState({
                 deletePswShow: "none",
                 editPswShow: "none",
+                showCheckBox: false,
               });
               localforage
                 .setItem("folderList", folderList)
@@ -667,8 +693,16 @@ export default class componentName extends Component {
         renameShow: "none",
       });
     };
+
     return (
       <div className="psw-wrappers">
+        <div
+          className="smile-message"
+          style={{ display: this.state.noPasswordShow }}
+        >
+          <img src={sadIcon} className="icon-fail" />
+          <div className="smile-text">还没有密码哦</div>
+        </div>
         <div
           className="password-modal8"
           style={{ display: this.state.renameShow }}
@@ -691,10 +725,8 @@ export default class componentName extends Component {
                   <span className="password-text">取消</span>
                 </div>
               </div>
-              <div className="btn-layout mr-20 set-bg ">
-                <span className="password-text" onClick={renameFolder}>
-                  确认
-                </span>
+              <div className="btn-layout mr-20 set-bg " onClick={renameFolder}>
+                <span className="password-text">确认</span>
               </div>
             </div>
           </div>
@@ -881,7 +913,9 @@ export default class componentName extends Component {
                 className="psw-info"
                 key={item.title}
                 onClick={() => {
-                  toDetail(item);
+                  if (!this.state.showCheckBox) {
+                    toDetail(item);
+                  }
                 }}
                 onMouseOver={() => {
                   showHover(index);
@@ -906,8 +940,6 @@ export default class componentName extends Component {
                           } else {
                             window.event.cancelBubble = true;
                           }
-                        }}
-                        onChange={() => {
                           let MyCheckBox = document.getElementsByClassName(
                             "folderCheckbox"
                           )[index];

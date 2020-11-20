@@ -189,12 +189,15 @@ export default class Folder extends Component {
                       visible: "none",
                       showRobot: false,
                     });
+                    document.getElementsByClassName("modal-input")[0].value =
+                      "";
                   }
                 );
               }
             );
           } else {
-            alert("新建失败");
+            document.getElementsByClassName("modal-input")[0].value = "";
+            alert(res.msg);
           }
         });
       };

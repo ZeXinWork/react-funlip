@@ -142,6 +142,9 @@ class PasswordDetail extends Component {
 
     //返回上一级子页面
     const goBack = () => {
+      if (isDeleteFolder) {
+        this.props.history.goBack();
+      }
       this.props.history.push("/home/psd");
     };
 

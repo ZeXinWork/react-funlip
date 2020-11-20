@@ -12,7 +12,7 @@ let password = "";
 let setIntervalFlag = true;
 let timeFlag = true;
 let firstInterval;
-
+let isRealShow = true;
 //获取用户数据流程 （内存-》本地-》接口）
 // 1、建立一个本地仓库（同步执行）
 localforage.config({
@@ -195,6 +195,7 @@ const deletePsdItem = async (deleteItem, config, targetObj) => {
       for (let i = 0; i < localFolderState.length; i++) {
         localFolderState[i].fileNum = localFolderState[i].passwords.length;
       }
+
       localforage
         .setItem("folderList", localFolderState)
         .then(function (value) {
@@ -243,6 +244,7 @@ const deletePsdItem = async (deleteItem, config, targetObj) => {
   sendCmd();
 };
 
+//编辑密码后更新本地数据
 const editItem = async (value) => {
   value = JSON.parse(value);
   const localState = await localforage
@@ -265,6 +267,7 @@ const editItem = async (value) => {
     });
 };
 
+//把密码发送个密码页
 const sendDataToPopup = (data) => {
   const cmd = {
     type: "popupGetData",
@@ -272,6 +275,8 @@ const sendDataToPopup = (data) => {
   };
   chrome.runtime.sendMessage(cmd, function (response) {});
 };
+
+//插件运行在所有url
 chrome.runtime.onInstalled.addListener(function () {
   chrome.declarativeContent.onPageChanged.removeRules(undefined, function () {
     chrome.declarativeContent.onPageChanged.addRules([
@@ -291,7 +296,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   let { type } = message.mes;
   let { requestType } = message.mes;
   const autoFill = handleLocalStorage("get", "autoFill"); //设置是否自动填充
-  const autoStore = handleLocalStorage("get", "autoStore");
+  const autoStore = handleLocalStorage("get", "autoStore"); //设置是否自动保存密码
   let BASE = "106.53.103.199:8088";
   if (type === "autofill") {
     if (autoFill == 1) {
@@ -310,12 +315,6 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
       chrome.tabs.sendMessage(tabs[0].id, passwordItem, function (response) {});
     });
-  } else if (type === "autolock") {
-    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-      chrome.tabs.sendMessage(tabs[0].id, message.mes, function (response) {});
-    });
-  } else if (type === "first-lock") {
-    handleLocalStorage("set", "autolock", "lock");
   } else if (type === "getUserList") {
     const getData = async () => {
       const data = await getAllData();
@@ -327,7 +326,9 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     getData();
   } else if (type === "showSave") {
     //判断当前是否应该打开自动保存页面
-    url = message.mes.url;
+    if (autoStore == 1) {
+      url = message.mes.url;
+    }
   } else if (type === "isShowSave") {
     //判断当前是否应该打开自动保存页面
     let sendUrl = {
@@ -335,11 +336,14 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       password: password,
       userName: userName,
     };
-    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-      chrome.tabs.sendMessage(tabs[0].id, sendUrl, function (response) {});
-    });
+    if (autoStore == 1 && isRealShow) {
+      chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+        chrome.tabs.sendMessage(tabs[0].id, sendUrl, function (response) {});
+      });
+    }
   } else if (type === "cancelSave") {
     url = "";
+    isRealShow = true;
   } else if (type === "savePsUs") {
     userName = message.mes.userName;
     password = message.mes.password;
@@ -364,6 +368,8 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   } else if (type === "showImage4") {
     let cmd = "showImage4";
     chrome.runtime.sendMessage(cmd, function (response) {});
+  } else if (type === "noShow") {
+    isRealShow = false;
   } else if (requestType === "getNumbers") {
     let { areaCode, phone, type } = message.mes;
     const { NumberType } = message.mes;
@@ -924,6 +930,7 @@ chrome.runtime.onConnect.addListener(function (externalPort) {
                 clickTime();
                 return;
               }
+              console.log("count");
               count++;
               if (count == targetTime) {
                 handleLocalStorage("set", "autoLock", true);

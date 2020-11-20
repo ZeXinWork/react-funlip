@@ -148,7 +148,23 @@ export default class Forgot extends Component {
           chrome.runtime.sendMessage({ mes }, function (response) {
             let res = JSON.parse(response);
             if (res.code == 200) {
-              this.props.history.push("/autoLock");
+              _this.setState(
+                {
+                  FormatShow: "block",
+                },
+                () => {
+                  setTimeout(() => {
+                    _this.setState(
+                      {
+                        FormatShow: "none",
+                      },
+                      () => {
+                        _this.props.history.push("/autoLock");
+                      }
+                    );
+                  }, 500);
+                }
+              );
             } else {
               alert(res.msg);
             }

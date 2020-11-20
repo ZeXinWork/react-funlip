@@ -104,6 +104,7 @@ function Content() {
     if (inputPassword) {
       passwordValue = inputPassword.value;
     }
+
     let mes;
     if (loginValue && passwordValue) {
       mes = {
@@ -129,7 +130,11 @@ function Content() {
     setShow("none");
     sendMessageToBackgroundScript4({});
   };
+  const sendMessageToBackgroundScript06 = (mes) => {
+    mes.type = "noShow";
 
+    chrome.runtime.sendMessage({ mes });
+  };
   sendMessageToBackgroundScript3({});
   chrome.runtime.onMessage.addListener(function (
     request,
@@ -147,8 +152,12 @@ function Content() {
     }
     setUrl(domain);
 
-    if (request.showUrl.indexOf(newUrl) != -1 || request.showUrl == newUrl) {
+    // if (request.showUrl.indexOf(newUrl) != -1) {
+    //   setShow("block");
+    // }
+    if (window.self === window.top && request.showUrl.indexOf(newUrl) != -1) {
       setShow("block");
+      sendMessageToBackgroundScript06();
     }
   });
   useEffect(() => {
