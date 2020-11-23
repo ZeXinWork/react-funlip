@@ -1,8 +1,8 @@
 /*global chrome*/
-import { handleLocalStorage, getCaptcha } from "../api";
+import { handleLocalStorage } from "../api";
 import localforage from "localforage";
-
 import qs from "qs";
+
 let passwordItem;
 let data;
 let count = 0;
@@ -13,6 +13,7 @@ let setIntervalFlag = true;
 let timeFlag = true;
 let firstInterval;
 let isRealShow = true;
+
 //获取用户数据流程 （内存-》本地-》接口）
 // 1、建立一个本地仓库（同步执行）
 localforage.config({
@@ -69,7 +70,7 @@ const getAllData = async () => {
   };
   userInfo = await getLocalData();
 
-  if (userInfo) {
+  if (userInfo && userInfo.length > 0) {
     data = userInfo;
   } else {
     const getServeData = async () => {
@@ -276,6 +277,33 @@ const sendDataToPopup = (data) => {
   chrome.runtime.sendMessage(cmd, function (response) {});
 };
 
+//新增item到skipList
+const addNewSkipList = async (value) => {
+  let data = JSON.parse(value);
+  const getLocalData = async () => {
+    const res = localforage
+      .getItem("skipList")
+      .then(function (value) {
+        // 当离线仓库中的值被载入时，此处代码运行
+        return value;
+      })
+      .catch(function (err) {
+        // 当出错时，此处代码运行
+      });
+    return res;
+  };
+  let userInfo = await getLocalData();
+  userInfo.push(data);
+  localforage
+    .setItem("skipList", userInfo)
+    .then(function (value) {
+      console.log(value);
+    })
+    .catch(function (err) {
+      // 当出错时，此处代码运行
+    });
+};
+
 //插件运行在所有url
 chrome.runtime.onInstalled.addListener(function () {
   chrome.declarativeContent.onPageChanged.removeRules(undefined, function () {
@@ -326,34 +354,68 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     getData();
   } else if (type === "showSave") {
     //判断当前是否应该打开自动保存页面
-
     isRealShow = true;
     if (autoStore == 1) {
       url = message.mes.url;
     }
   } else if (type === "isShowSave") {
     //判断当前是否应该打开自动保存页面
-    let realSend = true;
-    for (let i = 0; i < data.length; i++) {
-      if (data[i].website.indexOf(url) != -1) {
-        console.log(data[i].account);
-        console.log(userName);
-        if (data[i].account == userName) {
-          realSend = false;
+    const setSHow = async () => {
+      const getLocalData = async () => {
+        const res = localforage
+          .getItem("skipList")
+          .then(function (value) {
+            // 当离线仓库中的值被载入时，此处代码运行
+            return value;
+          })
+          .catch(function (err) {
+            // 当出错时，此处代码运行
+          });
+        return res;
+      };
+
+      //设置标志值realSend，为false代表用户列表有改密码或者skipList有该url
+      let realSend = true;
+      let userInfo = await getLocalData();
+      //skipList有该url
+      if (userInfo && userInfo.length > 0) {
+        for (let i = 0; i < userInfo.length; i++) {
+          if (userInfo[i].website.indexOf(url) != -1) {
+            realSend = false;
+          }
         }
       }
-    }
-    let sendUrl = {
-      showUrl: url,
-      password: password,
-      userName: userName,
-    };
 
-    if (autoStore == 1 && isRealShow && realSend) {
-      chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-        chrome.tabs.sendMessage(tabs[0].id, sendUrl, function (response) {});
-      });
-    }
+      //用户密码项有该账号
+      if (data && data.length > 0) {
+        for (let i = 0; i < data.length; i++) {
+          if (data[i].website.indexOf(url) != -1) {
+            if (data[i].account == userName) {
+              realSend = false;
+            }
+          }
+        }
+      }
+
+      let sendUrl = {
+        showUrl: url,
+        password: password,
+        userName: userName,
+      };
+      // isRealShow 只在最顶层的window显示 不让接下来的iframe显示（修复样式bug）
+      // realSend 判断是否需要显示
+      if (autoStore == 1 && isRealShow && realSend) {
+        chrome.tabs.query({ active: true, currentWindow: true }, function (
+          tabs
+        ) {
+          chrome.tabs.sendMessage(tabs[0].id, sendUrl, function (response) {});
+        });
+      } else {
+        //如果不显示 把url清空
+        url = "";
+      }
+    };
+    setSHow();
   } else if (type === "cancelSave") {
     url = "";
     isRealShow = true;
@@ -383,6 +445,31 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     chrome.runtime.sendMessage(cmd, function (response) {});
   } else if (type === "noShow") {
     isRealShow = false;
+  } else if (type === "deleteOutLogin") {
+    localforage
+      .setItem("userInfo", [])
+      .then(function (value) {
+        // 当离线仓库中的值被载入时，此处代码运行
+      })
+      .catch(function (err) {
+        // 当出错时，此处代码运行
+      });
+    localforage
+      .setItem("folderList", [])
+      .then(function (value) {
+        // 当离线仓库中的值被载入时，此处代码运行
+      })
+      .catch(function (err) {
+        // 当出错时，此处代码运行
+      });
+    localforage
+      .setItem("skipList", [])
+      .then(function (value) {
+        // 当离线仓库中的值被载入时，此处代码运行
+      })
+      .catch(function (err) {
+        // 当出错时，此处代码运行
+      });
   } else if (requestType === "getNumbers") {
     let { areaCode, phone, type } = message.mes;
     const { NumberType } = message.mes;
@@ -831,10 +918,10 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       .catch((error) => {});
     return true;
   } else if (requestType === "getCodeUrl") {
-    let { expired, loginKey } = message.mes;
+    let { expired, key } = message.mes;
     let userInfo = {
       expired,
-      loginKey,
+      key,
     };
     data = JSON.stringify(userInfo);
     fetch("http://106.53.103.199:8088/plugin/api/login/scancode/generate", {
@@ -850,10 +937,10 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       .catch((error) => {});
     return true;
   } else if (requestType === "checkNumberTime") {
-    let { authToken, loginKey } = message.mes;
+    let { authToken, key } = message.mes;
     let userInfo = {
       authToken,
-      loginKey,
+      key,
     };
     data = JSON.stringify(userInfo);
     fetch("http://106.53.103.199:8088/plugin/api/login/scancode/status", {
@@ -908,6 +995,54 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     })
       .then((response) => response.text())
       .then((text) => sendResponse(text))
+      .catch((error) => {});
+    return true;
+  } else if (requestType === "addNewSkip") {
+    const token = handleLocalStorage("get", "token");
+    const pluginId = handleLocalStorage("get", "pluginID");
+    let { url } = message.mes;
+    let userInfo = {
+      pluginId,
+      website: url,
+    };
+    data = JSON.stringify(userInfo);
+    fetch("http://106.53.103.199:8088/plugin/api/v1/setting/skipping/add", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ClientType: "plugin",
+        Authorization: token,
+      },
+      body: data,
+    })
+      .then((response) => response.text())
+      .then((text) => {
+        addNewSkipList(text);
+      })
+      .catch((error) => {});
+    return true;
+  } else if (requestType === "removeWebsiteIem") {
+    const token = handleLocalStorage("get", "token");
+    // const pluginId = handleLocalStorage("get", "pluginID");
+    let { idList } = message.mes;
+    let userInfo = {
+      // pluginId,
+      idList,
+    };
+    data = JSON.stringify(userInfo);
+    fetch("http://106.53.103.199:8088/plugin/api/v1/setting/skipping/remove", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ClientType: "plugin",
+        Authorization: token,
+      },
+      body: data,
+    })
+      .then((response) => response.text())
+      .then((text) => {
+        sendResponse(text);
+      })
       .catch((error) => {});
     return true;
   }

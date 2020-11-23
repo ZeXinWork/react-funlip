@@ -141,11 +141,28 @@ class PasswordDetail extends Component {
     };
 
     //返回上一级子页面
+
     const goBack = () => {
-      if (isDeleteFolder) {
-        this.props.history.goBack();
+      let isDeleteFolder;
+      let preList;
+      if (this.props.location.state) {
+        isDeleteFolder = this.props.location.state.isDeleteFolder;
+        preList = this.props.location.state.preList;
       }
-      this.props.history.push("/home/psd");
+      if (isDeleteFolder) {
+        if (preList && preList.length > 0) {
+          this.props.history.push({
+            pathname: "/folderDetail",
+            state: { preList: preList },
+          });
+        } else {
+          this.props.history.push({
+            pathname: "/folderDetail",
+          });
+        }
+      } else {
+        this.props.history.push("/home/psd");
+      }
     };
 
     //显示\关闭用户设置的密码

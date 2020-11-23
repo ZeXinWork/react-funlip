@@ -2,7 +2,7 @@
 
 import React, { Component } from "react";
 import { handleLocalStorage } from "../../../../api";
-import axios from "axios";
+import localforage from "localforage";
 import meVip from "./icon_me_vip@2x.png";
 import userPhoto from "./img_me_photo@2x.png";
 import arrowRight from "./icon_arrowright@2x(1).png";
@@ -49,6 +49,11 @@ export default class componentName extends Component {
             handleLocalStorage("remove", "folderId");
             handleLocalStorage("remove", "folderName");
             handleLocalStorage("remove", "lockedDelay");
+            function sendMessageToContentScript(mes) {
+              mes.type = "deleteOutLogin";
+              chrome.runtime.sendMessage({ mes }, function (response) {});
+            }
+            sendMessageToContentScript({});
             const token = handleLocalStorage("get", "token");
             if (!token) {
               history.push("/login");

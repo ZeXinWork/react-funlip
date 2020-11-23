@@ -35,6 +35,8 @@ export default class componentName extends Component {
     let dataList;
     let folderId;
     let afterDelete;
+    let oldList;
+    let preList;
     const folderName = handleLocalStorage("get", "folderName");
     let loading = document.getElementById("funlip-loading");
     loading.style.display = "none";
@@ -46,13 +48,16 @@ export default class componentName extends Component {
         () => {}
       );
     }
-
+    console.log(this.props.location.state);
     if (this.props.location.state) {
       passwordList = this.props.location.state.passwordList;
       dataList = this.props.location.state.dataList;
       folderId = this.props.location.state.folderId;
       afterDelete = this.props.location.state.afterDelete;
+      oldList = this.props.location.state.oldList;
+      preList = this.props.location.state.preList;
     }
+
     // 点击空白处关闭弹窗
     // document.addEventListener("click", (e) => {
     //   if (e && e.stopPropagation) {
@@ -163,6 +168,14 @@ export default class componentName extends Component {
         });
       };
       getLocalState();
+    } else if (oldList && oldList.length > 0) {
+      this.setState({
+        list: oldList,
+      });
+    } else if (preList && preList.length > 0) {
+      this.setState({
+        list: preList,
+      });
     } else {
       this.setState({
         list: [],
@@ -180,7 +193,12 @@ export default class componentName extends Component {
     const toDetail = (itemDetail) => {
       this.props.history.push({
         pathname: "/PswDetail",
-        state: { itemDetail, isDeleteFolder: true, folderId },
+        state: {
+          itemDetail,
+          isDeleteFolder: true,
+          folderId,
+          preList: this.state.list,
+        },
       });
     };
 
@@ -236,7 +254,6 @@ export default class componentName extends Component {
 
     //显示操作面板
     const showEditHover = () => {
-      console.log(this.state.editShow);
       if (this.state.editShow == "none") {
         this.setState({
           editShow: "block",
@@ -667,6 +684,7 @@ export default class componentName extends Component {
                 deletePswShow: "none",
                 editPswShow: "none",
                 showCheckBox: false,
+                btnShow: "block",
               });
               localforage
                 .setItem("folderList", folderList)
@@ -1011,7 +1029,11 @@ export default class componentName extends Component {
               onClick={() => {
                 this.props.history.push({
                   pathname: "/newPsw",
-                  state: { isFolderDetail: true, folderId },
+                  state: {
+                    isFolderDetail: true,
+                    folderId,
+                    preList: this.state.list,
+                  },
                 });
               }}
             >
@@ -1024,7 +1046,10 @@ export default class componentName extends Component {
               onClick={() => {
                 this.props.history.push({
                   pathname: "/folderAdd",
-                  state: { folderName: this.state.folderName },
+                  state: {
+                    folderName: this.state.folderName,
+                    list: this.state.list,
+                  },
                 });
               }}
             >

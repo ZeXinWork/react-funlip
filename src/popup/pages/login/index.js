@@ -39,12 +39,12 @@ export default class componentName extends Component {
       const myString = randomString(10);
       this.setState(
         {
-          loginKey: myString,
+          key: myString,
         },
         () => {
           let userInfo = {
-            // expired: 30,
-            loginKey: myString,
+            expired: 300,
+            key: myString,
           };
 
           const sendMessageToContentBackgroundScript = (mes) => {
@@ -81,7 +81,7 @@ export default class componentName extends Component {
                           });
                           let userInfo = {
                             authToken: _this.state.authToken,
-                            loginKey: _this.state.loginKey,
+                            key: _this.state.key,
                           };
                           const sendMessageToContentBackgroundScript = (
                             mes
@@ -105,6 +105,7 @@ export default class componentName extends Component {
 
                               //取消登录
                               else if (loginStatus == "CANCEL_LOGIN") {
+                                console.log("取消登录");
                                 _this.setState(
                                   {
                                     clickTime: true,
@@ -117,11 +118,12 @@ export default class componentName extends Component {
                               }
                               //登陆成功
                               else if (loginStatus == "LOGGED_IN") {
+                                console.log("成功登录");
                                 _this.setState({
                                   clickTime: true,
                                 });
-                                const { loginToken, token, user } = response;
-                                const { plugin } = loginToken;
+                                const { loginToken, token } = response;
+                                const { plugin, user } = loginToken;
                                 const {
                                   autoFill,
                                   autoLogin,
@@ -132,10 +134,10 @@ export default class componentName extends Component {
                                   createdAt,
                                   updatedAt,
                                 } = plugin;
-                                let { firstTimeLogin, nickName } = user;
+                                let { firstTimeLogin, nickname } = user;
                                 handleLocalStorage("set", "pluginID", id);
                                 handleLocalStorage("set", "token", token);
-                                handleLocalStorage("set", "userName", nickName);
+                                handleLocalStorage("set", "userName", nickname);
                                 handleLocalStorage("set", "autoFill", autoFill);
                                 handleLocalStorage(
                                   "set",
@@ -205,8 +207,9 @@ export default class componentName extends Component {
       this.props.history.push("/autoLock");
     } else if (token) {
       this.props.history.push("/home");
+    } else {
+      this.codeLogin();
     }
-    this.codeLogin();
   }
 
   render() {
@@ -415,7 +418,7 @@ export default class componentName extends Component {
               {this.state.showCode ? (
                 <QRCode
                   id="qrCode"
-                  value={`https://funlip.xmwefun.com?scanningLoginKey=${this.state.loginKey}`}
+                  value={`https://funlip.xmwefun.com?scanningLoginKey=${this.state.key}`}
                   size={128} // 二维码的大小
                   fgColor="#4E5278" // 二维码的颜色
                   style={{ margin: "auto" }}

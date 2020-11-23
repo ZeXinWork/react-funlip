@@ -41,12 +41,15 @@ class PsdLibrary extends Component {
 
     let isFolderDetail;
     let folderName;
+    let oldList;
     if (this.props.location.state) {
       isFolderDetail = this.props.location.state.isFolderDetail;
       folderName = this.props.location.state.folderName;
+      oldList = this.props.location.state.list;
     }
 
     const _this = this;
+
     const setList = (data) => {
       //流程，根据首字母比较，然后排序 再把数组中的数据加载一个新数组里面 然后更新用户接口面
       //
@@ -61,9 +64,19 @@ class PsdLibrary extends Component {
       //   newArray.push(key);
       // });
       //
+      let value = data;
+      if (oldList && oldList.length > 0) {
+        for (let i = 0; i < value.length; i++) {
+          for (let j = 0; j < oldList.length; j++) {
+            if (oldList[j].id == value[i].id) {
+              value.splice(i, 1);
+            }
+          }
+        }
+      }
       this.setState(
         {
-          list: data,
+          list: value,
         },
         () => {
           let loading = document.getElementById("funlip-loading");
@@ -71,7 +84,9 @@ class PsdLibrary extends Component {
         }
       );
     };
+
     const pluginID = handleLocalStorage("get", "pluginID");
+
     const toDetail = (itemDetail) => {
       this.props.history.push({
         pathname: "/PswDetail",
@@ -89,7 +104,6 @@ class PsdLibrary extends Component {
       }
       if (request.type == "popupGetData") {
         const { data } = request;
-
         setList(data);
       }
     });
@@ -260,6 +274,7 @@ class PsdLibrary extends Component {
               onClick={() => {
                 this.props.history.push({
                   pathname: "/folderDetail",
+                  state: { oldList: oldList },
                 });
               }}
             />

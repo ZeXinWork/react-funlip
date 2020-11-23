@@ -116,7 +116,26 @@ class createNewPsw extends Component {
 
     //返回上一级子页面
     const goBack = () => {
-      this.props.history.goBack();
+      let isFolderDetail;
+      let preList;
+      if (this.props.location.state) {
+        isFolderDetail = this.props.location.state.isFolderDetail;
+        preList = this.props.location.state.preList;
+      }
+      if (isFolderDetail) {
+        if (preList && preList.length > 0) {
+          this.props.history.push({
+            pathname: "/folderDetail",
+            state: { preList: preList },
+          });
+        } else {
+          this.props.history.push({
+            pathname: "/folderDetail",
+          });
+        }
+      } else {
+        this.props.history.goBack();
+      }
     };
 
     //Form布局
@@ -143,6 +162,7 @@ class createNewPsw extends Component {
           account: username,
           pluginId: pluginID,
         };
+
         const sendMessageToContentBackgroundScript = (mes) => {
           const _this = this;
           mes.requestType = "saveNewPsw";
@@ -162,6 +182,7 @@ class createNewPsw extends Component {
                 chrome.runtime.sendMessage({ mes }, function (res) {
                   let responses = JSON.parse(res);
                   if (responses.code == 200) {
+                    console.log("不能把");
                     _this.props.history.push({
                       pathname: "/folderDetail",
                       state: { dataList: response },

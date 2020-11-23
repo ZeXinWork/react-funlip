@@ -1,9 +1,8 @@
 /*global chrome*/
 
 import React, { useState, useEffect } from "react";
-import { handleLocalStorage, getCaptcha } from "../api";
+
 import ReactDOM from "react-dom";
-// import { Form, Input, Button } from "antd";
 import Button from "antd/es/button";
 import "antd/es/button/style/index.css";
 import logo from "./images/icon_WePass_logo备份@2x.png";
@@ -27,20 +26,6 @@ function Content() {
   const layout = {
     labelCol: { span: 24 },
     wrapperCol: { span: 16 },
-  };
-  //表单失败后的回调
-  const onFinishFailed = (errorInfo) => {};
-
-  //表单验证通过后的回调
-  const onFinish = (values) => {
-    let { title, password, tip, url, username } = values;
-    let passwordItem = {
-      title,
-      password,
-      tip,
-      url,
-      username,
-    };
   };
 
   // 获取当前主域名;
@@ -434,7 +419,20 @@ function Content() {
               <div className="button-layout">
                 <div className="main ml-20">
                   <div className="btn-1 ">
-                    <span className="password-text reset-psw">跳过此网站</span>
+                    <span
+                      className="password-text reset-psw"
+                      onClick={() => {
+                        function sendMessageToBackgroundScript2(mes) {
+                          mes.requestType = "addNewSkip";
+                          mes.url = url;
+                          chrome.runtime.sendMessage({ mes });
+                        }
+                        sendMessageToBackgroundScript2({});
+                        setShow("none");
+                      }}
+                    >
+                      跳过此网站
+                    </span>
                   </div>
                 </div>
                 <div className="btn-layout mr-20 set-bg" onClick={saveNewPwd}>
@@ -468,16 +466,6 @@ let data;
 if (url.indexOf("chrome-extension:") != -1) {
   flag = false;
 }
-
-// alert(window.location.href);
-
-// let input = document.getElementsByTagName("input");
-// alert(input);
-// let i = document.getElementById("u");
-// alert(i);
-// i.value = "123";
-// let inputTest = document.getElementsByTagName("input");
-//
 
 // 自动填充，每次打开页面之后都要发送信息给background，这样才能自动填充（因为要在bg里获取用户data）
 function sendMessageToBackgroundScript2(mes) {

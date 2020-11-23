@@ -2,12 +2,118 @@
   width: 360px;
   box-sizing: border-box;
   height: 580px;
+  .password-modal3 {
+    display: none;
+    position: absolute;
+    top: 220px;
+    left: 45px;
+    background: #ffffff;
+    border: 1px solid #ebf1fb;
+    width: 270px;
+    .password-btn-group {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      .main {
+        width: 108px;
+        height: 36px;
+        box-sizing: border-box;
+        padding: 2px;
+        border-radius: 18px;
+        background-image: -webkit-linear-gradient(
+          90deg,
+          rgba(24, 191, 246, 1),
+          rgba(24, 117, 246, 1)
+        );
+      }
+      .btn-1 {
+        width: 100%;
+        height: 100%;
+        border-radius: 18px;
+        background: #fff;
+        text-align: center;
+        line-height: 30px;
+        cursor: pointer;
+      }
+      .set-bg {
+        width: 108px;
+        height: 36px;
+        background: linear-gradient(245deg, #4ca0fe 0%, #8455ff 100%);
+        border-radius: 18px;
+        cursor: pointer;
+      }
+      .btn-layout {
+        width: 108px;
+        height: 36px;
+        text-align: center;
+        line-height: 36px;
+      }
+      .ml-20 {
+        margin-left: 20px;
+        margin-right: 14px;
+      }
+      .mr-20 {
+        margin-right: 20px;
+      }
+    }
+    z-index: 1000;
+    .password-title-icon {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 16px;
+      margin-right: 16px;
+      cursor: pointer;
+
+      .lock-icon {
+        width: 32px;
+        height: 32px;
+        margin-right: 100px;
+      }
+    }
+    .password-title {
+      margin-top: 15px;
+      margin-left: 70px;
+      text-align: center;
+      line-height: 18px;
+      width: 140px;
+      height: 20px;
+      font-size: 14px;
+      font-family: PingFangSC-Semibold, PingFang SC;
+      font-weight: 600;
+      color: #3a3f6d;
+      line-height: 20px;
+      .password-title-info {
+        color: #1e1e1e;
+        font-size: 18px;
+      }
+    }
+    .password-body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      margin-top: 30px;
+
+      .password-body-num {
+        width: 230px;
+        height: 36px;
+        text-align: center;
+        line-height: 18px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+  }
   .passSaveWebsite-logo {
     width: 24px;
     height: 24px;
     margin-bottom: 16px;
     margin-top: 24px;
     margin-left: 24px;
+    cursor: pointer;
   }
   .passSaveWebsite-item-wrapper {
     width: 312px;
