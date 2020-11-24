@@ -304,7 +304,7 @@ class PsdLibrary extends Component {
                 className="psw-info"
                 key={item.title}
                 onClick={() => {
-                  toDetail(item);
+                  // toDetail(item);
                 }}
                 onMouseOver={() => {
                   showHover(index);

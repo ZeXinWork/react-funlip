@@ -465,6 +465,13 @@
   width: 270px;
   z-index: 1000;
 }
+.psw-wrappers .password-modal8 .folderName-explain {
+  font-size: 12px;
+  font-family: PingFang-SC-Medium, PingFang-SC;
+  font-weight: 500;
+  color: #5770ec;
+  line-height: 17px;
+}
 .psw-wrappers .password-modal8 .password-body-Input {
   width: 224px;
   height: 36px;
@@ -741,7 +748,7 @@
 .psw-wrappers .editPsw-wrapper {
   width: 360px;
   height: 64px;
-  background: linear-gradient(222deg, #4ca0fe 0%, #8455ff 100%);
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   position: fixed;
@@ -756,7 +763,6 @@
   width: 24px;
   height: 24px;
   margin-top: 15px;
-  cursor: pointer;
 }
 .psw-wrappers .editPsw-wrapper .remove-wrapper .remove-wrapper-text {
   font-size: 11px;
@@ -764,7 +770,6 @@
   font-weight: 500;
   color: #ffffff;
   line-height: 16px;
-  cursor: pointer;
 }
 .psw-wrappers .editPsw-wrapper .delete-wrapper {
   width: 103px;
@@ -774,10 +779,55 @@
 .psw-wrappers .editPsw-wrapper .delete-wrapper .delete-wrapper-icon {
   width: 24px;
   height: 24px;
-  cursor: pointer;
   margin-top: 15px;
 }
 .psw-wrappers .editPsw-wrapper .delete-wrapper .delete-wrapper-text {
+  font-size: 11px;
+  font-family: PingFang-SC-Medium, PingFang-SC;
+  font-weight: 500;
+  color: #ffffff;
+  line-height: 16px;
+}
+.psw-wrappers .editPsws-wrapper {
+  width: 360px;
+  height: 64px;
+  background: linear-gradient(222deg, #4ca0fe 0%, #8455ff 100%);
+  display: flex;
+  justify-content: center;
+  position: fixed;
+  bottom: 0;
+}
+.psw-wrappers .editPsws-wrapper .remove-wrapper {
+  width: 103px;
+  height: 64px;
+  margin-left: 60px;
+}
+.psw-wrappers .editPsws-wrapper .remove-wrapper .remove-wrapper-icon {
+  width: 24px;
+  height: 24px;
+  margin-top: 15px;
+  cursor: pointer;
+}
+.psw-wrappers .editPsws-wrapper .remove-wrapper .remove-wrapper-text {
+  font-size: 11px;
+  font-family: PingFang-SC-Medium, PingFang-SC;
+  font-weight: 500;
+  color: #ffffff;
+  line-height: 16px;
+  cursor: pointer;
+}
+.psw-wrappers .editPsws-wrapper .delete-wrapper {
+  width: 103px;
+  height: 64px;
+  margin-left: 20px;
+}
+.psw-wrappers .editPsws-wrapper .delete-wrapper .delete-wrapper-icon {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  margin-top: 15px;
+}
+.psw-wrappers .editPsws-wrapper .delete-wrapper .delete-wrapper-text {
   font-size: 11px;
   font-family: PingFang-SC-Medium, PingFang-SC;
   font-weight: 500;

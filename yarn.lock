@@ -1670,7 +1670,7 @@
   dependencies:
     "@types/istanbul-lib-report" "*"
 
-"@types/json-schema@^7.0.3", "@types/json-schema@^7.0.5":
+"@types/json-schema@^7.0.3", "@types/json-schema@^7.0.5", "@types/json-schema@^7.0.6":
   version "7.0.6"
   resolved "https://registry.npm.taobao.org/@types/json-schema/download/@types/json-schema-7.0.6.tgz?cache=0&sync_timestamp=1598910652146&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40types%2Fjson-schema%2Fdownload%2F%40types%2Fjson-schema-7.0.6.tgz#f4c7ec43e81b319a9815115031709f26987891f0"
   integrity sha1-9MfsQ+gbMZqYFRFQMXCfJph4kfA=
@@ -2048,7 +2048,7 @@ ajv-keywords@^3.1.0, ajv-keywords@^3.4.1, ajv-keywords@^3.5.2:
   resolved "https://registry.npm.taobao.org/ajv-keywords/download/ajv-keywords-3.5.2.tgz?cache=0&sync_timestamp=1595907059959&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fajv-keywords%2Fdownload%2Fajv-keywords-3.5.2.tgz#31f29da5ab6e00d1c2d329acf7b5929614d5014d"
   integrity sha1-MfKdpatuANHC0yms97WSlhTVAU0=
 
-ajv@^6.1.0, ajv@^6.10.0, ajv@^6.10.2, ajv@^6.12.3, ajv@^6.12.4:
+ajv@^6.1.0, ajv@^6.10.0, ajv@^6.10.2, ajv@^6.12.3, ajv@^6.12.4, ajv@^6.12.5:
   version "6.12.6"
   resolved "https://registry.npm.taobao.org/ajv/download/ajv-6.12.6.tgz?cache=0&sync_timestamp=1602353926859&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fajv%2Fdownload%2Fajv-6.12.6.tgz#baf5a62e802b07d977034586f8c3baf5adf26df4"
   integrity sha1-uvWmLoArB9l3A0WG+MO69a3ybfQ=
@@ -6710,6 +6710,11 @@ jsprim@^1.2.2:
     json-schema "0.2.3"
     verror "1.10.0"
 
+jsrsasign@^10.1.4:
+  version "10.1.4"
+  resolved "https://registry.npm.taobao.org/jsrsasign/download/jsrsasign-10.1.4.tgz#8fca72f4bce9b0cb24fe3390df60a5b4a059b446"
+  integrity sha1-j8py9LzpsMsk/jOQ32CltKBZtEY=
+
 jsx-ast-utils@^2.2.1, jsx-ast-utils@^2.2.3:
   version "2.4.1"
   resolved "https://registry.npm.taobao.org/jsx-ast-utils/download/jsx-ast-utils-2.4.1.tgz?cache=0&sync_timestamp=1602640038121&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fjsx-ast-utils%2Fdownload%2Fjsx-ast-utils-2.4.1.tgz#1114a4c1209481db06c690c2b4f488cc665f657e"
@@ -6871,6 +6876,15 @@ loader-utils@^1.0.2, loader-utils@^1.1.0, loader-utils@^1.2.3, loader-utils@^1.4
     big.js "^5.2.2"
     emojis-list "^3.0.0"
     json5 "^1.0.1"
+
+loader-utils@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.npm.taobao.org/loader-utils/download/loader-utils-2.0.0.tgz#e4cace5b816d425a166b5f097e10cd12b36064b0"
+  integrity sha1-5MrOW4FtQloWa18JfhDNErNgZLA=
+  dependencies:
+    big.js "^5.2.2"
+    emojis-list "^3.0.0"
+    json5 "^2.1.2"
 
 localforage@^1.9.0:
   version "1.9.0"
@@ -9058,6 +9072,14 @@ raw-body@2.4.0:
     iconv-lite "0.4.24"
     unpipe "1.0.0"
 
+raw-loader@^4.0.2:
+  version "4.0.2"
+  resolved "https://registry.npm.taobao.org/raw-loader/download/raw-loader-4.0.2.tgz?cache=0&sync_timestamp=1602255313867&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fraw-loader%2Fdownload%2Fraw-loader-4.0.2.tgz#1aac6b7d1ad1501e66efdac1522c73e59a584eb6"
+  integrity sha1-GqxrfRrRUB5m79rBUixz5ZpYTrY=
+  dependencies:
+    loader-utils "^2.0.0"
+    schema-utils "^3.0.0"
+
 rc-align@^4.0.0:
   version "4.0.8"
   resolved "https://registry.npm.taobao.org/rc-align/download/rc-align-4.0.8.tgz?cache=0&sync_timestamp=1600919784585&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Frc-align%2Fdownload%2Frc-align-4.0.8.tgz#276c3f5dfadf0de4bb95392cb81568c9e947a668"
@@ -9630,13 +9652,6 @@ readdirp@~3.5.0:
   dependencies:
     picomatch "^2.2.1"
 
-real-ip@^1.0.3:
-  version "1.0.3"
-  resolved "https://registry.npm.taobao.org/real-ip/download/real-ip-1.0.3.tgz#74d5da62b4730b0df978b98d2b9d89ff4c98c760"
-  integrity sha1-dNXaYrRzCw35eLmNK52J/0yYx2A=
-  dependencies:
-    transform-runtime "^0.0.0"
-
 realpath-native@^1.1.0:
   version "1.1.0"
   resolved "https://registry.npm.taobao.org/realpath-native/download/realpath-native-1.1.0.tgz#2003294fea23fb0672f2476ebe22fcf498a2d65c"
@@ -10087,6 +10102,15 @@ schema-utils@^2.5.0, schema-utils@^2.6.0, schema-utils@^2.6.1, schema-utils@^2.6
   dependencies:
     "@types/json-schema" "^7.0.5"
     ajv "^6.12.4"
+    ajv-keywords "^3.5.2"
+
+schema-utils@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.npm.taobao.org/schema-utils/download/schema-utils-3.0.0.tgz#67502f6aa2b66a2d4032b4279a2944978a0913ef"
+  integrity sha1-Z1AvaqK2ai1AMrQnmilEl4oJE+8=
+  dependencies:
+    "@types/json-schema" "^7.0.6"
+    ajv "^6.12.5"
     ajv-keywords "^3.5.2"
 
 scroll-into-view-if-needed@^2.2.25:
@@ -11044,11 +11068,6 @@ tr46@^1.0.1:
   integrity sha1-qLE/1r/SSJUZZ0zN5VujaTtwbQk=
   dependencies:
     punycode "^2.1.0"
-
-transform-runtime@^0.0.0:
-  version "0.0.0"
-  resolved "https://registry.npm.taobao.org/transform-runtime/download/transform-runtime-0.0.0.tgz#e714d9b69211dd9537939d50e3aa5788c442b85c"
-  integrity sha1-5xTZtpIR3ZU3k51Q46pXiMRCuFw=
 
 ts-pnp@1.1.6:
   version "1.1.6"

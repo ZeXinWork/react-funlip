@@ -29,7 +29,10 @@ export default class componentName extends Component {
     deletePswShow: "none",
     renameShow: "none",
     noPasswordShow: "none",
+    folderExplain: "hidden",
     mustCheck: false,
+    canClick: false,
+    isChecked: false,
   };
   componentDidMount() {
     let passwordList;
@@ -49,7 +52,7 @@ export default class componentName extends Component {
         () => {}
       );
     }
-    console.log(this.props.location.state);
+
     if (this.props.location.state) {
       passwordList = this.props.location.state.passwordList;
       dataList = this.props.location.state.dataList;
@@ -390,52 +393,57 @@ export default class componentName extends Component {
       let renameInput = document.getElementsByClassName(
         "password-body-Input"
       )[0].value;
-
-      let userInfo = {
-        folderId,
-        name: renameInput,
-      };
-      function sendMessageToContentScript(mes) {
-        mes.requestType = "renameFolder";
-        chrome.runtime.sendMessage({ mes }, function (response) {
-          let res = JSON.parse(response);
-          if (res.code == 200) {
-            const getLocalSate = async () => {
-              const getLocalState = async () => {
-                const res = localforage
-                  .getItem("folderList")
-                  .then(function (value) {
-                    return value;
-                  })
-                  .catch(function (err) {
-                    let error = false;
-                    return error;
-                  });
-                return res;
-              };
-              const folderList = await getLocalState();
-              for (let i = 0; i < folderList.length; i++) {
-                if (folderList[i].id == folderId) {
-                  folderList[i].name = res.data.name;
-                }
-              }
-
-              localforage
-                .setItem("folderList", folderList)
-                .then(function (value) {
-                  _this.setState({
-                    renameShow: "none",
-                    folderName: res.data.name,
-                    editShow: "none",
-                  });
-                })
-                .catch(function (err) {});
-            };
-            getLocalSate();
-          }
+      if (renameInput.length == 0) {
+        this.setState({
+          folderExplain: "visible",
         });
+      } else {
+        let userInfo = {
+          folderId,
+          name: renameInput,
+        };
+        function sendMessageToContentScript(mes) {
+          mes.requestType = "renameFolder";
+          chrome.runtime.sendMessage({ mes }, function (response) {
+            let res = JSON.parse(response);
+            if (res.code == 200) {
+              const getLocalSate = async () => {
+                const getLocalState = async () => {
+                  const res = localforage
+                    .getItem("folderList")
+                    .then(function (value) {
+                      return value;
+                    })
+                    .catch(function (err) {
+                      let error = false;
+                      return error;
+                    });
+                  return res;
+                };
+                const folderList = await getLocalState();
+                for (let i = 0; i < folderList.length; i++) {
+                  if (folderList[i].id == folderId) {
+                    folderList[i].name = res.data.name;
+                  }
+                }
+
+                localforage
+                  .setItem("folderList", folderList)
+                  .then(function (value) {
+                    _this.setState({
+                      renameShow: "none",
+                      folderName: res.data.name,
+                      editShow: "none",
+                    });
+                  })
+                  .catch(function (err) {});
+              };
+              getLocalSate();
+            }
+          });
+        }
+        sendMessageToContentScript(userInfo);
       }
-      sendMessageToContentScript(userInfo);
     };
 
     //删除文件夹并删除下面所有密码
@@ -547,6 +555,7 @@ export default class componentName extends Component {
           myChecked.push(i);
         }
       }
+
       let list = this.state.list;
       for (let i = 0; i < list.length; i++) {
         for (let j = 0; j < myChecked.length; j++) {
@@ -739,6 +748,26 @@ export default class componentName extends Component {
       });
     };
 
+    const setCanClick = () => {
+      let myChecked = [];
+
+      let MyCheckBoxs = document.getElementsByClassName("folderCheckbox");
+      for (let i = 0; i < MyCheckBoxs.length; i++) {
+        if (MyCheckBoxs[i].checked) {
+          myChecked.push(i);
+        }
+      }
+      console.log(myChecked);
+      if (myChecked.length > 0) {
+        this.setState({
+          canClick: true,
+        });
+      } else {
+        this.setState({
+          canClick: false,
+        });
+      }
+    };
     return (
       <div className="psw-wrappers">
         <div
@@ -764,6 +793,9 @@ export default class componentName extends Component {
               className="password-body-Input"
               bordered={false}
             />
+            <div style={{ visibility: this.state.folderExplain }}>
+              <span className="folderName-explain">文件夹名称不能为空！</span>
+            </div>
             <div className="password-btn-group">
               <div className="main ml-20">
                 <div className="btn-1 " onClick={closeModal8}>
@@ -980,7 +1012,17 @@ export default class componentName extends Component {
                     <div className="psw-icon">
                       <Checkbox
                         className="folderCheckbox"
+                        // checked={this.state.isChecked}
                         onClick={(e) => {
+                          // if (this.state.isChecked) {
+                          //   this.setState({
+                          //     isChecked: false,
+                          //   });
+                          // } else {
+                          //   this.setState({
+                          //     isChecked: treu,
+                          //   });
+                          // }
                           if (e && e.stopPropagation) {
                             e.stopPropagation();
                           } else {
@@ -993,6 +1035,7 @@ export default class componentName extends Component {
                           MyCheckBox.checked
                             ? (MyCheckBox.checked = false)
                             : (MyCheckBox.checked = true);
+                          setCanClick();
                         }}
                       />
                     </div>
@@ -1087,14 +1130,29 @@ export default class componentName extends Component {
           </div>
         </div>
         {this.state.editPswShow == "block" ? (
-          <div className="editPsw-wrapper">
+          <div
+            className={
+              this.state.canClick ? "editPsws-wrapper" : "editPsw-wrapper"
+            }
+          >
             <div className="remove-wrapper">
               <img
                 src={remove}
                 className="remove-wrapper-icon"
-                onClick={removePsw}
+                onClick={() => {
+                  if (this.state.canClick) {
+                    removePsw();
+                  }
+                }}
               />
-              <p className="remove-wrapper-text" onClick={removePsw}>
+              <p
+                className="remove-wrapper-text"
+                onClick={() => {
+                  if (this.state.canClick) {
+                    removePsw();
+                  }
+                }}
+              >
                 移出
               </p>
             </div>
@@ -1102,9 +1160,20 @@ export default class componentName extends Component {
               <img
                 src={deleteIcon}
                 className="delete-wrapper-icon "
-                onClick={deletePsw}
+                onClick={() => {
+                  if (this.state.canClick) {
+                    deletePsw();
+                  }
+                }}
               />
-              <p className="delete-wrapper-text" onClick={deletePsw}>
+              <p
+                className="delete-wrapper-text"
+                onClick={() => {
+                  if (this.state.canClick) {
+                    deletePsw();
+                  }
+                }}
+              >
                 删除
               </p>
             </div>
