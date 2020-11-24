@@ -210,7 +210,7 @@ export default class MyAbout extends Component {
         phone: tele,
         captcha: number,
         phone_area_code: "+86",
-        device_name: "test",
+        device_name: "Chrome-插件端",
       };
 
       if (resetMainPsw) {

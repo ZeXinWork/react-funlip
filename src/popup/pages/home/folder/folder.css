@@ -142,6 +142,10 @@
   box-shadow: inset 0 0 3px #ccc;
   box-sizing: border-box;
 }
+.folder-wrapper .folderModal-wrapper .modal-explain {
+  margin: 10px 0px 5px 20px;
+  color: red;
+}
 .folder-wrapper .folderModal-wrapper .modal-icon {
   width: 32px;
   height: 32px;

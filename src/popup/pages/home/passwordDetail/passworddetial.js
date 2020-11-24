@@ -22,6 +22,7 @@ class PasswordDetail extends Component {
     title: "",
     website: "",
     ToolTip: 10,
+    mustShowUp: true,
   };
 
   //生成随机密码
@@ -54,9 +55,15 @@ class PasswordDetail extends Component {
     //设置对应配置信息
     const length = value;
     // const hasLower = lowercaseEl.checked;
-    const hasUpper = uppercaseEl.checked;
+    let hasUpper = uppercaseEl.checked;
     const hasNumber = numbersEl.checked;
     const hasSymbol = symbolsEl.checked;
+    if (!hasUpper && !hasNumber && !hasSymbol) {
+      hasUpper = true;
+      this.setState({
+        mustShowUp: true,
+      });
+    }
     const res = generatePassword(
       // hasLower,
       hasUpper,
@@ -121,6 +128,7 @@ class PasswordDetail extends Component {
     const pluginID = handleLocalStorage("get", "pluginID");
     const token = handleLocalStorage("get", "token");
     let { id } = this.props.location.state.itemDetail;
+    // const { searchInputValue } = this.props.location.state;
     let { isDeleteFolder } = this.props.location.state;
 
     const _this = this;
@@ -160,7 +168,14 @@ class PasswordDetail extends Component {
             pathname: "/folderDetail",
           });
         }
-      } else {
+      }
+      // else if (searchInputValue) {
+      //   this.props.history.push({
+      //     pathname: "/home/psd",
+      //     state: { searchInputValue },
+      //   });
+      // }
+      else {
         this.props.history.push("/home/psd");
       }
     };
@@ -421,8 +436,18 @@ class PasswordDetail extends Component {
                 <Checkbox
                   className="c-ml set-b"
                   id="uppercase"
+                  checked={this.state.mustShowUp}
                   defaultChecked={this.state.check}
                   onChange={() => {
+                    if (this.state.mustShowUp) {
+                      this.setState({
+                        mustShowUp: false,
+                      });
+                    } else {
+                      this.setState({
+                        mustShowUp: true,
+                      });
+                    }
                     setValue(this.state.value);
                   }}
                 />
@@ -451,11 +476,9 @@ class PasswordDetail extends Component {
               </div>
             </div>
             <div className="password-btn-group">
-              <div className="main ml-20">
+              <div className="main ml-20" onClick={closeModal}>
                 <div className="btn-1 ">
-                  <span className="password-text" onClick={closeModal}>
-                    取消
-                  </span>
+                  <span className="password-text">取消</span>
                 </div>
               </div>
               <div className="btn-layout mr-20 set-bg " onClick={closeSetModal}>

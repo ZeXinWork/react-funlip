@@ -11,6 +11,7 @@ export default class createPSW extends Component {
     hasNumber: true,
     hasSymbol: true,
     ToolTip: 10,
+    mustShowLow: true,
   };
   //创建密码
   createPassword = (value) => {
@@ -100,22 +101,115 @@ export default class createPSW extends Component {
       const { value, options } = option;
 
       if (options === "uppercase") {
-        this.setState({
-          hasUpper: !this.state.hasUpper,
-        });
+        this.setState(
+          {
+            hasUpper: !this.state.hasUpper,
+          },
+          () => {
+            if (
+              !this.state.hasUpper &&
+              !this.state.hasSymbol &&
+              !this.state.hasNumber &&
+              !this.state.hasLower
+            ) {
+              this.setState(
+                {
+                  hasLower: true,
+                  mustShowLow: true,
+                },
+                () => {
+                  let res = this.createPassword(this.state.value);
+                  this.setState(() => ({
+                    password: res,
+                  }));
+                }
+              );
+            }
+          }
+        );
       } else if (options === "symbols") {
-        this.setState({
-          hasSymbol: !this.state.hasSymbol,
-        });
+        this.setState(
+          {
+            hasSymbol: !this.state.hasSymbol,
+          },
+          () => {
+            if (
+              !this.state.hasUpper &&
+              !this.state.hasSymbol &&
+              !this.state.hasNumber &&
+              !this.state.hasLower
+            ) {
+              this.setState(
+                {
+                  hasLower: true,
+                  mustShowLow: true,
+                },
+                () => {
+                  let res = this.createPassword(this.state.value);
+                  this.setState(() => ({
+                    password: res,
+                  }));
+                }
+              );
+            }
+          }
+        );
       } else if (options === "numbers") {
-        this.setState({
-          hasNumber: !this.state.hasNumber,
-        });
+        this.setState(
+          {
+            hasNumber: !this.state.hasNumber,
+          },
+          () => {
+            if (
+              !this.state.hasUpper &&
+              !this.state.hasSymbol &&
+              !this.state.hasNumber &&
+              !this.state.hasLower
+            ) {
+              this.setState(
+                {
+                  hasLower: true,
+                  mustShowLow: true,
+                },
+                () => {
+                  let res = this.createPassword(this.state.value);
+                  this.setState(() => ({
+                    password: res,
+                  }));
+                }
+              );
+            }
+          }
+        );
       } else if (options === "lowercase") {
-        this.setState({
-          hasLower: !this.state.hasLower,
-        });
+        this.setState(
+          {
+            hasLower: !this.state.hasLower,
+          },
+          () => {
+            if (
+              !this.state.hasUpper &&
+              !this.state.hasSymbol &&
+              !this.state.hasNumber &&
+              !this.state.hasLower
+            ) {
+              this.setState(
+                {
+                  hasLower: true,
+                  mustShowLow: true,
+                },
+                () => {
+                  let res = this.createPassword(this.state.value);
+                  this.setState(() => ({
+                    password: res,
+                  }));
+                }
+              );
+            }
+          }
+        );
       }
+
       this.setState(
         {
           value,
@@ -199,7 +293,17 @@ export default class createPSW extends Component {
               <Switch
                 defaultChecked={this.state.check}
                 id="lowercase"
+                checked={this.state.mustShowLow}
                 onChange={() => {
+                  if (this.state.mustShowLow) {
+                    this.setState({
+                      mustShowLow: false,
+                    });
+                  } else {
+                    this.setState({
+                      mustShowLow: true,
+                    });
+                  }
                   setValue({
                     value: this.state.value,
                     options: "lowercase",

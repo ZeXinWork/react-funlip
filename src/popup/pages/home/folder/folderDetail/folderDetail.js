@@ -29,6 +29,7 @@ export default class componentName extends Component {
     deletePswShow: "none",
     renameShow: "none",
     noPasswordShow: "none",
+    mustCheck: false,
   };
   componentDidMount() {
     let passwordList;
@@ -488,16 +489,42 @@ export default class componentName extends Component {
     };
     //打开移出密码modal
     const removePsw = () => {
-      this.setState({
-        removeShow: "block",
-      });
+      let MyCheckBox = document.getElementsByClassName("folderCheckbox");
+      let myChecked = [];
+      let targetArray = [];
+      let targetIdArray = [];
+      for (let i = 0; i < MyCheckBox.length; i++) {
+        if (MyCheckBox[i].checked) {
+          myChecked.push(i);
+        }
+      }
+      if (myChecked.length > 0) {
+        this.setState({
+          removeShow: "block",
+        });
+      } else {
+        alert("请选择要移出的密码");
+      }
     };
 
     //删除密码modal
     const deletePsw = () => {
-      this.setState({
-        deletePswShow: "block",
-      });
+      let MyCheckBox = document.getElementsByClassName("folderCheckbox");
+      let myChecked = [];
+      let targetArray = [];
+      let targetIdArray = [];
+      for (let i = 0; i < MyCheckBox.length; i++) {
+        if (MyCheckBox[i].checked) {
+          myChecked.push(i);
+        }
+      }
+      if (myChecked.length > 0) {
+        this.setState({
+          deletePswShow: "block",
+        });
+      } else {
+        alert("请选择要删除的密码");
+      }
     };
 
     //取消密码移出
@@ -933,6 +960,7 @@ export default class componentName extends Component {
                 onClick={() => {
                   if (!this.state.showCheckBox) {
                     toDetail(item);
+                  } else {
                   }
                 }}
                 onMouseOver={() => {
@@ -958,6 +986,7 @@ export default class componentName extends Component {
                           } else {
                             window.event.cancelBubble = true;
                           }
+
                           let MyCheckBox = document.getElementsByClassName(
                             "folderCheckbox"
                           )[index];
@@ -1063,11 +1092,7 @@ export default class componentName extends Component {
               <img
                 src={remove}
                 className="remove-wrapper-icon"
-                onClick={() => {
-                  this.setState({
-                    removeShow: "block",
-                  });
-                }}
+                onClick={removePsw}
               />
               <p className="remove-wrapper-text" onClick={removePsw}>
                 移出

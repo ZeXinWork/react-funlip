@@ -1,7 +1,6 @@
 /* global chrome */
 import React, { Component } from "react";
 import localforage from "localforage";
-import axios from "axios";
 import { Input, Checkbox } from "antd";
 import { handleLocalStorage, searchPassword } from "../../../../api";
 import Search from "./Search.png";
@@ -42,11 +41,26 @@ class PsdLibrary extends Component {
     sendMessageToContentBackgroundScript({});
   }
 
+  // componentDidMount() {
+  //   let searchInputValue;
+  //   if (this.props.location.state) {
+  //     searchInputValue = this.props.location.state.searchInputValue;
+  //   }
+
+  //   if (searchInputValue) {
+  //     let searchInput = document.getElementsByClassName("ant-input")[0];
+  //     console.log(searchInput);
+  //     console.log(searchInputValue);
+  //     searchInput.value = searchInputValue;
+  //   }
+  // }
+
   render() {
     //跳转至密码详情页，并传参
 
     let isFolderDetail;
     let folderName;
+
     if (this.props.location.state) {
       isFolderDetail = this.props.location.state.isFolderDetail;
       folderName = this.props.location.state.folderName;
@@ -77,10 +91,10 @@ class PsdLibrary extends Component {
       }
     };
     const pluginID = handleLocalStorage("get", "pluginID");
-    const toDetail = (itemDetail) => {
+    const toDetail = (itemDetail, searchInputValue) => {
       this.props.history.push({
         pathname: "/PswDetail",
-        state: { itemDetail },
+        state: { itemDetail, searchInputValue },
       });
     };
 
@@ -238,7 +252,19 @@ class PsdLibrary extends Component {
                     className="psw-info"
                     key={item.title}
                     onClick={() => {
+                      // let searchInput = document.getElementsByClassName(
+                      //   "ant-input"
+                      // )[0];
+                      // let searchInputValue;
+                      // if (searchInput) {
+                      //   searchInputValue = searchInput.value;
+                      // }
+
+                      // if (searchInputValue) {
+                      //   toDetail(item, searchInputValue);
+                      // } else {
                       toDetail(item);
+                      // }
                     }}
                     onMouseOver={() => {
                       showHover(index);

@@ -364,7 +364,13 @@ function Content() {
                 />
 
                 <div className="autoMids">
-                  <div className="button-layouts">
+                  <div
+                    className="button-layouts"
+                    onClick={() => {
+                      setShow("none");
+                      sendMessageToBackgroundScript4({});
+                    }}
+                  >
                     <div className="mains ">
                       <div className="btn-1s ">
                         <span className="password-form-cancel">取消</span>
@@ -478,10 +484,12 @@ if (flag) {
 
 //跳转新的url
 const goUrl = (url) => {
-  if (url.indexOf("https://") != -1) {
-    window.open(url, "_blank");
-  } else {
-    window.open(`https://${url}`, "_blank");
+  if (window.self === window.top) {
+    if (url.indexOf("https://") != -1) {
+      window.open(url, "_blank");
+    } else {
+      window.open(`https://${url}`, "_blank");
+    }
   }
 };
 

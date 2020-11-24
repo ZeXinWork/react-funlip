@@ -18,6 +18,8 @@ export default class Folder extends Component {
     list: [],
     showRobot: false,
     showCreate: "none",
+    onlyOne: true,
+    showExplain: "none",
   };
   showModal = () => {
     this.setState({
@@ -134,72 +136,92 @@ export default class Folder extends Component {
       });
     };
     const confirmModal = () => {
-      let folderName = document.getElementsByClassName("modal-input")[0].value;
-      const pluginId = handleLocalStorage("get", "pluginID");
-      let userInfo = {
-        pluginId,
-        name: folderName,
-      };
-      const sendMessageToContentBackgroundScript = (mes) => {
-        mes.requestType = "addNewFolder";
-        const _this = this;
-        chrome.runtime.sendMessage({ mes }, function (response) {
-          let res = JSON.parse(response);
+      if (this.state.onlyOne) {
+        this.setState({
+          onlyOne: false,
+        });
+        let folderName = document.getElementsByClassName("modal-input")[0]
+          .value;
+        if (folderName.length == 0) {
+          this.setState({
+            showExplain: "block",
+            onlyOne: true,
+          });
+        } else {
+          const pluginId = handleLocalStorage("get", "pluginID");
+          let userInfo = {
+            pluginId,
+            name: folderName,
+          };
+          const sendMessageToContentBackgroundScript = (mes) => {
+            mes.requestType = "addNewFolder";
+            const _this = this;
+            chrome.runtime.sendMessage({ mes }, function (response) {
+              let res = JSON.parse(response);
 
-          if (res.id && res.name) {
-            let newArray = [];
-            newArray.push(res);
-            newArray[0].fileNum = 0;
-            newArray[0].passwords = [];
-            const getLocalstates = async () => {
-              const getLocalState = async () => {
-                const res = localforage
-                  .getItem("folderList")
-                  .then(function (value) {
-                    return value;
-                  })
-                  .catch(function (err) {
-                    let error = false;
-                    return error;
-                  });
-                return res;
-              };
-              const folderList = await getLocalState();
-              console.log(newArray[0]);
-              folderList.push(newArray[0]);
-              localforage
-                .setItem("folderList", folderList)
-                .then(function (value) {})
-                .catch(function (err) {});
-            };
-            getLocalstates();
-            _this.setState(
-              {
-                showCreate: "block",
-              },
-              () => {
+              if (res.id && res.name) {
+                let newArray = [];
+                newArray.push(res);
+                newArray[0].fileNum = 0;
+                newArray[0].passwords = [];
+                const getLocalstates = async () => {
+                  const getLocalState = async () => {
+                    const res = localforage
+                      .getItem("folderList")
+                      .then(function (value) {
+                        return value;
+                      })
+                      .catch(function (err) {
+                        let error = false;
+                        return error;
+                      });
+                    return res;
+                  };
+                  const folderList = await getLocalState();
+                  console.log(newArray[0]);
+                  folderList.push(newArray[0]);
+                  localforage
+                    .setItem("folderList", folderList)
+                    .then(function (value) {})
+                    .catch(function (err) {});
+                };
+                getLocalstates();
                 _this.setState(
                   {
-                    list: [..._this.state.list, ...newArray],
+                    showCreate: "block",
                   },
                   () => {
-                    _this.setState({
-                      visible: "none",
-                      showRobot: false,
-                    });
-                    document.getElementsByClassName("modal-input")[0].value =
-                      "";
+                    _this.setState(
+                      {
+                        list: [..._this.state.list, ...newArray],
+                      },
+                      () => {
+                        _this.setState({
+                          visible: "none",
+                          showRobot: false,
+                          onlyOne: true,
+                          showExplain: "none",
+                        });
+                        document.getElementsByClassName(
+                          "modal-input"
+                        )[0].value = "";
+                      }
+                    );
                   }
                 );
+              } else {
+                _this.setState({
+                  onlyOne: true,
+                  showExplain: "none",
+                });
+                document.getElementsByClassName("modal-input")[0].value = "";
+                alert(res.msg);
               }
-            );
-          } else {
-            document.getElementsByClassName("modal-input")[0].value = "";
-            alert(res.msg);
-          }
-        });
-      };
-      sendMessageToContentBackgroundScript(userInfo);
+            });
+          };
+          sendMessageToContentBackgroundScript(userInfo);
+        }
+      }
     };
 
     return (
@@ -284,6 +306,12 @@ export default class Folder extends Component {
               </div>
               <div className="modal-text">新建文件夹</div>
               <input className="modal-input" placeholder="输入文件夹名称" />
+              <div
+                style={{ display: this.state.showExplain }}
+                className="modal-explain"
+              >
+                <p>文件夹名不能为空</p>
+              </div>
               <div className="password-btn-group">
                 <div className="main ml-20">
                   <div className="btn-1 " onClick={canModal}>
