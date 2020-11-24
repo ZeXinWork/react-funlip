@@ -331,9 +331,11 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       let userInfoData = { data };
       userInfoData.test = "autofill";
       chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-        chrome.tabs.sendMessage(tabs[0].id, userInfoData, function (
-          response
-        ) {});
+        chrome.tabs.sendMessage(
+          tabs[0].id,
+          userInfoData,
+          function (response) {}
+        );
       });
     }
   } else if (type === "mesToBackground") {
@@ -358,6 +360,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     if (autoStore == 1) {
       url = message.mes.url;
     }
+    console.log(url);
   } else if (type === "isShowSave") {
     //判断当前是否应该打开自动保存页面
     const setSHow = async () => {
@@ -382,15 +385,32 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         for (let i = 0; i < userInfo.length; i++) {
           if (userInfo[i].website.indexOf(url) != -1) {
             realSend = false;
+            console.log("skipList有");
           }
         }
       }
 
       //用户密码项有该账号
-      if (data && data.length > 0) {
-        for (let i = 0; i < data.length; i++) {
-          if (data[i].website.indexOf(url) != -1) {
-            if (data[i].account == userName) {
+      const getLocalUData = async () => {
+        const res = localforage
+          .getItem("userInfo")
+          .then(function (value) {
+            // 当离线仓库中的值被载入时，此处代码运行
+            return value;
+          })
+          .catch(function (err) {
+            // 当出错时，此处代码运行
+          });
+        return res;
+      };
+
+      let usersInfo = await getLocalUData();
+      console.log(usersInfo);
+      if (usersInfo && usersInfo.length > 0) {
+        for (let i = 0; i < usersInfo.length; i++) {
+          if (usersInfo[i].website.indexOf(url) != -1) {
+            if (usersInfo[i].account == userName) {
+              console.log("userInfo有");
               realSend = false;
             }
           }
@@ -405,11 +425,16 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       // isRealShow 只在最顶层的window显示 不让接下来的iframe显示（修复样式bug）
       // realSend 判断是否需要显示
       if (autoStore == 1 && isRealShow && realSend) {
-        chrome.tabs.query({ active: true, currentWindow: true }, function (
-          tabs
-        ) {
-          chrome.tabs.sendMessage(tabs[0].id, sendUrl, function (response) {});
-        });
+        chrome.tabs.query(
+          { active: true, currentWindow: true },
+          function (tabs) {
+            chrome.tabs.sendMessage(
+              tabs[0].id,
+              sendUrl,
+              function (response) {}
+            );
+          }
+        );
       } else {
         //如果不显示 把url清空
         url = "";

@@ -434,6 +434,7 @@ function Content() {
                           chrome.runtime.sendMessage({ mes });
                         }
                         sendMessageToBackgroundScript2({});
+                        sendMessageToBackgroundScript4({});
                         setShow("none");
                       }}
                     >
