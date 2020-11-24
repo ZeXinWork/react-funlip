@@ -4,15 +4,11 @@
   width: 360px;
   height: 600px;
   background: #ffffff;
-  background: 1px solid transparent;
   overflow: hidden;
 }
 .newPsw-wrappers * {
   margin: 0;
   padding: 0;
-}
-.newPsw-wrappers .ant-form-item-explain {
-  color: #5770ec !important;
 }
 .newPsw-wrappers input {
   outline: none;
@@ -181,13 +177,13 @@
 .newPsw-wrappers .position-to-input-left {
   position: absolute;
   right: 64px;
-  top: 249px;
+  top: 260px;
   z-index: 999;
 }
 .newPsw-wrappers .position-to-input-right {
   position: absolute;
   right: 24px;
-  top: 249px;
+  top: 260px;
   z-index: 999;
 }
 .newPsw-wrappers .cursor {
@@ -204,7 +200,7 @@
   width: 312px;
   height: 30px;
   caret-color: #5770ec;
-  margin-bottom: 24px;
+  margin-bottom: 14px;
 }
 .newPsw-wrappers .newPsw-card-content .newPsw-card-inputTextAreas {
   width: 312px;
@@ -215,7 +211,7 @@
   outline: none;
   margin-top: 8px;
   caret-color: #d5d6e4;
-  margin-bottom: 24px;
+  margin-bottom: 14px;
 }
 .newPsw-wrappers .newPsw-card-content .newPsw-form-btns {
   width: 312px;
@@ -235,6 +231,69 @@
   color: #7881a9;
   height: 17px;
   width: 24px;
+}
+.newPsw-wrappers .newPsw-card-content .title-explain {
+  width: 84px;
+  font-size: 12px;
+  font-family: PingFang-SC-Medium, PingFang-SC;
+  font-weight: 500;
+  color: #5770ec;
+  line-height: 17px;
+  margin-left: 252px;
+}
+.newPsw-wrappers .newPsw-card-content .account-explain {
+  width: 84px;
+  font-size: 12px;
+  font-family: PingFang-SC-Medium, PingFang-SC;
+  font-weight: 500;
+  color: #5770ec;
+  line-height: 17px;
+  margin-left: 252px;
+}
+.newPsw-wrappers .newPsw-card-content .password-explain {
+  width: 84px;
+  font-size: 12px;
+  font-family: PingFang-SC-Medium, PingFang-SC;
+  font-weight: 500;
+  color: #5770ec;
+  line-height: 17px;
+  margin-left: 252px;
+}
+.newPsw-wrappers .newPsw-card-content .password-explain-long {
+  width: 150px;
+  font-size: 12px;
+  font-family: PingFang-SC-Medium, PingFang-SC;
+  font-weight: 500;
+  color: #5770ec;
+  line-height: 17px;
+  margin-left: 190px;
+}
+.newPsw-wrappers .newPsw-card-content .account-explain-long {
+  width: 150px;
+  font-size: 12px;
+  font-family: PingFang-SC-Medium, PingFang-SC;
+  font-weight: 500;
+  color: #5770ec;
+  line-height: 17px;
+  margin-left: 190px;
+}
+.newPsw-wrappers .newPsw-card-content .title-explain-long {
+  width: 150px;
+  font-size: 12px;
+  font-family: PingFang-SC-Medium, PingFang-SC;
+  font-weight: 500;
+  color: #5770ec;
+  line-height: 17px;
+  margin-left: 190px;
+}
+.newPsw-wrappers .newPsw-card-content .tip-explain {
+  font-size: 12px;
+  width: 180px;
+  font-family: PingFang-SC-Medium, PingFang-SC;
+  font-weight: 500;
+  color: #5770ec;
+  line-height: 17px;
+  margin-left: 140px;
 }
 .newPsw-wrappers .password-modal {
   display: none;

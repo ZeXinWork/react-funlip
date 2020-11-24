@@ -17,6 +17,14 @@ class createNewPsw extends Component {
     value: 10,
     ToolTip: 10,
     mustShowUp: true,
+    passwordExplain: "hidden",
+    titleExplain: "hidden",
+    accountExplain: "hidden",
+    tipExplain: "hidden",
+    accountExplainText: "请输入账号！",
+    passwordExplainText: "请输入密码！",
+    titleExplainText: "请输入标题！",
+    onlyOne: true,
   };
 
   //生成随机密码
@@ -153,78 +161,137 @@ class createNewPsw extends Component {
 
     //表单验证通过后的回调
     const onFinish = async (values) => {
-      let { title, password, tip, url, username } = values;
-      let isFolderDetail;
-      let folderId;
-      if (this.props.location.state) {
-        isFolderDetail = this.props.location.state.isFolderDetail;
-        folderId = this.props.location.state.folderId;
-      }
-      if (isFolderDetail) {
-        let passwordItem = {
-          title: title,
-          pwd: password,
-          note: tip,
-          website: url,
-          account: username,
-          pluginId: pluginID,
-        };
+      if (this.state.onlyOne) {
+        this.setState({
+          onlyOne: false,
+        });
+        let { title, password, tip, url, username } = values;
+        if (!title) {
+          this.setState({
+            titleExplain: "visible",
+            onlyOne: true,
+          });
+        }
 
-        const sendMessageToContentBackgroundScript = (mes) => {
-          const _this = this;
-          mes.requestType = "saveNewPsw";
-          mes.isFolderAdd = true;
-          chrome.runtime.sendMessage({ mes }, function (res) {
-            let response = JSON.parse(res);
-            if (response.id) {
-              if (!folderId) {
-                folderId = handleLocalStorage("get", "folderId");
-              }
-              let userInfo = {
-                passwordIds: [response.id],
-                folderId,
-              };
-              const sendMessageToContentBackgroundScript2 = (mes) => {
-                mes.requestType = "addPswToFolder";
-                chrome.runtime.sendMessage({ mes }, function (res) {
-                  let responses = JSON.parse(res);
-                  if (responses.code == 200) {
-                    console.log("不能把");
-                    _this.props.history.push({
-                      pathname: "/folderDetail",
-                      state: { dataList: response },
-                    });
+        if (!password) {
+          this.setState({
+            passwordExplain: "visible",
+            onlyOne: true,
+          });
+        }
+        if (!username) {
+          this.setState({
+            accountExplain: "visible",
+            onlyOne: true,
+          });
+        }
+        if (title) {
+          this.setState({
+            titleExplain: "hidden",
+            onlyOne: true,
+          });
+        }
+        if (password && password.length < 24) {
+          this.setState({
+            passwordExplain: "hidden",
+            onlyOne: true,
+          });
+        }
+        if (username) {
+          this.setState({
+            accountExplain: "hidden",
+            onlyOne: true,
+          });
+        }
+        if (!url) {
+          url = "";
+        }
+
+        if (
+          title &&
+          title.length > 0 &&
+          password &&
+          password.length > 0 &&
+          username &&
+          username.length > 0
+        ) {
+          let isFolderDetail;
+          let folderId;
+          if (this.props.location.state) {
+            isFolderDetail = this.props.location.state.isFolderDetail;
+            folderId = this.props.location.state.folderId;
+          }
+          if (isFolderDetail) {
+            let passwordItem = {
+              title: title,
+              pwd: password,
+              note: tip,
+              website: url,
+              account: username,
+              pluginId: pluginID,
+            };
+
+            const sendMessageToContentBackgroundScript = (mes) => {
+              const _this = this;
+              mes.requestType = "saveNewPsw";
+              mes.isFolderAdd = true;
+              chrome.runtime.sendMessage({ mes }, function (res) {
+                let response = JSON.parse(res);
+                if (response.id) {
+                  if (!folderId) {
+                    folderId = handleLocalStorage("get", "folderId");
                   }
-                });
-              };
-              sendMessageToContentBackgroundScript2(userInfo);
-            }
-          });
-        };
-        sendMessageToContentBackgroundScript(passwordItem);
-      } else {
-        let passwordItem = {
-          title: title,
-          pwd: password,
-          note: tip,
-          website: url,
-          account: username,
-          pluginId: pluginID,
-        };
-        const sendMessageToContentBackgroundScript = (mes) => {
-          const _this = this;
-          mes.requestType = "saveNewPsw";
-          chrome.runtime.sendMessage({ mes }, function (res) {
-            let response = JSON.parse(res);
-
-            if (response.id) {
-              _this.props.history.push({
-                pathname: "/home/psd",
+                  let userInfo = {
+                    passwordIds: [response.id],
+                    folderId,
+                  };
+                  const sendMessageToContentBackgroundScript2 = (mes) => {
+                    mes.requestType = "addPswToFolder";
+                    chrome.runtime.sendMessage({ mes }, function (res) {
+                      let responses = JSON.parse(res);
+                      if (responses.code == 200) {
+                        _this.setState({
+                          onlyOne: true,
+                        });
+                        _this.props.history.push({
+                          pathname: "/folderDetail",
+                          state: { dataList: response },
+                        });
+                      }
+                    });
+                  };
+                  sendMessageToContentBackgroundScript2(userInfo);
+                }
               });
-            }
-          });
-        };
-        sendMessageToContentBackgroundScript(passwordItem);
+            };
+            sendMessageToContentBackgroundScript(passwordItem);
+          } else {
+            let passwordItem = {
+              title: title,
+              pwd: password,
+              note: tip,
+              website: url,
+              account: username,
+              pluginId: pluginID,
+            };
+            const sendMessageToContentBackgroundScript = (mes) => {
+              const _this = this;
+              mes.requestType = "saveNewPsw";
+              chrome.runtime.sendMessage({ mes }, function (res) {
+                let response = JSON.parse(res);
+                if (response.id) {
+                  _this.setState({
+                    onlyOne: true,
+                  });
+                  _this.props.history.push({
+                    pathname: "/home/psd",
+                  });
+                }
+              });
+            };
+            sendMessageToContentBackgroundScript(passwordItem);
+          }
+        }
       }
     };
 
@@ -295,56 +362,139 @@ class createNewPsw extends Component {
             >
               <span className="newPsw-card-inputnewPswText">标题</span>
               <Form.Item label="" name="title">
-                <input className="newPsw-card-inputs" bordered={false} />
+                <input
+                  className="newPsw-card-inputs"
+                  bordered={false}
+                  maxlength={24}
+                  onChange={(e) => {
+                    if (e.target.value.length === 24) {
+                      let passwordExplain = document.getElementsByClassName(
+                        "title-explain"
+                      )[0];
+                      passwordExplain.className = "title-explain-long";
+                      this.setState({
+                        titleExplain: "visible",
+                        titleExplainText: "标题长度不能大于24位",
+                      });
+                    } else {
+                      let passwordExplain = document.getElementsByClassName(
+                        "title-explain-long"
+                      )[0];
+                      passwordExplain.className = "title-explain";
+                      this.setState({
+                        titleExplain: "hidden",
+                        titleExplainText: "请输入标题！",
+                      });
+                    }
+                  }}
+                />
               </Form.Item>
-
+              <div
+                className="title-explain"
+                style={{ visibility: this.state.titleExplain }}
+              >
+                {this.state.titleExplainText}
+              </div>
               <span className="newPsw-card-inputnewPswText">账号</span>
-              <Form.Item
-                label=""
-                name="username"
-                rules={[
-                  {
-                    required: true,
-                    message: "请输入登陆账号！",
-                  },
-                ]}
-              >
-                <input className="newPsw-card-inputs" bordered={false} />
+
+              <Form.Item label="" name="username">
+                <input
+                  className="newPsw-card-inputs"
+                  bordered={false}
+                  maxlength={24}
+                  onChange={(e) => {
+                    if (e.target.value.length === 24) {
+                      let passwordExplain = document.getElementsByClassName(
+                        "account-explain"
+                      )[0];
+                      passwordExplain.className = "account-explain-long";
+                      this.setState({
+                        accountExplain: "visible",
+                        accountExplainText: "账号长度不能大于24位",
+                      });
+                    } else {
+                      let passwordExplain = document.getElementsByClassName(
+                        "account-explain-long"
+                      )[0];
+                      passwordExplain.className = "account-explain";
+                      this.setState({
+                        accountExplain: "hidden",
+                        accountExplainText: "请输入账号！",
+                      });
+                    }
+                  }}
+                />
               </Form.Item>
-              <span className="newPsw-card-inputnewPswText">密码</span>
-              <Form.Item
-                label=""
-                name="password"
-                rules={[
-                  {
-                    required: true,
-                    message: "请输入密码",
-                  },
-                ]}
+              <div
+                className="account-explain"
+                style={{ visibility: this.state.accountExplain }}
               >
+                {this.state.accountExplainText}
+              </div>
+              <span className="newPsw-card-inputnewPswText">密码</span>
+              <Form.Item label="" name="password">
                 <input
                   className="newPsw-card-inputs "
                   id="password-input"
+                  maxlength={24}
                   type="password"
+                  onChange={(e) => {
+                    if (e.target.value.length === 24) {
+                      let passwordExplain = document.getElementsByClassName(
+                        "password-explain"
+                      )[0];
+                      passwordExplain.className = "password-explain-long";
+                      this.setState({
+                        passwordExplain: "visible",
+                        passwordExplainText: "密码长度不能大于24位",
+                      });
+                    } else {
+                      let passwordExplain = document.getElementsByClassName(
+                        "password-explain-long"
+                      )[0];
+                      passwordExplain.className = "password-explain";
+                      this.setState({
+                        passwordExplain: "hidden",
+                        passwordExplainText: "请输入密码！",
+                      });
+                    }
+                  }}
                 />
               </Form.Item>
-              <span className="newPsw-card-inputnewPswText">网址</span>
-              <Form.Item
-                label=""
-                name="url"
-                rules={[
-                  {
-                    required: true,
-                    message: "请输入网址",
-                  },
-                ]}
+              <div
+                className="password-explain"
+                style={{ visibility: this.state.passwordExplain }}
               >
+                {this.state.passwordExplainText}
+              </div>
+              <span className="newPsw-card-inputnewPswText">网址</span>
+              <Form.Item label="" name="url">
                 <input className="newPsw-card-inputs" bordered={false} />
               </Form.Item>
               <span className="newPsw-card-inputnewPswText">备注</span>
               <Form.Item label="" name="tip">
-                <textarea className="newPsw-card-inputTextAreas" />
+                <textarea
+                  maxlength={100}
+                  className="newPsw-card-inputTextAreas"
+                  onChange={(e) => {
+                    if (e.target.value.length === 100) {
+                      this.setState({
+                        tipExplain: "visible",
+                      });
+                    } else {
+                      this.setState({
+                        tipExplain: "hidden",
+                      });
+                    }
+                  }}
+                />
               </Form.Item>
+              <div
+                className="tip-explain"
+                style={{ visibility: this.state.tipExplain }}
+              >
+                备注的文字长度不能超过100位！
+              </div>
               <Form.Item>
                 <Button
                   htmlType="submit"
@@ -371,7 +521,7 @@ class createNewPsw extends Component {
             <div className="password-slider-wrapper">
               <span>{this.state.ToolTip}</span>
               <Slider
-                max={40}
+                max={24}
                 min={0}
                 className="password-slider"
                 defaultValue={10}
@@ -386,7 +536,7 @@ class createNewPsw extends Component {
                   );
                 }}
               />
-              <span>40</span>
+              <span>24</span>
             </div>
             <div className="password-body-select">
               <div>

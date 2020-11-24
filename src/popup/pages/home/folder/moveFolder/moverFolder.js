@@ -27,7 +27,7 @@ class PsdLibrary extends Component {
     };
 
     const sendMessageToContentBackgroundScript = (mes) => {
-      mes.type = "getUserList";
+      mes.type = "getUserLists";
       let loading = document.getElementById("funlip-loading");
       loading.style.display = "block";
 
@@ -102,7 +102,7 @@ class PsdLibrary extends Component {
       if (request == "addSuccess") {
         _this.props.history.push("/home/psd");
       }
-      if (request.type == "popupGetData") {
+      if (request.type == "folderGetData") {
         const { data } = request;
         setList(data);
       }

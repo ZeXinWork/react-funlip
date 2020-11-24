@@ -49,8 +49,8 @@ class PsdLibrary extends Component {
 
   //   if (searchInputValue) {
   //     let searchInput = document.getElementsByClassName("ant-input")[0];
-  //     console.log(searchInput);
-  //     console.log(searchInputValue);
+  //
+  //
   //     searchInput.value = searchInputValue;
   //   }
   // }
@@ -68,6 +68,7 @@ class PsdLibrary extends Component {
 
     const _this = this;
     const setList = (data) => {
+      console.log(data);
       if (data.length == 0) {
         this.setState(
           {

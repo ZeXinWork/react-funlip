@@ -23,6 +23,14 @@ class PasswordDetail extends Component {
     website: "",
     ToolTip: 10,
     mustShowUp: true,
+    onlyOne: true,
+    passwordExplain: "hidden",
+    titleExplain: "hidden",
+    accountExplain: "hidden",
+    tipExplain: "hidden",
+    accountExplainText: "请输入账号！",
+    passwordExplainText: "请输入密码！",
+    titleExplainText: "请输入标题！",
   };
 
   //生成随机密码
@@ -218,6 +226,7 @@ class PasswordDetail extends Component {
     };
     // 发请求删除用户密码信息
     const deleteItem = async (config, targetObj) => {
+      const _this = this;
       const pluginID = handleLocalStorage("get", "pluginID");
       const value = {
         pluginId: pluginID / 1,
@@ -232,6 +241,7 @@ class PasswordDetail extends Component {
         };
         function sendMessageToContentScript(mes) {
           mes.requestType = "outFolder";
+
           chrome.runtime.sendMessage({ mes }, function (response) {
             let res = JSON.parse(response);
           });
@@ -261,7 +271,14 @@ class PasswordDetail extends Component {
               state: { afterDelete: true },
             });
           } else {
-            _this.props.history.push("/home/psd");
+            _this.setState(
+              {
+                onlyOne: true,
+              },
+              () => {
+                _this.props.history.push("/home/psd");
+              }
+            );
           }
         }
       });
@@ -283,25 +300,76 @@ class PasswordDetail extends Component {
 
     //发请修改在密码详情页中修改的数据(流程： 发编辑请求 ->返回新的数据-->并删除原始数据-->把新数据数据传给bg->bg修改本地数据->传给密码库页面更新数据)
     const editInfo = async () => {
-      const { title, pwd, note, website, account } = this.state;
-
-      let passwordItem = {
-        title: title,
-        pwd: pwd,
-        note: note,
-        website: website,
-        account: account,
-        pluginId: pluginID,
-      };
-      const sendMessageToContentBackgroundScript = (mes) => {
-        mes.requestType = "editNewPsw";
-        chrome.runtime.sendMessage({ mes }, (res) => {
-          let response = JSON.parse(res);
-          let config = "editConfig";
-          deleteItem(config, response);
+      console.log(this.state.onlyOne);
+      if (this.state.onlyOne) {
+        this.setState({
+          onlyOne: false,
         });
-      };
-      sendMessageToContentBackgroundScript(passwordItem);
+        const { title, pwd, note, website, account } = this.state;
+        if (!title) {
+          this.setState({
+            titleExplain: "visible",
+            onlyOne: true,
+          });
+        }
+
+        if (!pwd) {
+          this.setState({
+            passwordExplain: "visible",
+            onlyOne: true,
+          });
+        }
+        if (!account) {
+          this.setState({
+            accountExplain: "visible",
+            onlyOne: true,
+          });
+        }
+        if (title) {
+          this.setState({
+            titleExplain: "hidden",
+          });
+        }
+        if (pwd) {
+          this.setState({
+            passwordExplain: "hidden",
+          });
+        }
+        if (account) {
+          this.setState({
+            accountExplain: "hidden",
+          });
+        }
+        if (!website) {
+          website = "";
+        }
+        if (
+          title &&
+          title.length > 0 &&
+          pwd &&
+          pwd.length > 0 &&
+          account &&
+          account.length > 0
+        ) {
+          let passwordItem = {
+            title: title,
+            pwd: pwd,
+            note: note,
+            website: website,
+            account: account,
+            pluginId: pluginID,
+          };
+          const sendMessageToContentBackgroundScript = (mes) => {
+            mes.requestType = "editNewPsw";
+            chrome.runtime.sendMessage({ mes }, (res) => {
+              let response = JSON.parse(res);
+              let config = "editConfig";
+              deleteItem(config, response);
+            });
+          };
+          sendMessageToContentBackgroundScript(passwordItem);
+        }
+      }
     };
 
     return (
@@ -331,31 +399,82 @@ class PasswordDetail extends Component {
               className="newPsw-card-input"
               bordered={false}
               value={this.state.title}
+              maxlength={24}
               onChange={(e) => {
                 const value = e.target.value;
                 this.setState({
                   title: value,
                 });
+                if (e.target.value.length === 24) {
+                  let passwordExplain = document.getElementsByClassName(
+                    "title-explain"
+                  )[0];
+                  passwordExplain.className = "title-explain-long";
+                  this.setState({
+                    titleExplain: "visible",
+                    titleExplainText: "标题长度不能大于24位",
+                  });
+                } else {
+                  let passwordExplain = document.getElementsByClassName(
+                    "title-explain-long"
+                  )[0];
+                  passwordExplain.className = "title-explain";
+                  this.setState({
+                    titleExplain: "hidden",
+                    titleExplainText: "请输入标题！",
+                  });
+                }
               }}
             />
+            <div
+              className="title-explain"
+              style={{ visibility: this.state.titleExplain }}
+            >
+              {this.state.titleExplainText}
+            </div>
             <span className="newPsw-card-inputnewPswText">账号</span>
             <input
               className="newPsw-card-input"
-              style={{ marginBottom: 20 }}
               bordered={false}
               value={this.state.account}
+              maxlength={24}
               onChange={(e) => {
                 const value = e.target.value;
                 this.setState({
                   account: value,
                 });
+                if (e.target.value.length === 24) {
+                  let passwordExplain = document.getElementsByClassName(
+                    "account-explain"
+                  )[0];
+                  passwordExplain.className = "account-explain-long";
+                  this.setState({
+                    accountExplain: "visible",
+                    accountExplainText: "账号长度不能大于24位",
+                  });
+                } else {
+                  let passwordExplain = document.getElementsByClassName(
+                    "account-explain-long"
+                  )[0];
+                  passwordExplain.className = "account-explain";
+                  this.setState({
+                    accountExplain: "hidden",
+                    accountExplainText: "请输入账号！",
+                  });
+                }
               }}
             />
+            <div
+              className="account-explain"
+              style={{ visibility: this.state.accountExplain }}
+            >
+              {this.state.accountExplainText}
+            </div>
             <span className="newPsw-card-inputnewPswText">密码</span>
             <input
               className="newPsw-card-input "
               id="password-input"
-              style={{ marginBottom: 20 }}
+              maxlength={24}
               type="password"
               value={this.state.pwd}
               onChange={(e) => {
@@ -363,8 +482,33 @@ class PasswordDetail extends Component {
                 this.setState({
                   pwd: value,
                 });
+                if (e.target.value.length === 24) {
+                  let passwordExplain = document.getElementsByClassName(
+                    "password-explain"
+                  )[0];
+                  passwordExplain.className = "password-explain-long";
+                  this.setState({
+                    passwordExplain: "visible",
+                    passwordExplainText: "密码长度不能大于24位",
+                  });
+                } else {
+                  let passwordExplain = document.getElementsByClassName(
+                    "password-explain-long"
+                  )[0];
+                  passwordExplain.className = "password-explain";
+                  this.setState({
+                    passwordExplain: "hidden",
+                    passwordExplainText: "请输入密码！",
+                  });
+                }
               }}
             />
+            <div
+              className="password-explain"
+              style={{ visibility: this.state.passwordExplain }}
+            >
+              {this.state.passwordExplainText}
+            </div>
             <span className="newPsw-card-inputnewPswText">网址</span>
             <input
               className="newPsw-card-input"
@@ -382,13 +526,30 @@ class PasswordDetail extends Component {
             <textarea
               className="newPsw-card-inputTextArea"
               value={this.state.note}
+              maxlength={100}
               onChange={(e) => {
                 const value = e.target.value;
                 this.setState({
                   note: value,
                 });
+
+                if (e.target.value.length === 100) {
+                  this.setState({
+                    tipExplain: "visible",
+                  });
+                } else {
+                  this.setState({
+                    tipExplain: "hidden",
+                  });
+                }
               }}
             />
+            <div
+              className="tip-explain"
+              style={{ visibility: this.state.tipExplain }}
+            >
+              备注的文字长度不能超过100位！
+            </div>
             <Button
               htmlType="submit"
               className="newPsw-form-btn "
@@ -413,7 +574,7 @@ class PasswordDetail extends Component {
             <div className="password-slider-wrapper">
               <span>{this.state.ToolTip}</span>
               <Slider
-                max={40}
+                max={24}
                 min={0}
                 className="password-slider"
                 defaultValue={10}
@@ -428,7 +589,7 @@ class PasswordDetail extends Component {
                   );
                 }}
               />
-              <span>40</span>
+              <span>24</span>
             </div>
             <div className="password-body-select">
               <div>

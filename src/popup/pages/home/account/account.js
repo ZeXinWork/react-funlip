@@ -92,32 +92,28 @@ export default class componentName extends Component {
           </div>
         </div>
         <div className="user-body-wrapper">
-          <div className="getPassword mb-20 ">
+          <div
+            className="getPassword mb-20 cur "
+            onClick={() => {
+              function sendMessageToContentScript(mes) {
+                mes.type = "showImage3";
+                chrome.runtime.sendMessage({ mes }, function (response) {});
+              }
+              sendMessageToContentScript({});
+              this.props.history.push("/home/createPSW");
+            }}
+          >
             <img src={passwordIcon} className="img-icon" />
-            <span
-              className="password-text user-text"
-              onClick={() => {
-                function sendMessageToContentScript(mes) {
-                  mes.type = "showImage3";
-                  chrome.runtime.sendMessage({ mes }, function (response) {});
-                }
-                sendMessageToContentScript({});
-                this.props.history.push("/home/createPSW");
-              }}
-            >
-              密码生成器
-            </span>
+            <span className="password-text user-text">密码生成器</span>
             <img
               src={arrowRight}
               alt="arrowRight"
               className="arrowRight-special cur"
             />
           </div>
-          <div className="getPassword mb-20 ">
+          <div className="getPassword mb-20 cur " onClick={goSet}>
             <img src={setting} className="img-icon" />
-            <span className="password-text user-text" onClick={goSet}>
-              安全设置
-            </span>
+            <span className="password-text user-text">安全设置</span>
             <img
               src={arrowRight}
               alt="arrowRight"
@@ -125,7 +121,7 @@ export default class componentName extends Component {
               onClick={goSet}
             />
           </div>
-          <div className="device-control mb-20 ">
+          <div className="device-control mb-20 cur ">
             <img src={equipment} className="control-icon img-icon" />
             <span className="control-text user-text">设备管理</span>
             <img
@@ -134,7 +130,7 @@ export default class componentName extends Component {
               className="arrowRight-common cur"
             />
           </div>
-          <div className="home-sync mb-20">
+          <div className="home-sync mb-20 cur">
             <img src={folder} className="sync-icon img-icon" />
             <span className="sync-text user-text">同步数据</span>
 
@@ -144,11 +140,9 @@ export default class componentName extends Component {
               className="arrowRight-common cur"
             />
           </div>
-          <div className="home-about mb-20">
+          <div className="home-about mb-20 cur" onClick={about}>
             <img src={security} className="about-icon img-icon" />
-            <span className="about-text user-text" onClick={about}>
-              关于我们
-            </span>
+            <span className="about-text user-text">关于我们</span>
 
             <img
               src={arrowRight}
@@ -156,11 +150,9 @@ export default class componentName extends Component {
               className="arrowRight-common cur"
             />
           </div>
-          <div className="home-out mb-20">
+          <div className="home-out mb-20 cur" onClick={outLogin}>
             <img src={exit} className="out-icon img-icon" />
-            <span className="out-text user-text" onClick={outLogin}>
-              登出账号
-            </span>
+            <span className="out-text user-text">登出账号</span>
             <img
               src={arrowRight}
               alt="arrowRight"

@@ -276,7 +276,13 @@ const sendDataToPopup = (data) => {
   };
   chrome.runtime.sendMessage(cmd, function (response) {});
 };
-
+const sendDataToPopups = (data) => {
+  const cmd = {
+    type: "folderGetData",
+    data,
+  };
+  chrome.runtime.sendMessage(cmd, function (response) {});
+};
 //新增item到skipList
 const addNewSkipList = async (value) => {
   let data = JSON.parse(value);
@@ -351,6 +357,14 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 
       if (data) {
         sendDataToPopup(data);
+      }
+    };
+    getData();
+  } else if (type === "getUserLists") {
+    const getData = async () => {
+      const data = await getAllData();
+      if (data) {
+        sendDataToPopups(data);
       }
     };
     getData();
