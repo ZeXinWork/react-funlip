@@ -19,7 +19,7 @@ export default class Folder extends Component {
     showRobot: false,
     showCreate: "none",
     onlyOne: true,
-    showExplain: "none",
+    showExplain: "hidden",
   };
   showModal = () => {
     this.setState({
@@ -50,7 +50,7 @@ export default class Folder extends Component {
         return res;
       };
       const folderList = await getLocalState();
-      console.log(folderList);
+
       const getData = async () => {
         const _this = this;
         mes.requestType = "getFolderList";
@@ -131,8 +131,11 @@ export default class Folder extends Component {
       });
     };
     const canModal = () => {
+      document.getElementsByClassName("modal-input")[0].value = "";
+
       this.setState({
         visible: "none",
+        showExplain: "hidden",
       });
     };
     const confirmModal = () => {
@@ -144,7 +147,7 @@ export default class Folder extends Component {
           .value;
         if (folderName.length == 0) {
           this.setState({
-            showExplain: "block",
+            showExplain: "visible",
             onlyOne: true,
           });
         } else {
@@ -178,7 +181,7 @@ export default class Folder extends Component {
                     return res;
                   };
                   const folderList = await getLocalState();
-                  console.log(newArray[0]);
+
                   folderList.push(newArray[0]);
                   localforage
                     .setItem("folderList", folderList)
@@ -200,7 +203,7 @@ export default class Folder extends Component {
                           visible: "none",
                           showRobot: false,
                           onlyOne: true,
-                          showExplain: "none",
+                          showExplain: "hidden",
                         });
                         document.getElementsByClassName(
                           "modal-input"
@@ -212,7 +215,7 @@ export default class Folder extends Component {
               } else {
                 _this.setState({
                   onlyOne: true,
-                  showExplain: "none",
+                  showExplain: "hidden",
                 });
                 document.getElementsByClassName("modal-input")[0].value = "";
                 alert(res.msg);
@@ -305,9 +308,20 @@ export default class Folder extends Component {
                 <img src={newFolder} className="modal-icon" />
               </div>
               <div className="modal-text">新建文件夹</div>
-              <input className="modal-input" placeholder="输入文件夹名称" />
+              <input
+                className="modal-input"
+                placeholder="输入文件夹名称"
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value.length > 0) {
+                    this.setState({
+                      showExplain: "hidden",
+                    });
+                  }
+                }}
+              />
               <div
-                style={{ display: this.state.showExplain }}
+                style={{ visibility: this.state.showExplain }}
                 className="modal-explain"
               >
                 <p>文件夹名不能为空</p>

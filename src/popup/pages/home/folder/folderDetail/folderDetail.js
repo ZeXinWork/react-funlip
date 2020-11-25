@@ -134,7 +134,7 @@ export default class componentName extends Component {
       getLocalState();
     } else if (passwordList) {
       //如果没有更新的，显示父级传过来的passwordList()
-
+      console.log(passwordList);
       this.setState({
         list: passwordList,
       });
@@ -592,12 +592,15 @@ export default class componentName extends Component {
                 return res;
               };
               let outPsw = response.data;
-
+              const folderId = handleLocalStorage("get", "folderId");
               const folderList = await getLocalState();
               for (let i = 0; i < folderList.length; i++) {
                 for (let j = 0; j < folderList[i].passwords.length; j++) {
                   for (let p = 0; p < outPsw.length; p++) {
-                    if (folderList[i].passwords[j].id == outPsw[p].id) {
+                    if (
+                      folderList[i].id == folderId &&
+                      folderList[i].passwords[j].id == outPsw[p].id
+                    ) {
                       folderList[i].passwords.splice(j, 1);
                     }
                   }

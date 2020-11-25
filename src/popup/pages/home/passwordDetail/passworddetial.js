@@ -437,20 +437,20 @@ class PasswordDetail extends Component {
               className="newPsw-card-input"
               bordered={false}
               value={this.state.account}
-              maxlength={24}
+              maxlength={64}
               onChange={(e) => {
                 const value = e.target.value;
                 this.setState({
                   account: value,
                 });
-                if (e.target.value.length === 24) {
+                if (e.target.value.length === 64) {
                   let passwordExplain = document.getElementsByClassName(
                     "account-explain"
                   )[0];
                   passwordExplain.className = "account-explain-long";
                   this.setState({
                     accountExplain: "visible",
-                    accountExplainText: "账号长度不能大于24位",
+                    accountExplainText: "账号长度不能大于64位",
                   });
                 } else {
                   let passwordExplain = document.getElementsByClassName(
