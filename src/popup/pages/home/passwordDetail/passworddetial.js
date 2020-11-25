@@ -136,7 +136,7 @@ class PasswordDetail extends Component {
     const pluginID = handleLocalStorage("get", "pluginID");
     const token = handleLocalStorage("get", "token");
     let { id } = this.props.location.state.itemDetail;
-    // const { searchInputValue } = this.props.location.state;
+    const { searchInputValue, oldSearchList } = this.props.location.state;
     let { isDeleteFolder } = this.props.location.state;
 
     const _this = this;
@@ -176,14 +176,12 @@ class PasswordDetail extends Component {
             pathname: "/folderDetail",
           });
         }
-      }
-      // else if (searchInputValue) {
-      //   this.props.history.push({
-      //     pathname: "/home/psd",
-      //     state: { searchInputValue },
-      //   });
-      // }
-      else {
+      } else if (searchInputValue) {
+        this.props.history.push({
+          pathname: "/home/psd",
+          state: { searchInputValue, oldSearchList },
+        });
+      } else {
         this.props.history.push("/home/psd");
       }
     };

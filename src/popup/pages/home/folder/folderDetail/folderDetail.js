@@ -33,6 +33,7 @@ export default class componentName extends Component {
     mustCheck: false,
     canClick: false,
     isChecked: false,
+    inputValue: "",
   };
   componentDidMount() {
     let passwordList;
@@ -134,7 +135,7 @@ export default class componentName extends Component {
       getLocalState();
     } else if (passwordList) {
       //如果没有更新的，显示父级传过来的passwordList()
-      console.log(passwordList);
+
       this.setState({
         list: passwordList,
       });
@@ -402,6 +403,7 @@ export default class componentName extends Component {
           folderId,
           name: renameInput,
         };
+
         function sendMessageToContentScript(mes) {
           mes.requestType = "renameFolder";
           chrome.runtime.sendMessage({ mes }, function (response) {
@@ -421,6 +423,7 @@ export default class componentName extends Component {
                   return res;
                 };
                 const folderList = await getLocalState();
+
                 for (let i = 0; i < folderList.length; i++) {
                   if (folderList[i].id == folderId) {
                     folderList[i].name = res.data.name;
@@ -434,6 +437,7 @@ export default class componentName extends Component {
                       renameShow: "none",
                       folderName: res.data.name,
                       editShow: "none",
+                      inputValue: "",
                     });
                   })
                   .catch(function (err) {});
@@ -748,6 +752,7 @@ export default class componentName extends Component {
     const closeModal8 = () => {
       this.setState({
         renameShow: "none",
+        inputValue: "",
       });
     };
 
@@ -760,7 +765,7 @@ export default class componentName extends Component {
           myChecked.push(i);
         }
       }
-      console.log(myChecked);
+
       if (myChecked.length > 0) {
         this.setState({
           canClick: true,
@@ -794,6 +799,13 @@ export default class componentName extends Component {
             <Input
               placeholder={this.state.folderName}
               className="password-body-Input"
+              value={this.state.inputValue}
+              onChange={(e) => {
+                const value = e.target.value;
+                this.setState({
+                  inputValue: value,
+                });
+              }}
               bordered={false}
             />
             <div style={{ visibility: this.state.folderExplain }}>
@@ -996,6 +1008,16 @@ export default class componentName extends Component {
                   if (!this.state.showCheckBox) {
                     toDetail(item);
                   } else {
+                    let MyCheckBox = document.getElementsByClassName(
+                      "folderCheckbox"
+                    )[index];
+                    if (MyCheckBox.checked) {
+                      MyCheckBox.checked = false;
+                    } else {
+                      MyCheckBox.checked = true;
+                    }
+
+                    setCanClick();
                   }
                 }}
                 onMouseOver={() => {
@@ -1013,31 +1035,15 @@ export default class componentName extends Component {
                 {this.state.showCheckBox ? (
                   <div>
                     <div className="psw-icon">
-                      <Checkbox
+                      <input
+                        type="checkbox"
                         className="folderCheckbox"
-                        // checked={this.state.isChecked}
                         onClick={(e) => {
-                          // if (this.state.isChecked) {
-                          //   this.setState({
-                          //     isChecked: false,
-                          //   });
-                          // } else {
-                          //   this.setState({
-                          //     isChecked: treu,
-                          //   });
-                          // }
                           if (e && e.stopPropagation) {
                             e.stopPropagation();
                           } else {
                             window.event.cancelBubble = true;
                           }
-
-                          let MyCheckBox = document.getElementsByClassName(
-                            "folderCheckbox"
-                          )[index];
-                          MyCheckBox.checked
-                            ? (MyCheckBox.checked = false)
-                            : (MyCheckBox.checked = true);
                           setCanClick();
                         }}
                       />

@@ -276,13 +276,7 @@ const sendDataToPopup = (data) => {
   };
   chrome.runtime.sendMessage(cmd, function (response) {});
 };
-const sendDataToPopups = (data) => {
-  const cmd = {
-    type: "folderGetData",
-    data,
-  };
-  chrome.runtime.sendMessage(cmd, function (response) {});
-};
+
 //新增item到skipList
 const addNewSkipList = async (value) => {
   let data = JSON.parse(value);
@@ -302,9 +296,7 @@ const addNewSkipList = async (value) => {
   userInfo.push(data);
   localforage
     .setItem("skipList", userInfo)
-    .then(function (value) {
-      console.log(value);
-    })
+    .then(function (value) {})
     .catch(function (err) {
       // 当出错时，此处代码运行
     });
@@ -360,21 +352,12 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       }
     };
     getData();
-  } else if (type === "getUserLists") {
-    const getData = async () => {
-      const data = await getAllData();
-      if (data) {
-        sendDataToPopups(data);
-      }
-    };
-    getData();
   } else if (type === "showSave") {
     //判断当前是否应该打开自动保存页面
     isRealShow = true;
     if (autoStore == 1) {
       url = message.mes.url;
     }
-    console.log(url);
   } else if (type === "isShowSave") {
     //判断当前是否应该打开自动保存页面
     const setSHow = async () => {
@@ -399,7 +382,6 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         for (let i = 0; i < userInfo.length; i++) {
           if (userInfo[i].website.indexOf(url) != -1) {
             realSend = false;
-            console.log("skipList有");
           }
         }
       }
@@ -419,12 +401,11 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       };
 
       let usersInfo = await getLocalUData();
-      console.log(usersInfo);
+
       if (usersInfo && usersInfo.length > 0) {
         for (let i = 0; i < usersInfo.length; i++) {
           if (usersInfo[i].website.indexOf(url) != -1) {
             if (usersInfo[i].account == userName) {
-              console.log("userInfo有");
               realSend = false;
             }
           }

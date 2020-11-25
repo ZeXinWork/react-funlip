@@ -36,18 +36,29 @@
 }
 .psw-wrappers .folderCheckbox {
   margin-right: 24px;
-}
-.psw-wrappers .ant-checkbox-inner {
-  background: url("checkbox／unselected+normal.png") no-repeat;
   width: 17px;
   height: 17px;
-  border-style: none;
-}
-.psw-wrappers .ant-checkbox-checked::after {
   border: none;
+  -webkit-apearance: none;
 }
-.psw-wrappers .ant-checkbox-checked {
+.psw-wrappers input[type="checkbox"] {
+  -webkit-appearance: none;
+  /*清除复选框默认样式*/
+  border: none;
+  outline: none;
+  vertical-align: middle;
+  width: 17px;
+  height: 17px;
+  margin-right: 24px;
+  background: url("checkbox／unselected+normal.png") no-repeat;
+}
+.psw-wrappers input[type="checkbox"]:checked {
+  outline: none;
+  -webkit-appearance: none;
+  border: none;
   background: url("checkbox／selected+normal.png") no-repeat;
+  /*复选框的背景图*/
+  background-size: contain;
 }
 .psw-wrappers .folder-tag-wrapper {
   margin-left: 24px;

@@ -19,6 +19,7 @@ class PsdLibrary extends Component {
     list: [],
     show: "",
     showRobot: false,
+    inputValue: "",
   };
 
   componentWillMount() {
@@ -27,39 +28,36 @@ class PsdLibrary extends Component {
         list: data,
       });
     };
-
+    let searchInputValue;
+    if (this.props.location.state) {
+      searchInputValue = this.props.location.state.searchInputValue;
+    }
     const sendMessageToContentBackgroundScript = (mes) => {
       mes.type = "getUserList";
       let loading = document.getElementById("funlip-loading");
       this.setState({
         showRobot: false,
       });
-      loading.style.display = "block";
+      if (!searchInputValue) {
+        loading.style.display = "block";
+      }
 
       chrome.runtime.sendMessage({ mes }, function (response) {});
     };
     sendMessageToContentBackgroundScript({});
   }
 
-  // componentDidMount() {
-  //   let searchInputValue;
-  //   if (this.props.location.state) {
-  //     searchInputValue = this.props.location.state.searchInputValue;
-  //   }
-
-  //   if (searchInputValue) {
-  //     let searchInput = document.getElementsByClassName("ant-input")[0];
-  //
-  //
-  //     searchInput.value = searchInputValue;
-  //   }
-  // }
-
   render() {
     //跳转至密码详情页，并传参
 
     let isFolderDetail;
     let folderName;
+    let searchInputValue;
+    let oldSearchList;
+    if (this.props.location.state) {
+      searchInputValue = this.props.location.state.searchInputValue;
+      oldSearchList = this.props.location.state.oldSearchList;
+    }
 
     if (this.props.location.state) {
       isFolderDetail = this.props.location.state.isFolderDetail;
@@ -68,7 +66,6 @@ class PsdLibrary extends Component {
 
     const _this = this;
     const setList = (data) => {
-      console.log(data);
       if (data.length == 0) {
         this.setState(
           {
@@ -79,6 +76,13 @@ class PsdLibrary extends Component {
             loading.style.display = "none";
           }
         );
+      } else if (searchInputValue) {
+        if (searchInputValue) {
+          this.setState({
+            inputValue: searchInputValue,
+            list: oldSearchList,
+          });
+        }
       } else {
         this.setState(
           {
@@ -92,10 +96,10 @@ class PsdLibrary extends Component {
       }
     };
     const pluginID = handleLocalStorage("get", "pluginID");
-    const toDetail = (itemDetail, searchInputValue) => {
+    const toDetail = (itemDetail, searchInputValue, oldSearchList) => {
       this.props.history.push({
         pathname: "/PswDetail",
-        state: { itemDetail, searchInputValue },
+        state: { itemDetail, searchInputValue, oldSearchList },
       });
     };
 
@@ -241,7 +245,13 @@ class PsdLibrary extends Component {
                 prefix={<img src={Search} className="icon-search" />}
                 className="home-search-input"
                 placeholder="   搜索密码"
+                value={this.state.inputValue}
                 onChange={(e) => {
+                  const value = e.target.value;
+                  searchInputValue = false;
+                  this.setState({
+                    inputValue: value,
+                  });
                   searChPsd(e);
                 }}
               />
@@ -253,19 +263,19 @@ class PsdLibrary extends Component {
                     className="psw-info"
                     key={item.title}
                     onClick={() => {
-                      // let searchInput = document.getElementsByClassName(
-                      //   "ant-input"
-                      // )[0];
-                      // let searchInputValue;
-                      // if (searchInput) {
-                      //   searchInputValue = searchInput.value;
-                      // }
+                      let searchInput = document.getElementsByClassName(
+                        "ant-input"
+                      )[0];
+                      let searchInputValue;
+                      if (searchInput) {
+                        searchInputValue = searchInput.value;
+                      }
 
-                      // if (searchInputValue) {
-                      //   toDetail(item, searchInputValue);
-                      // } else {
-                      toDetail(item);
-                      // }
+                      if (searchInputValue) {
+                        toDetail(item, searchInputValue, this.state.list);
+                      } else {
+                        toDetail(item);
+                      }
                     }}
                     onMouseOver={() => {
                       showHover(index);

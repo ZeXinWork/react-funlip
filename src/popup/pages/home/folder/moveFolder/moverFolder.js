@@ -20,25 +20,53 @@ class PsdLibrary extends Component {
     folderIds: [],
   };
   componentDidMount() {
-    const setList = (data) => {
-      this.setState({
-        list: data,
-      });
+    const getData = async () => {
+      let oldList;
+      if (this.props.location.state) {
+        oldList = this.props.location.state.list;
+      }
+      const getLocalData = async () => {
+        const res = localforage
+          .getItem("userInfo")
+          .then(function (value) {
+            // 当离线仓库中的值被载入时，此处代码运行
+            return value;
+          })
+          .catch(function (err) {
+            // 当出错时，此处代码运行
+          });
+        return res;
+      };
+      let userInfo = await getLocalData();
+      const setList = (data) => {
+        console.log(data);
+        let value = data;
+        if (oldList && oldList.length > 0) {
+          for (let i = 0; i < value.length; i++) {
+            for (let j = 0; j < oldList.length; j++) {
+              if (oldList[j].id == value[i].id) {
+                value.splice(i, 1);
+              }
+            }
+          }
+        }
+        this.setState(
+          {
+            list: value,
+          },
+          () => {
+            let loading = document.getElementById("funlip-loading");
+            loading.style.display = "none";
+          }
+        );
+      };
+      setList(userInfo);
     };
-
-    const sendMessageToContentBackgroundScript = (mes) => {
-      mes.type = "getUserLists";
-      let loading = document.getElementById("funlip-loading");
-      loading.style.display = "block";
-
-      chrome.runtime.sendMessage({ mes }, function (response) {});
-    };
-    sendMessageToContentBackgroundScript({});
+    getData();
   }
 
   render() {
     //跳转至密码详情页，并传参
-
     let isFolderDetail;
     let folderName;
     let oldList;
@@ -47,43 +75,7 @@ class PsdLibrary extends Component {
       folderName = this.props.location.state.folderName;
       oldList = this.props.location.state.list;
     }
-
     const _this = this;
-
-    const setList = (data) => {
-      //流程，根据首字母比较，然后排序 再把数组中的数据加载一个新数组里面 然后更新用户接口面
-      //
-      // let newArray = [];
-      // data.map((item, index) => {
-      //   const first = item.title.charAt(0);
-      //   let key = {
-      //     first,
-      //     index,
-      //     item,
-      //   };
-      //   newArray.push(key);
-      // });
-      //
-      let value = data;
-      if (oldList && oldList.length > 0) {
-        for (let i = 0; i < value.length; i++) {
-          for (let j = 0; j < oldList.length; j++) {
-            if (oldList[j].id == value[i].id) {
-              value.splice(i, 1);
-            }
-          }
-        }
-      }
-      this.setState(
-        {
-          list: value,
-        },
-        () => {
-          let loading = document.getElementById("funlip-loading");
-          loading.style.display = "none";
-        }
-      );
-    };
 
     const pluginID = handleLocalStorage("get", "pluginID");
 
@@ -93,20 +85,6 @@ class PsdLibrary extends Component {
         state: { itemDetail },
       });
     };
-
-    chrome.extension.onMessage.addListener(function (
-      request,
-      sender,
-      sendResponse
-    ) {
-      if (request == "addSuccess") {
-        _this.props.history.push("/home/psd");
-      }
-      if (request.type == "folderGetData") {
-        const { data } = request;
-        setList(data);
-      }
-    });
 
     //发送消息给background,手动填充
     function sendMessageToContentScript(mes) {
