@@ -23,11 +23,6 @@ class PsdLibrary extends Component {
   };
 
   componentWillMount() {
-    const setList = (data) => {
-      this.setState({
-        list: data,
-      });
-    };
     let searchInputValue;
     if (this.props.location.state) {
       searchInputValue = this.props.location.state.searchInputValue;

@@ -8,7 +8,6 @@ import "antd/es/button/style/index.css";
 import logo from "./images/icon_WePass_logo备份@2x.png";
 import edit from "./images/icon_edit@2x.png";
 import close from "./images/close.png";
-
 import "./antd-diy.css";
 import "./savePsw.css";
 
@@ -140,7 +139,11 @@ function Content() {
     // if (request.showUrl.indexOf(newUrl) != -1) {
     //   setShow("block");
     // }
-    if (window.self === window.top && request.showUrl.indexOf(newUrl) != -1) {
+    if (
+      window.self === window.top &&
+      request.showUrl &&
+      request.showUrl.indexOf(newUrl) != -1
+    ) {
       setShow("block");
       sendMessageToBackgroundScript06();
     }
@@ -470,6 +473,8 @@ try {
 let url = window.location.href;
 let flag = true;
 let data;
+let setInterFlag = 0;
+
 if (url.indexOf("chrome-extension:") != -1) {
   flag = false;
 }
@@ -477,10 +482,29 @@ if (url.indexOf("chrome-extension:") != -1) {
 // 自动填充，每次打开页面之后都要发送信息给background，这样才能自动填充（因为要在bg里获取用户data）
 function sendMessageToBackgroundScript2(mes) {
   mes.type = "autofill";
+  mes.currentAutofillUrl = window.location.href;
   chrome.runtime.sendMessage({ mes });
 }
 if (flag) {
-  sendMessageToBackgroundScript2({});
+  let mid = setInterval(() => {
+    setInterFlag++;
+
+    sendMessageToBackgroundScript2({});
+    chrome.runtime.onMessage.addListener(function (
+      request,
+      sender,
+      sendResponse
+    ) {
+      if (request == "stopCount") {
+        clearInterval(mid);
+        setInterFlag = 0;
+      }
+      sendResponse("closeCount");
+    });
+    if (setInterFlag == 60) {
+      clearInterval(mid);
+    }
+  }, 1000);
 }
 
 //跳转新的url
@@ -529,19 +553,32 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
             function test(name, pass) {
               let inputGroup = document.getElementsByTagName("input");
               let inputArray = [];
+
               if (inputGroup.length) {
                 for (let i = 0; i < inputGroup.length; i++) {
                   if (inputGroup[i].type === "password") {
                     if (inputGroup[i].style.display == "none") {
-                      inputArray.push(inputGroup[i - 1]);
-                    }
-                    if (
-                      inputGroup[i].style.display != "none" &&
-                      inputGroup[i - 1].style.display != "none"
-                    ) {
-                      inputArray.push(inputGroup[i - 1]);
+                      for (let j = i - 1; j > 0; j--) {
+                        if (inputGroup[j].style.display != "none") {
+                          inputArray.push(inputGroup[j]);
+                          break;
+                        }
+                      }
                     }
                     if (inputGroup[i].style.display != "none") {
+                      if (inputArray.length == 0) {
+                        if (i === 1) {
+                          inputArray.push(inputGroup[i - 1]);
+                        } else {
+                          for (let x = i - 1; x > 0; x--) {
+                            if (inputGroup[x].style.display != "none") {
+                              inputArray.push(inputGroup[x]);
+                              break;
+                            }
+                          }
+                        }
+                      }
+
                       inputArray.push(inputGroup[i]);
                     }
                   }
@@ -569,6 +606,16 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
                   nativeInputValueSetterPsw.call(passWordText, pass);
                   var ev2 = new Event("input", { bubbles: true });
                   passWordText.dispatchEvent(ev2);
+                  if (loginWordText && loginWordText.value.length > 0) {
+                    function sendMessageToBackgroundScript2(mes) {
+                      mes.type = "stopAutofill";
+                      mes.currentAutofillUrl = window.location.href;
+                      chrome.runtime.sendMessage({ mes });
+                    }
+                    sendMessageToBackgroundScript2({});
+                    //
+                    // setInterFlag = false;
+                  }
                 }
               }
             }
@@ -579,7 +626,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     }
   }
   autofill();
-
+  let autoFillConfig = true;
   //手动填充密码
   function test() {
     if (request.test == "mesToBackground") {
@@ -620,15 +667,20 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
               for (let i = 0; i < inputGroup.length; i++) {
                 if (inputGroup[i].type === "password") {
                   if (inputGroup[i].style.display == "none") {
-                    inputArray.push(inputGroup[i - 1]);
-                  }
-                  if (
-                    inputGroup[i].style.display != "none" &&
-                    inputGroup[i - 1].style.display != "none"
-                  ) {
-                    inputArray.push(inputGroup[i - 1]);
+                    for (let j = i - 1; j > 0; j--) {
+                      if (inputGroup[j].style.display != "none") {
+                        inputArray.push(inputGroup[j]);
+                        break;
+                      }
+                    }
                   }
                   if (inputGroup[i].style.display != "none") {
+                    for (let j = i - 1; j > 0; j--) {
+                      if (inputGroup[j].style.display != "none") {
+                        inputArray.push(inputGroup[j]);
+                        break;
+                      }
+                    }
                     inputArray.push(inputGroup[i]);
                   }
                 }

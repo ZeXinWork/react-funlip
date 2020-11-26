@@ -10,10 +10,11 @@ let url = "";
 let userName = "";
 let password = "";
 let setIntervalFlag = true;
+let currentURl = undefined;
 let timeFlag = true;
 let firstInterval;
 let isRealShow = true;
-
+let isAutofill = true;
 //获取用户数据流程 （内存-》本地-》接口）
 // 1、建立一个本地仓库（同步执行）
 localforage.config({
@@ -325,7 +326,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   const autoStore = handleLocalStorage("get", "autoStore"); //设置是否自动保存密码
   let BASE = "106.53.103.199:8088";
   if (type === "autofill") {
-    if (autoFill == 1) {
+    if (autoFill == 1 && isAutofill) {
       let userInfoData = { data };
       userInfoData.test = "autofill";
       chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
@@ -334,6 +335,17 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
           userInfoData,
           function (response) {}
         );
+      });
+    }
+  } else if (type == "stopAutofill") {
+    isAutofill = false;
+    if (!isAutofill) {
+      chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+        chrome.tabs.sendMessage(tabs[0].id, "stopCount", function (response) {
+          if (response == "closeCount") {
+            isAutofill = true;
+          }
+        });
       });
     }
   } else if (type === "mesToBackground") {
@@ -490,6 +502,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       .catch(function (err) {
         // 当出错时，此处代码运行
       });
+  } else if (type === "stopAutofill") {
   } else if (requestType === "getNumbers") {
     let { areaCode, phone, type } = message.mes;
     const { NumberType } = message.mes;
