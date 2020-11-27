@@ -247,6 +247,10 @@ export default class MyAbout extends Component {
               handleLocalStorage("set", "autoStore", autoStore);
               handleLocalStorage("set", "lockedDelay", lockedDelay);
               handleLocalStorage("remove", "verificationMainCode");
+              handleLocalStorage("remove", "verificationCode");
+
+              handleLocalStorage("remove", "phone");
+
               if (firstTimeLogin) {
                 handleLocalStorage("set", "isSetMainPsw", true);
                 _this.props.history.push({

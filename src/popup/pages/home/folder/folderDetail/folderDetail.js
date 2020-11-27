@@ -5,6 +5,7 @@ import Success from "./icon_success@2x.png";
 import { handleLocalStorage } from "../../../../../api";
 import localforage from "localforage";
 import { Checkbox, Input } from "antd";
+import copy from "copy-to-clipboard";
 import Lock from "./Lock.png";
 import Folder from "./Folder.png";
 import Up from "./Up.png";
@@ -238,19 +239,11 @@ export default class componentName extends Component {
 
     //复制密码
     const Copy = (psw) => {
-      const input = document.createElement("input");
+      // const input = document.createElement("input");
       let modal = document.getElementsByClassName(
         "psw-success-info-wrapper"
       )[0];
-      const password = psw;
-      if (!password) {
-        return;
-      }
-      input.value = password;
-      document.body.appendChild(input);
-      input.select();
-      document.execCommand("copy");
-      input.remove();
+      copy(psw);
       modal.style.display = "block";
       setTimeout(() => {
         modal.style.display = "none";
@@ -438,6 +431,7 @@ export default class componentName extends Component {
                       folderName: res.data.name,
                       editShow: "none",
                       inputValue: "",
+                      folderExplain: "hidden",
                     });
                   })
                   .catch(function (err) {});
@@ -621,9 +615,12 @@ export default class componentName extends Component {
                   }
                 }
               }
+
               _this.setState({
                 removeShow: "none",
                 editPswShow: "none",
+                showCheckBox: false,
+                btnShow: "block",
               });
               localforage
                 .setItem("folderList", folderList)
@@ -635,6 +632,8 @@ export default class componentName extends Component {
             _this.setState({
               removeShow: "none",
               editPswShow: "none",
+              showCheckBox: false,
+              btnShow: "block",
             });
           }
         });
@@ -753,6 +752,7 @@ export default class componentName extends Component {
       this.setState({
         renameShow: "none",
         inputValue: "",
+        folderExplain: "hidden",
       });
     };
 
@@ -804,6 +804,7 @@ export default class componentName extends Component {
                 const value = e.target.value;
                 this.setState({
                   inputValue: value,
+                  folderExplain: "hidden",
                 });
               }}
               bordered={false}

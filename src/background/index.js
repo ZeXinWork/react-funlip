@@ -72,6 +72,21 @@ const getAllData = async () => {
   userInfo = await getLocalData();
 
   if (userInfo && userInfo.length > 0) {
+    let arr1 = [];
+    Object.assign(arr1, userInfo);
+    let temp = null;
+    for (let i = 0; i < arr1.length - 1; i++) {
+      for (let j = 0; j < arr1.length - 1 - i; j++) {
+        if (arr1[j].title.length > 0) {
+          if (arr1[j].title > arr1[j + 1].title) {
+            temp = arr1[j];
+            arr1[j] = arr1[j + 1];
+            arr1[j + 1] = temp;
+          }
+        }
+      }
+    }
+
     data = userInfo;
   } else {
     const getServeData = async () => {
@@ -101,45 +116,31 @@ const getAllData = async () => {
 //往数据库里添加数据，并添加到内存返回给密码库页面
 const addItem = async (value, isFolderAdd) => {
   value = JSON.parse(value);
-  const localState = await localforage
-    .getItem("userInfo")
-    .then(function (value) {
-      // 当离线仓库中的值被载入时，此处代码运行
-      return value;
-    })
-    .catch(function (err) {
-      // 当出错时，此处代码运行
-    });
+  if (value.id) {
+    const localState = await localforage
+      .getItem("userInfo")
+      .then(function (value) {
+        // 当离线仓库中的值被载入时，此处代码运行
+        return value;
+      })
+      .catch(function (err) {
+        // 当出错时，此处代码运行
+      });
 
-  localState.push(value);
-  localforage
-    .setItem("userInfo", localState)
-    .then(function (value) {
-      data = value;
-      let cmd;
+    localState.push(value);
+    localforage
+      .setItem("userInfo", localState)
+      .then(function (value) {
+        data = value;
+        let cmd;
 
-      if (!isFolderAdd) {
-        cmd = "addSuccess";
-        chrome.runtime.sendMessage(cmd, function (response) {});
-      }
-    })
-    .catch(function (err) {
-      // 当出错时，此处代码运行
-    });
-  //
-  // let arr = JSON.parse(localState);
-  // arr.push(value);
-  //
-  //
-  //
-  // data = arr;
-  //
-  // localforage
-  //   .setItem("userInfo", arr)
-  //   .then(function (value) {})
-  //   .catch(function (err) {
-  //     // 当出错时，此处代码运行
-  //   });
+        if (!isFolderAdd) {
+          cmd = "addSuccess";
+          chrome.runtime.sendMessage(cmd, function (response) {});
+        }
+      })
+      .catch(function (err) {});
+  }
 };
 
 //删除数据库指定数据,并添加到内存返回给密码库页面
@@ -327,15 +328,24 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   let BASE = "106.53.103.199:8088";
   if (type === "autofill") {
     if (autoFill == 1 && isAutofill) {
-      let userInfoData = { data };
-      userInfoData.test = "autofill";
-      chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-        chrome.tabs.sendMessage(
-          tabs[0].id,
-          userInfoData,
-          function (response) {}
+      const getAllDatas = async () => {
+        const data = await getAllData();
+
+        let userInfoData = { data };
+
+        userInfoData.test = "autofill";
+        chrome.tabs.query(
+          { active: true, currentWindow: true },
+          function (tabs) {
+            chrome.tabs.sendMessage(
+              tabs[0].id,
+              userInfoData,
+              function (response) {}
+            );
+          }
         );
-      });
+      };
+      getAllDatas();
     }
   } else if (type == "stopAutofill") {
     isAutofill = false;

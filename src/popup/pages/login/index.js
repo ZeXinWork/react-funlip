@@ -214,51 +214,59 @@ export default class componentName extends Component {
 
   render() {
     const { Option } = Select;
-    const lock = handleLocalStorage("get", "autolock");
-    if (lock) {
-      this.props.history.push("/autoLock");
-    }
 
     //表单通过后的回调
     const onFinish = async (values) => {
       const { tele } = values; //获取用户输入的手机号
       ////发请求先获取验证码
-      const userInfo = {
-        areaCode: "+86",
-        phone: tele,
-        type: "PLUGIN_LOGIN",
-      };
-
-      const sendMessageToContentBackgroundScript = (mes) => {
-        const _this = this;
-        mes.requestType = "getNumbers";
-
-        chrome.runtime.sendMessage({ mes }, function (res) {
-          res = JSON.parse(res);
-
-          if (res.code === 200) {
-            const { verificationCode } = res.data;
-            _this.props.history.push({
-              pathname: "/pswNum",
-              state: { tele: tele, number: verificationCode },
-            });
-          } else if (res.code === 714) {
-            _this.setState(
-              {
-                already: "block",
-              },
-              () => {
-                setTimeout(() => {
-                  _this.setState({
-                    already: "none",
-                  });
-                }, 2000);
-              }
-            );
-          }
+      const verificationCode = handleLocalStorage("get", "verificationCode");
+      const phone = handleLocalStorage("get", "phone");
+      if (verificationCode && phone) {
+        this.props.history.push({
+          pathname: "/pswNum",
+          state: { verificationCode, tele: phone },
         });
-      };
-      sendMessageToContentBackgroundScript(userInfo);
+      } else {
+        const userInfo = {
+          areaCode: "+86",
+          phone: tele,
+          type: "PLUGIN_LOGIN",
+        };
+
+        const sendMessageToContentBackgroundScript = (mes) => {
+          const _this = this;
+          mes.requestType = "getNumbers";
+
+          chrome.runtime.sendMessage({ mes }, function (res) {
+            res = JSON.parse(res);
+
+            if (res.code === 200) {
+              const { verificationCode } = res.data;
+              handleLocalStorage("set", "verificationCode", verificationCode);
+              handleLocalStorage("set", "phone", tele);
+
+              _this.props.history.push({
+                pathname: "/pswNum",
+                state: { tele: tele, number: verificationCode },
+              });
+            } else if (res.code === 714) {
+              _this.setState(
+                {
+                  already: "block",
+                },
+                () => {
+                  setTimeout(() => {
+                    _this.setState({
+                      already: "none",
+                    });
+                  }, 2000);
+                }
+              );
+            }
+          });
+        };
+        sendMessageToContentBackgroundScript(userInfo);
+      }
     };
     //表单失败的回调
     const onFinishFailed = (errorInfo) => {

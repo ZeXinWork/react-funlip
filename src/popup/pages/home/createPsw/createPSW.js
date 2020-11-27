@@ -1,12 +1,14 @@
 import React, { Component } from "react";
 import { Button, Slider, Switch } from "antd";
+import copy from "copy-to-clipboard";
+import Success from "./icon_success@2x.png";
 import "./createPSW.css";
 export default class createPSW extends Component {
   state = {
     password: "",
     check: true,
     value: 10,
-    hasLower: true,
+
     hasUpper: true,
     hasNumber: true,
     hasSymbol: true,
@@ -49,7 +51,8 @@ export default class createPSW extends Component {
     const symbolsEl = document.getElementById("symbols");
     //设置对应配置信息
     const length = value;
-    let { hasLower, hasUpper, hasNumber, hasSymbol } = this.state;
+    let hasLower = true;
+    let { hasUpper, hasNumber, hasSymbol } = this.state;
 
     let res = generatePassword(
       hasLower,
@@ -233,22 +236,27 @@ export default class createPSW extends Component {
 
     //将密码复制到粘贴板
     const Copy = () => {
-      const textarea = document.createElement("textarea");
-      const password = this.state.password;
-      if (!password) {
-        return;
-      }
-      textarea.style.display = "hidden";
-      textarea.value = password;
-      document.body.appendChild(textarea);
-      textarea.select();
-      document.execCommand("copy");
-      textarea.remove();
-
-      alert("密码已复制到剪切板");
+      let modal = document.getElementsByClassName(
+        "psw-success-info-wrapper"
+      )[0];
+      copy(this.state.password);
+      modal.style.display = "block";
+      setTimeout(() => {
+        modal.style.display = "none";
+      }, 2000);
     };
     return (
       <div className="createPSW-wrapper">
+        <div className="psw-success-info-wrapper">
+          <div className="psw-success-info">
+            <img
+              src={Success}
+              className="success-icon"
+              alt="psw-success-info"
+            />
+            <div className="psw-success-text">密码已复制</div>
+          </div>
+        </div>
         <div className="createPSW-header">
           <p className="createPSW-header-text">{this.state.password}</p>
         </div>
@@ -256,7 +264,7 @@ export default class createPSW extends Component {
           <div className="createPSW-slider-wrapper">
             <span>{this.state.ToolTip}</span>
             <Slider
-              max={40}
+              max={24}
               min={0}
               className="createPSW-slider"
               defaultValue={10}
@@ -271,7 +279,7 @@ export default class createPSW extends Component {
                 );
               }}
             />
-            <span>40</span>
+            <span>24</span>
           </div>
           <div className="autoMid">
             <div className="auto-Space">
@@ -288,30 +296,7 @@ export default class createPSW extends Component {
                 className="mr-32"
               />
             </div>
-            <div className="auto-Space">
-              <span className="ml-32">小写字母</span>
-              <Switch
-                defaultChecked={this.state.check}
-                id="lowercase"
-                checked={this.state.mustShowLow}
-                onChange={() => {
-                  if (this.state.mustShowLow) {
-                    this.setState({
-                      mustShowLow: false,
-                    });
-                  } else {
-                    this.setState({
-                      mustShowLow: true,
-                    });
-                  }
-                  setValue({
-                    value: this.state.value,
-                    options: "lowercase",
-                  });
-                }}
-                className="mr-32"
-              />
-            </div>
+
             <div className="auto-Space">
               <span className="ml-32">符号</span>
               <Switch
@@ -341,7 +326,7 @@ export default class createPSW extends Component {
               />
             </div>
           </div>
-          <div className="autoMid">
+          <div className="autoMid ">
             <div className="button-layout">
               <div className="main ml-20">
                 <div className="btn-1 " onClick={reset}>

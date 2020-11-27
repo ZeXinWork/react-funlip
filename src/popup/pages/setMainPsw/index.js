@@ -13,6 +13,7 @@ export default class setMP extends Component {
     warnIng: "none",
     sixLength: "none",
     mainPswErr: "none",
+    equalMessage: "none",
   };
   render() {
     const goLogin = () => {
@@ -91,6 +92,19 @@ export default class setMP extends Component {
             }, 1000);
           }
         );
+      } else if (oldPsw == newPsw) {
+        this.setState(
+          {
+            equalMessage: "block",
+          },
+          () => {
+            setTimeout(() => {
+              _this.setState({
+                equalMessage: "none",
+              });
+            }, 1000);
+          }
+        );
       } else if (conFirmPsw != newPsw) {
         this.setState(
           {
@@ -112,6 +126,7 @@ export default class setMP extends Component {
             let res = JSON.parse(response);
             if (res.code === 200) {
               //修改 扫码登录就没有本地手机号了
+
               const phone = tele;
               let oldMainPass = oldPsw;
               let newMainPass = newPsw;
@@ -197,7 +212,12 @@ export default class setMP extends Component {
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit" className="from-btn">
+            <Button
+              type="primary"
+              htmlType="submit"
+              className="from-btn"
+              shape="round"
+            >
               下一步
             </Button>
           </Form.Item>
@@ -229,6 +249,13 @@ export default class setMP extends Component {
         >
           <img src={iconWarning} className="icon-fail" />
           <div className="smile-text">原主密码错误！</div>
+        </div>
+        <div
+          className="smile-message"
+          style={{ display: this.state.equalMessage }}
+        >
+          <img src={iconWarning} className="icon-fail" />
+          <div className="smile-text">新密码不能与旧密码一致！</div>
         </div>
         <img
           src={iconArrow}

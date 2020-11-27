@@ -12,6 +12,8 @@ import Success from "./icon_success@2x.png";
 import arrowLeft from "./icon_arrowright_black@2x.png";
 import robot from "./robot.png";
 import add from "./icon_btn_add@2x.png";
+import copy from "copy-to-clipboard";
+
 import "./passwordLibrary.css";
 class PsdLibrary extends Component {
   //设置密码列表
@@ -144,21 +146,10 @@ class PsdLibrary extends Component {
 
     //复制用户密码
     const Copy = (psw) => {
-      const input = document.createElement("input");
-
       let modal = document.getElementsByClassName(
         "psw-success-info-wrapper"
       )[0];
-
-      const password = psw;
-      if (!password) {
-        return;
-      }
-      input.value = password;
-      document.body.appendChild(input);
-      input.select();
-      document.execCommand("copy");
-      input.remove();
+      copy(psw);
       modal.style.display = "block";
       setTimeout(() => {
         modal.style.display = "none";

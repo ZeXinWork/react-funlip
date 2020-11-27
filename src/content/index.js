@@ -22,10 +22,6 @@ function Content() {
   let [title, setTitle] = useState("");
   let [note, setNote] = useState("");
   //表单布局
-  const layout = {
-    labelCol: { span: 24 },
-    wrapperCol: { span: 16 },
-  };
 
   // 获取当前主域名;
   const configUrl = (url) => {
@@ -114,6 +110,7 @@ function Content() {
     setShow("none");
     sendMessageToBackgroundScript4({});
   };
+
   const sendMessageToBackgroundScript06 = (mes) => {
     mes.type = "noShow";
 
@@ -153,9 +150,9 @@ function Content() {
     //针对页面表单事件
     const pageUrl = configUrl(window.location.href);
     setUrl(pageUrl);
-    document.onsubmit = function () {
-      //想让他在页面中显示 必须要通过通信改变状态值
 
+    document.onsubmit = function () {
+      alert(1);
       let inputGroup = document.getElementsByTagName("input");
       let inputArray = [];
       if (inputGroup.length) {
@@ -177,7 +174,6 @@ function Content() {
         }
       }
       if (inputArray.length > 0) {
-        // setShow("block");
         sendMessageToBackgroundScript02({});
       }
     };
@@ -226,14 +222,14 @@ function Content() {
       } else if (aCollection[i].className) {
         if (
           aCollection[i].className.indexOf("login") != -1 &&
-          aCollection[i].childElementCount == 0 &&
-          aCollection[i].innerText == "登录"
+          aCollection[i].childElementCount == 0
         ) {
           aLoginGroup.push(aCollection[i]);
         }
       }
     }
-    if (aLoginGroup.length === 1) {
+    if (aLoginGroup.length > 0) {
+      console.log("找到你了");
       let targetA = aLoginGroup[0];
       targetA.addEventListener("click", setOnclick, false);
     }
@@ -261,7 +257,9 @@ function Content() {
       }
     }
 
-    if (BtnGroup.length === 1) {
+    if (BtnGroup.length > 0) {
+      console.log("找到你了");
+
       let targetA = BtnGroup[0];
       targetA.addEventListener("click", setOnclick, false);
     }
@@ -288,7 +286,8 @@ function Content() {
       }
     }
 
-    if (inputGroup.length === 1) {
+    if (inputGroup.length > 0) {
+      console.log("找到你了");
       let targetA = inputGroup[0];
       targetA.addEventListener("click", setOnclick, false);
     }
@@ -488,7 +487,6 @@ function sendMessageToBackgroundScript2(mes) {
 if (flag) {
   let mid = setInterval(() => {
     setInterFlag++;
-
     sendMessageToBackgroundScript2({});
     chrome.runtime.onMessage.addListener(function (
       request,
@@ -556,30 +554,36 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 
               if (inputGroup.length) {
                 for (let i = 0; i < inputGroup.length; i++) {
-                  if (inputGroup[i].type === "password") {
-                    if (inputGroup[i].style.display == "none") {
-                      for (let j = i - 1; j > 0; j--) {
-                        if (inputGroup[j].style.display != "none") {
-                          inputArray.push(inputGroup[j]);
-                          break;
-                        }
-                      }
-                    }
-                    if (inputGroup[i].style.display != "none") {
-                      if (inputArray.length == 0) {
-                        if (i === 1) {
-                          inputArray.push(inputGroup[i - 1]);
-                        } else {
-                          for (let x = i - 1; x > 0; x--) {
-                            if (inputGroup[x].style.display != "none") {
-                              inputArray.push(inputGroup[x]);
-                              break;
-                            }
+                  if (inputGroup[i].parentNode.style.display !== "none") {
+                    if (inputGroup[i].type === "password") {
+                      if (inputGroup[i].style.display == "none") {
+                        for (let j = i - 1; j > 0; j--) {
+                          if (inputGroup[j].style.display != "none") {
+                            inputArray.push(inputGroup[j]);
+                            break;
                           }
                         }
                       }
+                      if (inputGroup[i].style.display != "none") {
+                        if (inputArray.length == 0) {
+                          if (i === 1) {
+                            inputArray.push(inputGroup[i - 1]);
+                          } else {
+                            for (let x = i - 1; x > 0; x--) {
+                              if (
+                                inputGroup[x].style.display != "none" &&
+                                inputGroup[x].parentNode.style.display != "none"
+                              ) {
+                                //
+                                inputArray.push(inputGroup[x]);
+                                break;
+                              }
+                            }
+                          }
+                        }
 
-                      inputArray.push(inputGroup[i]);
+                        inputArray.push(inputGroup[i]);
+                      }
                     }
                   }
                 }
@@ -665,23 +669,36 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 
             if (inputGroup.length) {
               for (let i = 0; i < inputGroup.length; i++) {
-                if (inputGroup[i].type === "password") {
-                  if (inputGroup[i].style.display == "none") {
-                    for (let j = i - 1; j > 0; j--) {
-                      if (inputGroup[j].style.display != "none") {
-                        inputArray.push(inputGroup[j]);
-                        break;
+                if (inputGroup[i].parentNode.style.display !== "none") {
+                  if (inputGroup[i].type === "password") {
+                    if (inputGroup[i].style.display == "none") {
+                      for (let j = i - 1; j > 0; j--) {
+                        if (inputGroup[j].style.display != "none") {
+                          inputArray.push(inputGroup[j]);
+                          break;
+                        }
                       }
                     }
-                  }
-                  if (inputGroup[i].style.display != "none") {
-                    for (let j = i - 1; j > 0; j--) {
-                      if (inputGroup[j].style.display != "none") {
-                        inputArray.push(inputGroup[j]);
-                        break;
+                    if (inputGroup[i].style.display != "none") {
+                      if (inputArray.length == 0) {
+                        if (i === 1) {
+                          inputArray.push(inputGroup[i - 1]);
+                        } else {
+                          for (let x = i - 1; x > 0; x--) {
+                            if (
+                              inputGroup[x].style.display != "none" &&
+                              inputGroup[x].parentNode.style.display != "none"
+                            ) {
+                              //
+                              inputArray.push(inputGroup[x]);
+                              break;
+                            }
+                          }
+                        }
                       }
+
+                      inputArray.push(inputGroup[i]);
                     }
-                    inputArray.push(inputGroup[i]);
                   }
                 }
               }
@@ -708,6 +725,16 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
                 nativeInputValueSetterPsw.call(passWordText, pass);
                 var ev2 = new Event("input", { bubbles: true });
                 passWordText.dispatchEvent(ev2);
+                if (loginWordText && loginWordText.value.length > 0) {
+                  function sendMessageToBackgroundScript2(mes) {
+                    mes.type = "stopAutofill";
+                    mes.currentAutofillUrl = window.location.href;
+                    chrome.runtime.sendMessage({ mes });
+                  }
+                  sendMessageToBackgroundScript2({});
+                  //
+                  // setInterFlag = false;
+                }
               }
             }
           }

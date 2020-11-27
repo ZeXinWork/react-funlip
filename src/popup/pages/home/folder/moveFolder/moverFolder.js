@@ -282,7 +282,14 @@ class PsdLibrary extends Component {
                 className="psw-info"
                 key={item.title}
                 onClick={() => {
-                  // toDetail(item);
+                  let MyCheckBox = document.getElementsByClassName(
+                    "folderCheckbox"
+                  )[index];
+                  if (MyCheckBox.checked) {
+                    MyCheckBox.checked = false;
+                  } else {
+                    MyCheckBox.checked = true;
+                  }
                 }}
                 onMouseOver={() => {
                   showHover(index);
@@ -297,7 +304,8 @@ class PsdLibrary extends Component {
                   <div>{item.account}</div>
                 </div>
                 <div className="psw-icon">
-                  <Checkbox
+                  <input
+                    type="checkbox"
                     className="folderCheckbox"
                     onClick={(e) => {
                       if (e && e.stopPropagation) {
@@ -305,14 +313,6 @@ class PsdLibrary extends Component {
                       } else {
                         window.event.cancelBubble = true;
                       }
-                    }}
-                    onChange={() => {
-                      let MyCheckBox = document.getElementsByClassName(
-                        "folderCheckbox"
-                      )[index];
-                      MyCheckBox.checked
-                        ? (MyCheckBox.checked = false)
-                        : (MyCheckBox.checked = true);
                     }}
                   />
                 </div>

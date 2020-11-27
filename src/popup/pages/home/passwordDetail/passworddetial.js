@@ -28,6 +28,8 @@ class PasswordDetail extends Component {
     titleExplain: "hidden",
     accountExplain: "hidden",
     tipExplain: "hidden",
+    websiteExplain: "hidden",
+
     accountExplainText: "请输入账号！",
     passwordExplainText: "请输入密码！",
     titleExplainText: "请输入标题！",
@@ -45,6 +47,11 @@ class PasswordDetail extends Component {
       return +String.fromCharCode(Math.floor(Math.random() * 10) + 48);
     }
 
+    //生成随机小写
+    function getRandomLower() {
+      return String.fromCharCode(Math.floor(Math.random() * 26) + 97);
+    }
+
     // 生成随机符号
     function getRandomSymbol() {
       const symbols = "!@#$%^&*(){}[]=<>/,.";
@@ -55,6 +62,7 @@ class PasswordDetail extends Component {
       upper: getRandomUpper,
       number: getRandomNumber,
       symbol: getRandomSymbol,
+      lower: getRandomLower,
     };
     //获取对应节点
     const uppercaseEl = document.getElementById("uppercase");
@@ -66,26 +74,21 @@ class PasswordDetail extends Component {
     let hasUpper = uppercaseEl.checked;
     const hasNumber = numbersEl.checked;
     const hasSymbol = symbolsEl.checked;
-    if (!hasUpper && !hasNumber && !hasSymbol) {
-      hasUpper = true;
-      this.setState({
-        mustShowUp: true,
-      });
-    }
+    let hasLower = true;
     const res = generatePassword(
-      // hasLower,
+      hasLower,
       hasUpper,
       hasNumber,
       hasSymbol,
       length
     );
     //获取密码
-    function generatePassword(upper, number, symbol, length) {
+    function generatePassword(lower, upper, number, symbol, length) {
       // 1.初始化密码
       let generatedPassword = "";
       // 2.过滤出没有选中的密码类型
-      const typesCount = upper + number + symbol;
-      const typeArr = [{ upper }, { number }, { symbol }].filter(
+      const typesCount = lower + upper + number + symbol;
+      const typeArr = [{ lower }, { upper }, { number }, { symbol }].filter(
         (item) => Object.values(item)[0]
       );
       //
@@ -391,7 +394,7 @@ class PasswordDetail extends Component {
               onClick={showModal2}
             />
           </div>
-          <div className="newPsw-card-content">
+          <div className="newPsw-card-contents">
             <span className="newPsw-card-inputnewPswText">标题</span>
             <input
               className="newPsw-card-input"
@@ -411,6 +414,11 @@ class PasswordDetail extends Component {
                   this.setState({
                     titleExplain: "visible",
                     titleExplainText: "标题长度不能大于24位",
+                  });
+                } else if (e.target.value.length > 0) {
+                  this.setState({
+                    titleExplain: "hidden",
+                    titleExplainText: "请输入标题！",
                   });
                 } else {
                   let passwordExplain = document.getElementsByClassName(
@@ -449,6 +457,11 @@ class PasswordDetail extends Component {
                   this.setState({
                     accountExplain: "visible",
                     accountExplainText: "账号长度不能大于64位",
+                  });
+                } else if (e.target.value.length > 0) {
+                  this.setState({
+                    accountExplain: "hidden",
+                    accountExplainText: "请输入账号！",
                   });
                 } else {
                   let passwordExplain = document.getElementsByClassName(
@@ -489,6 +502,11 @@ class PasswordDetail extends Component {
                     passwordExplain: "visible",
                     passwordExplainText: "密码长度不能大于24位",
                   });
+                } else if (e.target.value.length > 0) {
+                  this.setState({
+                    passwordExplain: "hidden",
+                    passwordExplainText: "请输入账号！",
+                  });
                 } else {
                   let passwordExplain = document.getElementsByClassName(
                     "password-explain-long"
@@ -510,16 +528,31 @@ class PasswordDetail extends Component {
             <span className="newPsw-card-inputnewPswText">网址</span>
             <input
               className="newPsw-card-input"
-              style={{ marginBottom: 20 }}
               bordered={false}
+              maxlength={255}
               value={this.state.website}
               onChange={(e) => {
                 const value = e.target.value;
+                if (value.length == 255) {
+                  this.setState({
+                    websiteExplain: "visible",
+                  });
+                } else {
+                  this.setState({
+                    websiteExplain: "hidden",
+                  });
+                }
                 this.setState({
                   website: value,
                 });
               }}
             />
+            <div
+              className="password-explains"
+              style={{ visibility: this.state.websiteExplain }}
+            >
+              网址不能超过255位
+            </div>
             <span className="newPsw-card-inputnewPswText">备注</span>
             <textarea
               className="newPsw-card-inputTextArea"

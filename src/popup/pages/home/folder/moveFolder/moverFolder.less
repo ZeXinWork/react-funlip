@@ -3,18 +3,24 @@
   width: 100%;
   height: 450px;
   position: relative;
-  .ant-checkbox-inner {
-    background: url("./checkbox／unselected+normal.png") no-repeat;
+  input[type="checkbox"] {
+    -webkit-appearance: none; /*清除复选框默认样式*/
+    border: none;
+    outline: none;
+    vertical-align: middle;
     width: 17px;
     height: 17px;
-    border-style: none;
+    margin-right: 24px;
+    background: url("./checkbox／unselected+normal.png") no-repeat;
   }
-  .ant-checkbox-checked::after {
+  input[type="checkbox"]:checked {
+    outline: none;
+    -webkit-appearance: none;
     border: none;
+    background: url("./checkbox／selected+normal.png") no-repeat; /*复选框的背景图*/
+    background-size: contain;
   }
-  .ant-checkbox-checked {
-    background: url("./checkbox／selected+normal.png") no-repeat;
-  }
+
   .folderName-wrapper {
     .folderName-icon {
       cursor: pointer;
