@@ -225,7 +225,11 @@
   width: 148px;
   height: 40px;
   background: linear-gradient(244deg, #4ca0fe 0%, #8455ff 100%);
+  border-radius: 25px;
   color: #fff;
+  border: none;
+  cursor: pointer;
+  outline: none;
 }
 .CRX-content .save-psw-wrapper .password-detail-wrapper .password-detail-form-wrapper .content-textarea-setINfo {
   width: 312px;

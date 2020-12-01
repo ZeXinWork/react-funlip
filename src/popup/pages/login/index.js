@@ -218,10 +218,12 @@ export default class componentName extends Component {
     //表单通过后的回调
     const onFinish = async (values) => {
       const { tele } = values; //获取用户输入的手机号
+
       ////发请求先获取验证码
       const verificationCode = handleLocalStorage("get", "verificationCode");
       const phone = handleLocalStorage("get", "phone");
-      if (verificationCode && phone) {
+
+      if (verificationCode && phone && phone == tele) {
         this.props.history.push({
           pathname: "/pswNum",
           state: { verificationCode, tele: phone },

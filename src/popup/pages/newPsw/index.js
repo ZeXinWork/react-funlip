@@ -169,6 +169,7 @@ class createNewPsw extends Component {
           onlyOne: false,
         });
         let { title, password, tip, url, username } = values;
+
         if (!title) {
           this.setState({
             titleExplain: "visible",
@@ -224,6 +225,7 @@ class createNewPsw extends Component {
             isFolderDetail = this.props.location.state.isFolderDetail;
             folderId = this.props.location.state.folderId;
           }
+
           if (isFolderDetail) {
             let passwordItem = {
               title: title,

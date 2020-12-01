@@ -156,6 +156,13 @@ class PsdLibrary extends Component {
           let res = JSON.parse(response);
 
           if (res != []) {
+            for (let i = 0; i < res.length; i++) {
+              for (let j = 0; j < oldList.length; j++) {
+                if (oldList[j].id == res[i].id) {
+                  res.splice(i, 1);
+                }
+              }
+            }
             _this.setState({
               list: [...res],
             });

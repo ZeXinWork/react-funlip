@@ -1,5 +1,6 @@
 /*global chrome*/
 import { handleLocalStorage } from "../api";
+
 import localforage from "localforage";
 import qs from "qs";
 
@@ -10,7 +11,7 @@ let url = "";
 let userName = "";
 let password = "";
 let setIntervalFlag = true;
-let currentURl = undefined;
+
 let timeFlag = true;
 let firstInterval;
 let isRealShow = true;
@@ -367,9 +368,42 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     });
   } else if (type === "getUserList") {
     const getData = async () => {
-      const data = await getAllData();
+      function deepCopy(o) {
+        if (o instanceof Array) {
+          var n = [];
+          for (var i = 0; i < o.length; ++i) {
+            n[i] = deepCopy(o[i]);
+          }
+          return n;
+        } else if (o instanceof Object) {
+          var n = {};
+          for (var i in o) {
+            n[i] = deepCopy(o[i]);
+          }
+          return n;
+        } else {
+          return o;
+        }
+      }
 
-      if (data) {
+      const data = await getAllData();
+      const newData = deepCopy(data);
+
+      let arrSortMinToMax = (a, b) => {
+        let cReg = /^[\u4E00-\u9FCC\u3400-\u4DB5\uFA0E\uFA0F\uFA11\uFA13\uFA14\uFA1F\uFA21\uFA23\uFA24\uFA27-\uFA29]|[\ud840-\ud868][\udc00-\udfff]|\ud869[\udc00-\uded6\udf00-\udfff]|[\ud86a-\ud86c][\udc00-\udfff]|\ud86d[\udc00-\udf34\udf40-\udfff]|\ud86e[\udc00-\udc1d]/;
+        if (!cReg.test(a.title) || !cReg.test(b.title)) {
+          return a.title.localeCompare(b.title);
+        } else {
+          return a.title.localeCompare(b.title, "zh");
+        }
+      };
+
+      let sortArr = newData.sort(arrSortMinToMax);
+      console.log(sortArr);
+
+      if (sortArr) {
+        sendDataToPopup(sortArr);
+      } else {
         sendDataToPopup(data);
       }
     };
@@ -377,7 +411,10 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   } else if (type === "showSave") {
     //判断当前是否应该打开自动保存页面
     isRealShow = true;
-
+    if (url != message.mes.url) {
+      password = "";
+      userName = "";
+    }
     if (autoStore == 1) {
       url = message.mes.url;
     }
@@ -442,7 +479,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       };
       // isRealShow 只在最顶层的window显示 不让接下来的iframe显示（修复样式bug）
       // realSend 判断是否需要显示
-      console.log(sendUrl);
+
       if (
         autoStore == 1 &&
         isRealShow &&
@@ -462,15 +499,14 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         );
       } else {
         //如果不显示 把url清空
-        url = "";
+        // url = "";
       }
     };
     setSHow();
   } else if (type === "cancelSave") {
-    url = "";
     userName = "";
     password = "";
-    isRealShow = false;
+    // isRealShow = false;
   } else if (type === "savePsUs") {
     userName = message.mes.userName;
     password = message.mes.password;
@@ -496,7 +532,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     let cmd = "showImage4";
     chrome.runtime.sendMessage(cmd, function (response) {});
   } else if (type === "noShow") {
-    isRealShow = false;
+    // isRealShow = false;
     userName = "";
     password = "";
   } else if (type === "deleteOutLogin") {

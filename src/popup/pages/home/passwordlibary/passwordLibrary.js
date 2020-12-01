@@ -273,7 +273,9 @@ class PsdLibrary extends Component {
                   >
                     <div className="psw-user-info">
                       <div>{item.title}</div>
-                      <div>{item.account}</div>
+                      <div className="psw-user-info-account">
+                        {item.account}
+                      </div>
                     </div>
                     {folderName ? (
                       <div className="psw-icon">
