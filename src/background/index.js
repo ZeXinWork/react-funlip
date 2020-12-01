@@ -377,6 +377,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   } else if (type === "showSave") {
     //判断当前是否应该打开自动保存页面
     isRealShow = true;
+
     if (autoStore == 1) {
       url = message.mes.url;
     }
@@ -441,7 +442,14 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       };
       // isRealShow 只在最顶层的window显示 不让接下来的iframe显示（修复样式bug）
       // realSend 判断是否需要显示
-      if (autoStore == 1 && isRealShow && realSend) {
+      console.log(sendUrl);
+      if (
+        autoStore == 1 &&
+        isRealShow &&
+        realSend &&
+        password.length > 0 &&
+        userName.length > 0
+      ) {
         chrome.tabs.query(
           { active: true, currentWindow: true },
           function (tabs) {
@@ -460,7 +468,9 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     setSHow();
   } else if (type === "cancelSave") {
     url = "";
-    isRealShow = true;
+    userName = "";
+    password = "";
+    isRealShow = false;
   } else if (type === "savePsUs") {
     userName = message.mes.userName;
     password = message.mes.password;
@@ -487,6 +497,8 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     chrome.runtime.sendMessage(cmd, function (response) {});
   } else if (type === "noShow") {
     isRealShow = false;
+    userName = "";
+    password = "";
   } else if (type === "deleteOutLogin") {
     localforage
       .setItem("userInfo", [])

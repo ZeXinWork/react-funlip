@@ -26,18 +26,18 @@ function Content() {
   // 获取当前主域名;
   const configUrl = (url) => {
     var domain = url.split("/"); //以“/”进行分割
-
     if (domain[2]) {
       domain = domain[2];
     } else {
       return url;
     }
-
     let newDomain = domain.split(".");
     for (let i = 0; i < newDomain.length; i++) {
       if (newDomain[i] == "com") {
         newDomain = newDomain[i - 1] + "." + newDomain[i];
         return newDomain;
+      } else {
+        return document.domain;
       }
     }
     // if (newDomain[2]) {
@@ -113,7 +113,6 @@ function Content() {
 
   const sendMessageToBackgroundScript06 = (mes) => {
     mes.type = "noShow";
-
     chrome.runtime.sendMessage({ mes });
   };
   sendMessageToBackgroundScript3({});
@@ -151,146 +150,141 @@ function Content() {
     const pageUrl = configUrl(window.location.href);
     setUrl(pageUrl);
 
-    document.onsubmit = function () {
-      alert(1);
-      let inputGroup = document.getElementsByTagName("input");
-      let inputArray = [];
-      if (inputGroup.length) {
-        for (let i = 0; i < inputGroup.length; i++) {
-          // alert("第一个的类型:" + inputGroup[i].type);
-          if (inputGroup[i].type === "password") {
-            inputArray.push(inputGroup[i - 1]);
-            inputArray.push(inputGroup[i]);
-          }
-        }
-        if (inputArray.length) {
-          let loginWordText = inputArray[0];
-          let passWordText = inputArray[1];
-          let value = {
-            userName: loginWordText.value,
-            password: passWordText.value,
-          };
-          sendMessageToBackgroundScript5(value);
-        }
-      }
-      if (inputArray.length > 0) {
-        sendMessageToBackgroundScript02({});
-      }
-    };
+    // document.onsubmit = function () {
+    //   let inputGroup = document.getElementsByTagName("input");
+    //   let inputArray = [];
+    //   if (inputGroup.length) {
+    //     for (let i = 0; i < inputGroup.length; i++) {
+    //       // alert("第一个的类型:" + inputGroup[i].type);
+    //       if (inputGroup[i].type === "password") {
+    //         inputArray.push(inputGroup[i - 1]);
+    //         inputArray.push(inputGroup[i]);
+    //       }
+    //     }
+    //     if (inputArray.length) {
+    //       let loginWordText = inputArray[0];
+    //       let passWordText = inputArray[1];
+    //       let value = {
+    //         userName: loginWordText.value,
+    //         password: passWordText.value,
+    //       };
+    //       sendMessageToBackgroundScript5(value);
+    //     }
+    //   }
+    //   if (inputArray.length > 0) {
+    //     sendMessageToBackgroundScript02({});
+    //   }
+    // };
 
     //2、针对页面非表单提交（省去input="submit"和"button ="submit"，只需要判断页面的a标签）
     //对iframe页面的submit表单绑定貌似无法使用，还是要做判断
-    let aCollection = document.getElementsByTagName("a");
-    let aLoginGroup = [];
-    const setOnclick = () => {
-      let inputGroup = document.getElementsByTagName("input");
-      let inputArray = [];
-      let loginWordText;
-      let passWordText;
-      if (inputGroup.length) {
-        for (let i = 0; i < inputGroup.length; i++) {
-          // alert("第一个的类型:" + inputGroup[i].type);
-          if (inputGroup[i].type === "password") {
-            inputArray.push(inputGroup[i - 1]);
-            inputArray.push(inputGroup[i]);
-          }
-        }
-        if (inputArray.length) {
-          loginWordText = inputArray[0];
-          passWordText = inputArray[1];
-          let value = {
-            userName: loginWordText.value,
-            password: passWordText.value,
-          };
-          sendMessageToBackgroundScript5(value);
-        }
-      }
-      if (inputArray.length > 0 && loginWordText.value && passWordText.value) {
-        // setShow("block");
-        sendMessageToBackgroundScript02({});
-      }
-    };
-    //对页面a标签处理
-    for (let i = 0; i < aCollection.length; i++) {
-      if (aCollection[i].id) {
-        if (
-          aCollection[i].id.indexOf("login") != -1 &&
-          aCollection[i].childElementCount == 0
-        ) {
-          aLoginGroup.push(aCollection[i]);
-        }
-      } else if (aCollection[i].className) {
-        if (
-          aCollection[i].className.indexOf("login") != -1 &&
-          aCollection[i].childElementCount == 0
-        ) {
-          aLoginGroup.push(aCollection[i]);
-        }
-      }
-    }
-    if (aLoginGroup.length > 0) {
-      console.log("找到你了");
-      let targetA = aLoginGroup[0];
-      targetA.addEventListener("click", setOnclick, false);
-    }
+    // let aCollection = document.getElementsByTagName("a");
+    // let aLoginGroup = [];
+    // const setOnclick = () => {
+    //   let inputGroup = document.getElementsByTagName("input");
+    //   let inputArray = [];
+    //   let loginWordText;
+    //   let passWordText;
+    //   if (inputGroup.length) {
+    //     for (let i = 0; i < inputGroup.length; i++) {
+    //       // alert("第一个的类型:" + inputGroup[i].type);
+    //       if (inputGroup[i].type === "password") {
+    //         inputArray.push(inputGroup[i - 1]);
+    //         inputArray.push(inputGroup[i]);
+    //       }
+    //     }
+    //     if (inputArray.length) {
+    //       loginWordText = inputArray[0];
+    //       passWordText = inputArray[1];
+    //       let value = {
+    //         userName: loginWordText.value,
+    //         password: passWordText.value,
+    //       };
+    //       sendMessageToBackgroundScript5(value);
+    //     }
+    //   }
+    //   if (inputArray.length > 0 && loginWordText.value && passWordText.value) {
+    //     // setShow("block");
+    //     sendMessageToBackgroundScript02({});
+    //   }
+    // };
+    // //对页面a标签处理
+    // for (let i = 0; i < aCollection.length; i++) {
+    //   if (aCollection[i].id) {
+    //     if (
+    //       aCollection[i].id.indexOf("login") != -1 &&
+    //       aCollection[i].childElementCount == 0
+    //     ) {
+    //       aLoginGroup.push(aCollection[i]);
+    //     }
+    //   } else if (aCollection[i].className) {
+    //     if (
+    //       aCollection[i].className.indexOf("login") != -1 &&
+    //       aCollection[i].childElementCount == 0
+    //     ) {
+    //       aLoginGroup.push(aCollection[i]);
+    //     }
+    //   }
+    // }
+    // if (aLoginGroup.length > 0) {
+    //   let targetA = aLoginGroup[0];
+    //   targetA.addEventListener("click", setOnclick, false);
+    // }
 
-    //对页面button标签进行处理
-    let buttonCollection = document.getElementsByTagName("button");
-    let BtnGroup = [];
-    for (let i = 0; i < buttonCollection.length; i++) {
-      if (buttonCollection[i].id) {
-        if (
-          buttonCollection[i].id.indexOf("login") != -1 &&
-          buttonCollection[i].childElementCount == 0 &&
-          buttonCollection[i].type === "submit"
-        ) {
-          BtnGroup.push(aCollection[i]);
-        }
-      } else if (buttonCollection[i].className) {
-        if (
-          buttonCollection[i].className.indexOf("login") != -1 &&
-          buttonCollection[i].childElementCount == 0 &&
-          buttonCollection[i].type === "submit"
-        ) {
-          BtnGroup.push(aCollection[i]);
-        }
-      }
-    }
+    // //对页面button标签进行处理
+    // let buttonCollection = document.getElementsByTagName("button");
+    // let BtnGroup = [];
+    // for (let i = 0; i < buttonCollection.length; i++) {
+    //   if (buttonCollection[i].id) {
+    //     if (
+    //       buttonCollection[i].id.indexOf("login") != -1 &&
+    //       buttonCollection[i].childElementCount == 0 &&
+    //       buttonCollection[i].type === "submit"
+    //     ) {
+    //       BtnGroup.push(aCollection[i]);
+    //     }
+    //   } else if (buttonCollection[i].className) {
+    //     if (
+    //       buttonCollection[i].className.indexOf("login") != -1 &&
+    //       buttonCollection[i].childElementCount == 0 &&
+    //       buttonCollection[i].type === "submit"
+    //     ) {
+    //       BtnGroup.push(aCollection[i]);
+    //     }
+    //   }
+    // }
 
-    if (BtnGroup.length > 0) {
-      console.log("找到你了");
+    // if (BtnGroup.length > 0) {
+    //   let targetA = BtnGroup[0];
+    //   targetA.addEventListener("click", setOnclick, false);
+    // }
 
-      let targetA = BtnGroup[0];
-      targetA.addEventListener("click", setOnclick, false);
-    }
+    // //对页面input框进行处理
+    // let inputCollection = document.getElementsByTagName("input");
+    // let inputGroup = [];
 
-    //对页面input框进行处理
-    let inputCollection = document.getElementsByTagName("input");
-    let inputGroup = [];
+    // for (let i = 0; i < inputCollection.length; i++) {
+    //   if (inputCollection[i].id) {
+    //     if (
+    //       inputCollection[i].id.indexOf("login") != -1 ||
+    //       inputCollection[i].type === "button"
+    //     ) {
+    //       inputGroup.push(inputCollection[i]);
+    //     }
+    //   } else if (inputCollection[i].className) {
+    //     if (
+    //       inputCollection[i].className.indexOf("login") != -1 ||
+    //       inputCollection[i].type === "button"
+    //     ) {
+    //       inputGroup.push(inputCollection[i]);
+    //     }
+    //   }
+    // }
 
-    for (let i = 0; i < inputCollection.length; i++) {
-      if (inputCollection[i].id) {
-        if (
-          inputCollection[i].id.indexOf("login") != -1 &&
-          inputCollection[i].type === "submit"
-        ) {
-          inputGroup.push(inputCollection[i]);
-        }
-      } else if (inputCollection[i].className) {
-        if (
-          inputCollection[i].className.indexOf("login") != -1 &&
-          inputCollection[i].type === "submit"
-        ) {
-          inputGroup.push(inputCollection[i]);
-        }
-      }
-    }
-
-    if (inputGroup.length > 0) {
-      console.log("找到你了");
-      let targetA = inputGroup[0];
-      targetA.addEventListener("click", setOnclick, false);
-    }
+    // if (inputGroup.length > 0) {
+    //   let targetA = inputGroup[0];
+    //   targetA.addEventListener("click", setOnclick, false);
+    // }
   }, []);
 
   return (
@@ -473,7 +467,7 @@ let url = window.location.href;
 let flag = true;
 let data;
 let setInterFlag = 0;
-
+let setAutoStore = 0;
 if (url.indexOf("chrome-extension:") != -1) {
   flag = false;
 }
@@ -500,6 +494,249 @@ if (flag) {
       sendResponse("closeCount");
     });
     if (setInterFlag == 60) {
+      clearInterval(mid);
+    }
+  }, 1000);
+}
+
+if (flag) {
+  //1、获取页面表单和input
+  //针对页面表单事件
+  const configUrl = (url) => {
+    var domain = url.split("/"); //以“/”进行分割
+    if (domain[2]) {
+      domain = domain[2];
+    } else {
+      return url;
+    }
+
+    let newDomain = domain.split(".");
+    for (let i = 0; i < newDomain.length; i++) {
+      if (newDomain[i] == "com") {
+        newDomain = newDomain[i - 1] + "." + newDomain[i];
+        return newDomain;
+      } else {
+        return document.domain;
+      }
+    }
+  };
+  let mid = setInterval(() => {
+    setAutoStore++;
+
+    const sendMessageToBackgroundScript5 = (mes) => {
+      mes.type = "savePsUs";
+      chrome.runtime.sendMessage({ mes });
+    };
+
+    const sendMessageToBackgroundScript02 = (mes) => {
+      mes.type = "showSave";
+      mes.url = configUrl(window.location.href);
+
+      chrome.runtime.sendMessage({ mes });
+    };
+
+    const sendMessageToBackgroundScript3 = (mes) => {
+      mes.type = "isShowSave";
+      mes.url = window.location.href;
+      chrome.runtime.sendMessage({ mes });
+      clearInterval(mid);
+    };
+
+    if (window.top === window.self) {
+      sendMessageToBackgroundScript02({});
+    }
+
+    document.onsubmit = function () {
+      let loginWordText;
+      let passWordText;
+      let inputGroup = document.getElementsByTagName("input");
+      let inputArray = [];
+      if (inputGroup.length) {
+        for (let i = 0; i < inputGroup.length; i++) {
+          if (inputGroup[i].parentNode.style.display !== "none") {
+            if (inputGroup[i].type === "password") {
+              if (inputGroup[i].style.display == "none") {
+                if (i === 1) {
+                  inputArray.push(inputGroup[i - 1]);
+                } else {
+                  for (let j = i - 1; j > 0; j--) {
+                    if (
+                      inputGroup[j].style.display != "none" &&
+                      inputGroup[j].type != "hidden"
+                    ) {
+                      inputArray.push(inputGroup[j]);
+                      break;
+                    }
+                  }
+                }
+              }
+              if (inputGroup[i].style.display != "none") {
+                if (inputArray.length == 0) {
+                  if (i === 1) {
+                    inputArray.push(inputGroup[i - 1]);
+                  } else {
+                    for (let x = i - 1; x > 0; x--) {
+                      if (
+                        inputGroup[x].style.display != "none" &&
+                        inputGroup[x].parentNode.style.display != "none" &&
+                        inputGroup[x].type != "hidden"
+                      ) {
+                        inputArray.push(inputGroup[x]);
+                        break;
+                      }
+                    }
+                  }
+                }
+                inputArray.push(inputGroup[i]);
+              }
+            }
+          }
+        }
+        if (inputArray.length) {
+          loginWordText = inputArray[0];
+          passWordText = inputArray[1];
+          let value = {
+            userName: loginWordText.value,
+            password: passWordText.value,
+          };
+
+          sendMessageToBackgroundScript5(value);
+        }
+      }
+      if (inputArray.length > 0) {
+        // sendMessageToBackgroundScript02({});
+        sendMessageToBackgroundScript3({});
+      }
+    };
+
+    let targetArray = [];
+    const setOnclick = () => {
+      let inputGroup = document.getElementsByTagName("input");
+      let inputArray = [];
+      let loginWordText;
+      let passWordText;
+      if (inputGroup.length) {
+        for (let i = 0; i < inputGroup.length; i++) {
+          if (inputGroup[i].parentNode.style.display !== "none") {
+            if (inputGroup[i].type === "password") {
+              if (inputGroup[i].style.display == "none") {
+                if (i === 1) {
+                  inputArray.push(inputGroup[i - 1]);
+                } else {
+                  for (let j = i - 1; j > 0; j--) {
+                    if (
+                      inputGroup[j].style.display != "none" &&
+                      inputGroup[j].type != "hidden"
+                    ) {
+                      inputArray.push(inputGroup[j]);
+                      break;
+                    }
+                  }
+                }
+              }
+              if (inputGroup[i].style.display != "none") {
+                if (inputArray.length == 0) {
+                  if (i === 1) {
+                    inputArray.push(inputGroup[i - 1]);
+                  } else {
+                    for (let x = i - 1; x > 0; x--) {
+                      if (
+                        inputGroup[x].style.display != "none" &&
+                        inputGroup[x].parentNode.style.display != "none" &&
+                        inputGroup[x].type != "hidden"
+                      ) {
+                        inputArray.push(inputGroup[x]);
+                        break;
+                      }
+                    }
+                  }
+                }
+                inputArray.push(inputGroup[i]);
+              }
+            }
+          }
+        }
+        if (inputArray.length) {
+          loginWordText = inputArray[0];
+          passWordText = inputArray[1];
+          let value = {
+            userName: loginWordText.value,
+            password: passWordText.value,
+          };
+          console.log(value);
+          sendMessageToBackgroundScript5(value);
+        }
+      }
+
+      if (
+        inputArray.length > 0 &&
+        loginWordText.value.length > 0 &&
+        passWordText.value.length > 0
+      ) {
+        // setShow("block");
+
+        // sendMessageToBackgroundScript02({});
+        sendMessageToBackgroundScript3({});
+        clearInterval(mid);
+      }
+    };
+    function loadTree(parent, callback) {
+      for (var i = 0; i < parent.children.length; i++) {
+        // 遍历第一级子元素
+        var child = parent.children[i];
+
+        if (child.className) {
+          if (child.className.indexOf("login") != -1) {
+            let text = child.innerText;
+            text = child.innerText.replace(/\s*/g, "");
+            if (
+              text.indexOf("登录") != -1 ||
+              text.indexOf("Login") != -1 ||
+              text.indexOf("login") != -1
+            ) {
+              child.addEventListener("click", setOnclick, false);
+            }
+          }
+        } else if (child.id) {
+          if (child.id.indexOf("login") != -1) {
+            let text = child.innerText;
+            text = child.innerText.replace(/\s*/g, "");
+            if (
+              text.indexOf("登录") != -1 ||
+              text.indexOf("Login") != -1 ||
+              text.indexOf("login") != -1
+            ) {
+              child.addEventListener("click", setOnclick, false);
+            }
+          }
+        }
+        if (child.value) {
+          if (
+            child.value.indexOf("登录") != -1 ||
+            child.value.indexOf("Login") != -1 ||
+            child.value.indexOf("login") != -1
+          ) {
+            child.addEventListener("click", setOnclick, false);
+          }
+        }
+        if (callback) {
+          // 处理找到的子元素
+          callback(child);
+        }
+        // 递归调用
+        loadTree(child);
+      }
+    }
+
+    var ul = document.getElementById("list");
+
+    let forms = document.getElementsByTagName("FORM");
+    for (let i = 0; i < forms.length; i++) {
+      loadTree(forms[i], function (element) {
+        element.onclick = function () {};
+      });
+    }
+    if (setAutoStore == 60) {
       clearInterval(mid);
     }
   }, 1000);
@@ -551,16 +788,22 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
             function test(name, pass) {
               let inputGroup = document.getElementsByTagName("input");
               let inputArray = [];
-
               if (inputGroup.length) {
                 for (let i = 0; i < inputGroup.length; i++) {
                   if (inputGroup[i].parentNode.style.display !== "none") {
                     if (inputGroup[i].type === "password") {
                       if (inputGroup[i].style.display == "none") {
-                        for (let j = i - 1; j > 0; j--) {
-                          if (inputGroup[j].style.display != "none") {
-                            inputArray.push(inputGroup[j]);
-                            break;
+                        if (i === 1) {
+                          inputArray.push(inputGroup[i - 1]);
+                        } else {
+                          for (let j = i - 1; j > 0; j--) {
+                            if (
+                              inputGroup[j].style.display != "none" &&
+                              inputGroup[j].type != "hidden"
+                            ) {
+                              inputArray.push(inputGroup[j]);
+                              break;
+                            }
                           }
                         }
                       }
@@ -572,25 +815,24 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
                             for (let x = i - 1; x > 0; x--) {
                               if (
                                 inputGroup[x].style.display != "none" &&
-                                inputGroup[x].parentNode.style.display != "none"
+                                inputGroup[x].parentNode.style.display !=
+                                  "none" &&
+                                inputGroup[x].type != "hidden"
                               ) {
-                                //
                                 inputArray.push(inputGroup[x]);
                                 break;
                               }
                             }
                           }
                         }
-
                         inputArray.push(inputGroup[i]);
                       }
                     }
                   }
                 }
-                if (inputArray.length) {
+                if (inputArray.length == 2) {
                   let loginWordText = inputArray[0];
                   let passWordText = inputArray[1];
-
                   var nativeInputValueSetterPsw = Object.getOwnPropertyDescriptor(
                     window.HTMLInputElement.prototype,
                     "value"
@@ -610,7 +852,10 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
                   nativeInputValueSetterPsw.call(passWordText, pass);
                   var ev2 = new Event("input", { bubbles: true });
                   passWordText.dispatchEvent(ev2);
-                  if (loginWordText && loginWordText.value.length > 0) {
+                  if (
+                    (loginWordText && loginWordText.value.length > 0) ||
+                    (passWordText && passWordText.value.length > 0)
+                  ) {
                     function sendMessageToBackgroundScript2(mes) {
                       mes.type = "stopAutofill";
                       mes.currentAutofillUrl = window.location.href;
@@ -666,16 +911,22 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
           function test(name, pass) {
             let inputGroup = document.getElementsByTagName("input");
             let inputArray = [];
-
             if (inputGroup.length) {
               for (let i = 0; i < inputGroup.length; i++) {
                 if (inputGroup[i].parentNode.style.display !== "none") {
                   if (inputGroup[i].type === "password") {
                     if (inputGroup[i].style.display == "none") {
-                      for (let j = i - 1; j > 0; j--) {
-                        if (inputGroup[j].style.display != "none") {
-                          inputArray.push(inputGroup[j]);
-                          break;
+                      if (i === 1) {
+                        inputArray.push(inputGroup[i - 1]);
+                      } else {
+                        for (let j = i - 1; j > 0; j--) {
+                          if (
+                            inputGroup[j].style.display != "none" &&
+                            inputGroup[j].type != "hidden"
+                          ) {
+                            inputArray.push(inputGroup[j]);
+                            break;
+                          }
                         }
                       }
                     }
@@ -687,7 +938,9 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
                           for (let x = i - 1; x > 0; x--) {
                             if (
                               inputGroup[x].style.display != "none" &&
-                              inputGroup[x].parentNode.style.display != "none"
+                              inputGroup[x].parentNode.style.display !=
+                                "none" &&
+                              inputGroup[x].type != "hidden"
                             ) {
                               //
                               inputArray.push(inputGroup[x]);
@@ -696,7 +949,6 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
                           }
                         }
                       }
-
                       inputArray.push(inputGroup[i]);
                     }
                   }
@@ -725,7 +977,10 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
                 nativeInputValueSetterPsw.call(passWordText, pass);
                 var ev2 = new Event("input", { bubbles: true });
                 passWordText.dispatchEvent(ev2);
-                if (loginWordText && loginWordText.value.length > 0) {
+                if (
+                  (loginWordText && loginWordText.value.length > 0) ||
+                  (passWordText && passWordText.value.length > 0)
+                ) {
                   function sendMessageToBackgroundScript2(mes) {
                     mes.type = "stopAutofill";
                     mes.currentAutofillUrl = window.location.href;
