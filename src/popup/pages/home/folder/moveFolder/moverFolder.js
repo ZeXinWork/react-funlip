@@ -20,6 +20,14 @@ class PsdLibrary extends Component {
     folderIds: [],
   };
   componentDidMount() {
+    let arrSortMinToMax = (a, b) => {
+      let cReg = /^[\u4E00-\u9FCC\u3400-\u4DB5\uFA0E\uFA0F\uFA11\uFA13\uFA14\uFA1F\uFA21\uFA23\uFA24\uFA27-\uFA29]|[\ud840-\ud868][\udc00-\udfff]|\ud869[\udc00-\uded6\udf00-\udfff]|[\ud86a-\ud86c][\udc00-\udfff]|\ud86d[\udc00-\udf34\udf40-\udfff]|\ud86e[\udc00-\udc1d]/;
+      if (!cReg.test(a.title) || !cReg.test(b.title)) {
+        return a.title.localeCompare(b.title);
+      } else {
+        return a.title.localeCompare(b.title, "zh");
+      }
+    };
     const getData = async () => {
       let oldList;
       if (this.props.location.state) {
@@ -39,7 +47,6 @@ class PsdLibrary extends Component {
       };
       let userInfo = await getLocalData();
       const setList = (data) => {
-        console.log(data);
         let value = data;
         if (oldList && oldList.length > 0) {
           for (let i = 0; i < value.length; i++) {
@@ -50,9 +57,11 @@ class PsdLibrary extends Component {
             }
           }
         }
+        let sortArr = value.sort(arrSortMinToMax);
+
         this.setState(
           {
-            list: value,
+            list: sortArr,
           },
           () => {
             let loading = document.getElementById("funlip-loading");
@@ -64,7 +73,14 @@ class PsdLibrary extends Component {
     };
     getData();
   }
-
+  arrSortMinToMax = (a, b) => {
+    let cReg = /^[\u4E00-\u9FCC\u3400-\u4DB5\uFA0E\uFA0F\uFA11\uFA13\uFA14\uFA1F\uFA21\uFA23\uFA24\uFA27-\uFA29]|[\ud840-\ud868][\udc00-\udfff]|\ud869[\udc00-\uded6\udf00-\udfff]|[\ud86a-\ud86c][\udc00-\udfff]|\ud86d[\udc00-\udf34\udf40-\udfff]|\ud86e[\udc00-\udc1d]/;
+    if (!cReg.test(a.title) || !cReg.test(b.title)) {
+      return a.title.localeCompare(b.title);
+    } else {
+      return a.title.localeCompare(b.title, "zh");
+    }
+  };
   render() {
     //跳转至密码详情页，并传参
     let isFolderDetail;
@@ -154,17 +170,19 @@ class PsdLibrary extends Component {
         mes.searchInfo = searchInfo;
         chrome.runtime.sendMessage({ mes }, function (response) {
           let res = JSON.parse(response);
+          let sortArr = res.sort(_this.arrSortMinToMax);
 
-          if (res != []) {
-            for (let i = 0; i < res.length; i++) {
+          if (sortArr != []) {
+            for (let i = 0; i < sortArr.length; i++) {
               for (let j = 0; j < oldList.length; j++) {
-                if (oldList[j].id == res[i].id) {
-                  res.splice(i, 1);
+                if (oldList[j].id == sortArr[i].id) {
+                  sortArr.splice(i, 1);
                 }
               }
             }
+
             _this.setState({
-              list: [...res],
+              list: [...sortArr],
             });
           }
         });
@@ -308,7 +326,7 @@ class PsdLibrary extends Component {
               >
                 <div className="psw-user-info">
                   <div>{item.title}</div>
-                  <div>{item.account}</div>
+                  <div className="psw-user-info-account">{item.account}</div>
                 </div>
                 <div className="psw-icon">
                   <input

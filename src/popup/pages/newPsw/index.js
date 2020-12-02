@@ -7,8 +7,7 @@ import { handleLocalStorage, addNewInfo } from "../../../api/index";
 import radom from "./icon_generate_password.png";
 
 import close from "./close.png";
-import * as actionCreator from "../../store/actionCreator";
-import { connect } from "react-redux";
+
 import "./newPsw.css";
 class createNewPsw extends Component {
   state = {
@@ -373,6 +372,7 @@ class createNewPsw extends Component {
                   maxlength={24}
                   onChange={(e) => {
                     if (e.target.value.length === 24) {
+                      alert("进来");
                       let passwordExplain = document.getElementsByClassName(
                         "title-explain"
                       )[0];
@@ -641,17 +641,5 @@ class createNewPsw extends Component {
     );
   }
 }
-const mapStateToProps = (state) => {
-  return {
-    passwordLibrary: state.passwordLibrary,
-  };
-};
-const mapDispatchToProps = (dispatch) => {
-  return {
-    addPasswordItem(passwordItem) {
-      const action = actionCreator.addPasswordItem(passwordItem);
-      dispatch(action);
-    },
-  };
-};
-export default connect(mapStateToProps, mapDispatchToProps)(createNewPsw);
+
+export default createNewPsw;

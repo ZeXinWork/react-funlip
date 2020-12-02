@@ -4,7 +4,6 @@ import React, { Component } from "react";
 import { Button, Form, Select } from "antd";
 import iconFall from "./icon_fail@2x.png";
 import bg from "./bgg.png";
-import axios from "axios";
 
 import Phone from "./phone@2x.png";
 import { handleLocalStorage } from "../../../api";
@@ -91,7 +90,10 @@ export default class componentName extends Component {
                               let response = JSON.parse(res);
                               console.log(response);
                               let { loginStatus } = response;
-                              if (loginStatus == "LOGIN_KEY_EXPIRED") {
+                              if (
+                                loginStatus == "LOGIN_KEY_EXPIRED" ||
+                                loginStatus == 4
+                              ) {
                                 _this.setState(
                                   {
                                     maskShow: true,
@@ -104,7 +106,10 @@ export default class componentName extends Component {
                               }
 
                               //取消登录
-                              else if (loginStatus == "CANCEL_LOGIN") {
+                              else if (
+                                loginStatus == "CANCEL_LOGIN" ||
+                                loginStatus == 3
+                              ) {
                                 console.log("取消登录");
                                 _this.setState(
                                   {
@@ -117,13 +122,17 @@ export default class componentName extends Component {
                                 );
                               }
                               //登陆成功
-                              else if (loginStatus == "LOGGED_IN") {
+                              else if (
+                                loginStatus == "LOGGED_IN" ||
+                                loginStatus == 2
+                              ) {
                                 console.log("成功登录");
                                 _this.setState({
                                   clickTime: true,
                                 });
-                                const { loginToken, token } = response;
-                                const { plugin, user } = loginToken;
+                                const { loginToken } = response;
+                                const { plugin, user, token } = loginToken;
+
                                 const {
                                   autoFill,
                                   autoLogin,
@@ -192,6 +201,10 @@ export default class componentName extends Component {
     const isSetMainPsw = handleLocalStorage("get", "isSetMainPsw");
     const resetMainPsw = handleLocalStorage("get", "resetMainPsw");
     const autoLock = handleLocalStorage("get", "autoLock");
+    let showPhone = undefined;
+    if (this.props.location.state) {
+      showPhone = this.props.location.state.showPhone;
+    }
 
     if (isSetMainPsw) {
       this.props.history.push({
@@ -209,6 +222,12 @@ export default class componentName extends Component {
       this.props.history.push("/home");
     } else {
       this.codeLogin();
+    }
+
+    if (showPhone) {
+      this.setState({
+        showPhone: true,
+      });
     }
   }
 

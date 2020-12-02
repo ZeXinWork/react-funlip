@@ -102,10 +102,22 @@
   width: 100%;
   margin-top: 40px;
   margin-bottom: 24px;
-}
-.CRX-content .save-psw-wrapper .autoMid .button-layout {
   display: flex;
-  margin-left: 70px;
+  justify-content: center;
+}
+.CRX-content .save-psw-wrapper .autoMid .newpassword-text {
+  outline: none;
+  width: 118px;
+  height: 40px;
+  background: #FFFFFF;
+  border-radius: 18px;
+  border: 2px solid #5790FE;
+  font-size: 14px;
+  font-family: PingFangSC-Semibold, PingFang SC;
+  font-weight: 600;
+  color: #5369D8;
+  line-height: 20px;
+  margin-right: 16px;
 }
 .CRX-content .save-psw-wrapper .autoMid .main {
   width: 108px;
@@ -186,25 +198,36 @@
   width: 312px;
   height: 30px;
   caret-color: #5770ec;
-  margin-bottom: 20px;
+  margin-bottom: 3px;
   margin-right: 5px;
 }
 .CRX-content .save-psw-wrapper .password-detail-wrapper .password-detail-form-wrapper .autoMids {
   width: 312px;
   margin-top: 50px;
   margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.CRX-content .save-psw-wrapper .password-detail-wrapper .password-detail-form-wrapper .autoMids .save-wrappers {
+  width: 270px;
+  height: 40px;
+  background: linear-gradient(244deg, #4ca0fe 0%, #8455ff 100%);
+  border-radius: 25px;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  outline: none;
 }
 .CRX-content .save-psw-wrapper .password-detail-wrapper .password-detail-form-wrapper .autoMids .button-layouts {
   width: 312px;
-  display: flex;
-  justify-content: space-between;
-  margin-right: 50px;
 }
 .CRX-content .save-psw-wrapper .password-detail-wrapper .password-detail-form-wrapper .autoMids .mains {
   width: 148px;
   height: 40px;
   box-sizing: border-box;
   padding: 1px;
+  padding-top: 2px;
   border-radius: 18px;
   background-image: -webkit-linear-gradient(90deg, #18bff6, #1875f6);
 }
@@ -221,16 +244,6 @@
 .CRX-content .save-psw-wrapper .password-detail-wrapper .password-detail-form-wrapper .autoMids .btn-1s .password-form-cancel {
   color: #5791fe;
 }
-.CRX-content .save-psw-wrapper .password-detail-wrapper .password-detail-form-wrapper .autoMids .save-wrappers {
-  width: 148px;
-  height: 40px;
-  background: linear-gradient(244deg, #4ca0fe 0%, #8455ff 100%);
-  border-radius: 25px;
-  color: #fff;
-  border: none;
-  cursor: pointer;
-  outline: none;
-}
 .CRX-content .save-psw-wrapper .password-detail-wrapper .password-detail-form-wrapper .content-textarea-setINfo {
   width: 312px;
   height: 88px;
@@ -240,4 +253,9 @@
   outline: none;
   margin-top: 8px;
   caret-color: #d5d6e4;
+}
+.CRX-content .save-psw-wrapper .password-detail-wrapper .password-detail-form-wrapper .funlip-explain-info {
+  color: #5770EC;
+  height: 17px;
+  margin-bottom: 5px;
 }

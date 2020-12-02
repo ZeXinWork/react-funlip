@@ -301,12 +301,11 @@ class PasswordDetail extends Component {
 
     //发请修改在密码详情页中修改的数据(流程： 发编辑请求 ->返回新的数据-->并删除原始数据-->把新数据数据传给bg->bg修改本地数据->传给密码库页面更新数据)
     const editInfo = async () => {
-      console.log(this.state.onlyOne);
       if (this.state.onlyOne) {
         this.setState({
           onlyOne: false,
         });
-        const { title, pwd, note, website, account } = this.state;
+        let { title, pwd, note, website, account } = this.state;
         if (!title) {
           this.setState({
             titleExplain: "visible",
@@ -361,10 +360,12 @@ class PasswordDetail extends Component {
             pluginId: pluginID,
           };
           const sendMessageToContentBackgroundScript = (mes) => {
+            console.log(mes);
             mes.requestType = "editNewPsw";
             chrome.runtime.sendMessage({ mes }, (res) => {
               let response = JSON.parse(res);
               let config = "editConfig";
+
               deleteItem(config, response);
             });
           };

@@ -1,9 +1,8 @@
 /* global chrome */
 
 import React, { Component } from "react";
-import { Input, message } from "antd";
-import { handleLocalStorage, reqLogin } from "../../../api/index";
-import axios from "axios";
+import { Input } from "antd";
+import { handleLocalStorage } from "../../../api/index";
 
 import "./passwordNumber.css";
 import arrowLeft from "./icon_arrowright_black@2x.png";
@@ -191,7 +190,10 @@ export default class MyAbout extends Component {
 
   render() {
     const goBack = () => {
-      this.props.history.goBack();
+      this.props.history.push({
+        pathname: "/login",
+        state: { showPhone: true },
+      });
     };
     //获取用户手机号 验证码
     let {

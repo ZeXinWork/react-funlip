@@ -23,30 +23,35 @@ function Content() {
   let [title, setTitle] = useState("");
   let [note, setNote] = useState("");
   let [showUrl, setShowUrl] = useState(`${window.location.href}/favicon.ico`);
+  let [titleExplain, setTitleExplain] = useState("hidden");
+  let [passwordExplain, setPasswordExplain] = useState("hidden");
+  let [accountExplain, setAccountExplain] = useState("hidden");
+  let [titleInfo, setTitleInfo] = useState("标题不能为空");
+  let [passwordInfo, setPasswordInfo] = useState("密码不能为空");
+  let [accountInfo, setAAccountInfo] = useState("账号不能为空");
 
   // 获取当前主域名;
   const configUrl = (url) => {
+    let getDomain = false;
     var domain = url.split("/"); //以“/”进行分割
     if (domain[2]) {
       domain = domain[2];
     } else {
       return url;
     }
+
     let newDomain = domain.split(".");
+
     for (let i = 0; i < newDomain.length; i++) {
       if (newDomain[i] == "com") {
         newDomain = newDomain[i - 1] + "." + newDomain[i];
+        getDomain = true;
         return newDomain;
-      } else {
-        return document.domain;
       }
     }
-    // if (newDomain[2]) {
-    //   newDomain = newDomain[1] + "." + newDomain[2];
-    //   return newDomain;
-    // } else {
-    //   return domain;
-    // }
+    if (!getDomain) {
+      return domain;
+    }
   };
 
   const sendMessageToBackgroundScript02 = (mes) => {
@@ -72,7 +77,8 @@ function Content() {
     chrome.runtime.sendMessage({ mes });
   };
 
-  const saveNewPwd = () => {
+  const saveNewPwd = (options) => {
+    const { isFirstPage } = options;
     let inputLogin = document.getElementById("Funlip-edit-input-info-text");
     let loginValue;
     let passwordValue;
@@ -86,23 +92,12 @@ function Content() {
     if (inputPassword) {
       passwordValue = inputPassword.value;
     }
-
     let inputTitle = document.getElementById("Funlip-title-input");
     if (inputTitle) {
       titleValue = inputTitle.value;
     }
-
     let mes;
-    if (loginValue && passwordValue) {
-      mes = {
-        requestType: "saveNewPsw",
-        pwd: passwordValue,
-        website: url,
-        account: loginValue,
-        title: titleValue,
-        note,
-      };
-    } else {
+    if (isFirstPage) {
       mes = {
         requestType: "saveNewPsw",
         pwd: psw,
@@ -111,13 +106,36 @@ function Content() {
         title: url,
         note,
       };
+      chrome.runtime.sendMessage({ mes });
+      setShow("none");
+      setDetail(false);
+      sendMessageToBackgroundScript4({});
+    } else if (loginValue && passwordValue && titleValue) {
+      mes = {
+        requestType: "saveNewPsw",
+        pwd: passwordValue,
+        website: url,
+        account: loginValue,
+        title: titleValue,
+        note,
+      };
+      chrome.runtime.sendMessage({ mes });
+      setShow("none");
+      setDetail(false);
+      sendMessageToBackgroundScript4({});
     }
-
-    chrome.runtime.sendMessage({ mes });
-    setShow("none");
-    setDetail(false);
-
-    sendMessageToBackgroundScript4({});
+    if (!titleValue) {
+      setTitleInfo("标题不能为空！");
+      setTitleExplain("visible");
+    }
+    if (!loginValue) {
+      setAAccountInfo("账号不能为空！");
+      setAccountExplain("visible");
+    }
+    if (!passwordValue) {
+      setPasswordInfo("密码不能为空！");
+      setPasswordExplain("visible");
+    }
   };
 
   const sendMessageToBackgroundScript06 = (mes) => {
@@ -196,20 +214,53 @@ function Content() {
               </div>
               <div className="password-detail-form-wrapper">
                 <div className="password-form-inputnewPswText">标题</div>
-
                 <input
                   className="newPsw-card-input"
                   id="Funlip-title-input"
                   bordered={false}
                   defaultValue={url}
+                  maxLength={24}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (value.length > 0) {
+                      setTitleExplain("hidden");
+                    }
+                    if (value.length == 24) {
+                      setTitleExplain("visible");
+                      setTitleInfo("标题不能超过24位！");
+                    }
+                  }}
                 />
-
+                <div
+                  style={{ visibility: titleExplain }}
+                  className="funlip-explain-info"
+                >
+                  {titleInfo}
+                </div>
                 <div className="password-form-inputnewPswText">账号</div>
                 <input
                   className="newPsw-card-input"
                   defaultValue={userName}
                   id="Funlip-edit-input-info-text"
+                  maxLength={64}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (value.length > 0) {
+                      setAccountExplain("hidden");
+                    }
+                    if (value.length == 64) {
+                      setAccountExplain("visible");
+                      setAAccountInfo("账号不能超过64位！");
+                    }
+                  }}
                 />
+
+                <div
+                  style={{ visibility: accountExplain }}
+                  className="funlip-explain-info"
+                >
+                  {accountInfo}
+                </div>
 
                 <div className="password-form-inputnewPswText">密码</div>
 
@@ -219,12 +270,26 @@ function Content() {
                   type="password"
                   defaultValue={psw}
                   id="Funlip-edit-input-PswInfo-text"
-                  // onChange={(e) => {
-                  //   const value = e.target.value;
-                  //   setPsw(value);
-                  // }}
-                  // value={psw}
+                  maxLength={24}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (value.length > 0) {
+                      setPasswordExplain("hidden");
+                    }
+                    if (value.length == 24) {
+                      setPasswordExplain("visible");
+                      setPasswordInfo("密码不能超过24位！");
+                    }
+                  }}
                 />
+
+                <div
+                  style={{ visibility: passwordExplain }}
+                  className="funlip-explain-info"
+                >
+                  {passwordInfo}
+                </div>
+
                 <div className="password-form-inputnewPswText">备注</div>
 
                 <textarea
@@ -249,11 +314,10 @@ function Content() {
                         <span className="password-form-cancel">取消</span>
                       </div>
                     </div>
-
-                    <button className="save-wrappers" onClick={saveNewPwd}>
-                      保存
-                    </button>
                   </div>
+                  <button className="save-wrappers" onClick={saveNewPwd}>
+                    保存
+                  </button>
                 </div>
               </div>
             </div>
@@ -296,29 +360,32 @@ function Content() {
               </div>
             </div>
             <div className="autoMid">
-              <div className="button-layout">
-                <div className="main ml-20">
-                  <div className="btn-1 ">
-                    <span
-                      className="password-text reset-psw"
-                      onClick={() => {
-                        function sendMessageToBackgroundScript2(mes) {
-                          mes.requestType = "addNewSkip";
-                          mes.url = url;
-                          chrome.runtime.sendMessage({ mes });
-                        }
-                        sendMessageToBackgroundScript2({});
-                        sendMessageToBackgroundScript4({});
-                        setShow("none");
-                      }}
-                    >
-                      跳过此网站
-                    </span>
-                  </div>
-                </div>
-                <div className="btn-layout mr-20 set-bg" onClick={saveNewPwd}>
-                  <span className="password-text save-text">保存</span>
-                </div>
+              <button className="newpassword-text">
+                <span
+                  onClick={() => {
+                    function sendMessageToBackgroundScript2(mes) {
+                      mes.requestType = "addNewSkip";
+                      mes.url = url;
+                      chrome.runtime.sendMessage({ mes });
+                    }
+                    sendMessageToBackgroundScript2({});
+                    sendMessageToBackgroundScript4({});
+                    setShow("none");
+                  }}
+                >
+                  跳过此网站
+                </span>
+              </button>
+
+              <div
+                className="btn-layout mr-20 set-bg"
+                onClick={() => {
+                  saveNewPwd({
+                    isFirstPage: true,
+                  });
+                }}
+              >
+                <span className="password-text save-text">保存</span>
               </div>
             </div>
           </React.Fragment>
@@ -417,9 +484,9 @@ if (flag) {
       clearInterval(mid);
     };
 
-    if (window.top === window.self) {
-      sendMessageToBackgroundScript02({});
-    }
+    // if (window.top === window.self) {
+    //   sendMessageToBackgroundScript02({});
+    // }
     document.onsubmit = function () {
       let loginWordText;
       let passWordText;
@@ -548,7 +615,7 @@ if (flag) {
       ) {
         // setShow("block");
 
-        // sendMessageToBackgroundScript02({});
+        sendMessageToBackgroundScript02({});
         sendMessageToBackgroundScript3({});
         clearInterval(mid);
       }
@@ -698,14 +765,13 @@ if (flag) {
 //跳转新的url
 const goUrl = (url) => {
   if (window.self === window.top) {
-    window.open(url, "_blank");
-    // if (url.indexOf("https://") != -1) {
-    //   window.open(url, "_blank");
-    // } else if (url.indexOf("httP://") != -1) {
-    //   window.open(url, "_blank");
-    // } else {
-    //   window.open(`https://${url}`, "_blank");
-    // }
+    if (url.indexOf("https://") != -1) {
+      window.open(url, "_blank");
+    } else if (url.indexOf("httP://") != -1) {
+      window.open(url, "_blank");
+    } else {
+      window.open(`https://${url}`, "_blank");
+    }
   }
 };
 

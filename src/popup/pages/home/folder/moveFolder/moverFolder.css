@@ -124,7 +124,13 @@
   border-radius: 3%;
 }
 .psw-wrapper .home-body .psw-info .psw-user-info {
+  width: 130px;
   margin: 10px;
+}
+.psw-wrapper .home-body .psw-info .psw-user-info .psw-user-info-account {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 .psw-wrapper .home-body .psw-info .psw-icon {
   cursor: pointer;

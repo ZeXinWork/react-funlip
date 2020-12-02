@@ -11,7 +11,7 @@ let url = "";
 let userName = "";
 let password = "";
 let setIntervalFlag = true;
-
+let currentTabId = undefined;
 let timeFlag = true;
 let firstInterval;
 let isRealShow = true;
@@ -24,12 +24,15 @@ localforage.config({
 });
 //2、封装从接口获取用户信息的代码
 const getData = async () => {
+  let BASE = "https://devfunlipextapi.xmwefun.com/";
+  // let BASE = "http://106.53.103.199:8088/";
+
   const token = handleLocalStorage("get", "token");
   const pluginID = handleLocalStorage("get", "pluginID");
   const value = {
     pluginId: pluginID,
   };
-  return fetch("http://106.53.103.199:8088/plugin/api/v1/password/list", {
+  return fetch(`${BASE}plugin/api/v1/password/list`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -326,14 +329,13 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   let { requestType } = message.mes;
   const autoFill = handleLocalStorage("get", "autoFill"); //设置是否自动填充
   const autoStore = handleLocalStorage("get", "autoStore"); //设置是否自动保存密码
-  let BASE = "106.53.103.199:8088";
+  // let BASE = "http://106.53.103.199:8088/";
+  let BASE = "https://devfunlipextapi.xmwefun.com/";
   if (type === "autofill") {
     if (autoFill == 1 && isAutofill) {
       const getAllDatas = async () => {
         const data = await getAllData();
-
         let userInfoData = { data };
-
         userInfoData.test = "autofill";
         chrome.tabs.query(
           { active: true, currentWindow: true },
@@ -399,7 +401,6 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       };
 
       let sortArr = newData.sort(arrSortMinToMax);
-      console.log(sortArr);
 
       if (sortArr) {
         sendDataToPopup(sortArr);
@@ -410,16 +411,57 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     getData();
   } else if (type === "showSave") {
     //判断当前是否应该打开自动保存页面
-    isRealShow = true;
-    if (url != message.mes.url) {
-      password = "";
-      userName = "";
-    }
-    if (autoStore == 1) {
-      url = message.mes.url;
-    }
+    let getDomain = false;
+    const configUrl = (url) => {
+      var domain = url.split("/"); //以“/”进行分割
+      if (domain[2]) {
+        domain = domain[2];
+      } else {
+        return url;
+      }
+
+      let newDomain = domain.split(".");
+
+      for (let i = 0; i < newDomain.length; i++) {
+        if (newDomain[i] == "com") {
+          newDomain = newDomain[i - 1] + "." + newDomain[i];
+          getDomain = true;
+          return newDomain;
+        }
+      }
+      if (!getDomain) {
+        return domain;
+      }
+    };
+    chrome.tabs.getSelected(null, function (tab) {
+      // 先获取当前页面的tabID
+      isRealShow = true;
+
+      if (autoStore == 1) {
+        url = configUrl(tab.url);
+      }
+    });
+
+    // if (url != message.mes.url) {
+    //   password = "";
+    //   userName = "";
+    // }
   } else if (type === "isShowSave") {
     //判断当前是否应该打开自动保存页面
+    chrome.tabs.getSelected(null, function (tab) {
+      // 先获取当前页面的tabID
+      isRealShow = true;
+
+      if (autoStore == 1) {
+        if (!currentTabId) {
+          currentTabId = tab.id;
+        } else if (currentTabId != tab.id) {
+          currentTabId = tab.id;
+          password = "";
+          userName = "";
+        }
+      }
+    });
     const setSHow = async () => {
       const getLocalData = async () => {
         const res = localforage
@@ -464,9 +506,11 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 
       if (usersInfo && usersInfo.length > 0) {
         for (let i = 0; i < usersInfo.length; i++) {
-          if (usersInfo[i].website.indexOf(url) != -1) {
-            if (usersInfo[i].account == userName) {
-              realSend = false;
+          if (usersInfo[i].website && usersInfo[i].website.length > 0) {
+            if (usersInfo[i].website.indexOf(url) != -1) {
+              if (usersInfo[i].account == userName) {
+                realSend = false;
+              }
             }
           }
         }
@@ -477,9 +521,10 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         password: password,
         userName: userName,
       };
+
       // isRealShow 只在最顶层的window显示 不让接下来的iframe显示（修复样式bug）
       // realSend 判断是否需要显示
-
+      console.log(sendUrl);
       if (
         autoStore == 1 &&
         isRealShow &&
@@ -487,6 +532,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         password.length > 0 &&
         userName.length > 0
       ) {
+        console.log("发送");
         chrome.tabs.query(
           { active: true, currentWindow: true },
           function (tabs) {
@@ -506,6 +552,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   } else if (type === "cancelSave") {
     userName = "";
     password = "";
+    url = "";
     // isRealShow = false;
   } else if (type === "savePsUs") {
     userName = message.mes.userName;
@@ -535,6 +582,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     // isRealShow = false;
     userName = "";
     password = "";
+    url = "";
   } else if (type === "deleteOutLogin") {
     localforage
       .setItem("userInfo", [])
@@ -564,11 +612,10 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   } else if (requestType === "getNumbers") {
     let { areaCode, phone, type } = message.mes;
     const { NumberType } = message.mes;
-
     if (NumberType) {
       type = "FORGOT_PASSWORD";
     }
-    fetch("http://106.53.103.199:8088/plugin/api/v1/captcha/send", {
+    fetch(`${BASE}plugin/api/v1/captcha/send`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -600,7 +647,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       device_name,
     };
     userInfo = qs.stringify(userInfo);
-    fetch("http://106.53.103.199:8088/app/api/login/sms", {
+    fetch(`${BASE}app/api/login/sms`, {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
@@ -625,7 +672,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       pluginId,
     };
     userInfo = JSON.stringify(userInfo);
-    fetch("http://106.53.103.199:8088/plugin/api/v1/password/store", {
+    fetch(`${BASE}plugin/api/v1/password/store`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -656,7 +703,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       passwordIds,
     };
     userInfo = JSON.stringify(userInfo);
-    fetch("http://106.53.103.199:8088/plugin/api/v1/password/delete", {
+    fetch(`${BASE}plugin/api/v1/password/delete`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -684,9 +731,10 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       account,
       pluginId,
     };
+
     const finished = "finished";
     userInfo = JSON.stringify(userInfo);
-    fetch("http://106.53.103.199:8088/plugin/api/v1/password/store", {
+    fetch(`${BASE}plugin/api/v1/password/store`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -709,7 +757,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     return true;
   } else if (requestType === "outLogin") {
     const token = handleLocalStorage("get", "token");
-    fetch("http://106.53.103.199:8088/app/api/logout", {
+    fetch(`${BASE}app/api/logout`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -726,7 +774,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     const token = handleLocalStorage("get", "token");
     const { password } = message.mes;
     let mainPass = JSON.stringify(password);
-    fetch("http://106.53.103.199:8088/plugin/api/v1/mainpass/set", {
+    fetch(`${BASE}plugin/api/v1/mainpass/set`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -749,7 +797,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 
     let reqData = JSON.stringify(searchInfo);
 
-    fetch("http://106.53.103.199:8088/plugin/api/v1/password/search", {
+    fetch(`${BASE}plugin/api/v1/password/search`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -778,7 +826,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     };
 
     let data = JSON.stringify(userInfo);
-    fetch("http://106.53.103.199:8088/plugin/api/v1/setting/update", {
+    fetch(`${BASE}plugin/api/v1/setting/update`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -805,7 +853,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       setting: config,
     };
     let data = JSON.stringify(userInfo);
-    fetch("http://106.53.103.199:8088/plugin/api/v1/setting/update", {
+    fetch(`${BASE}plugin/api/v1/setting/update`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -825,7 +873,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       mainPass,
     };
     let data = JSON.stringify(userInfo);
-    fetch("http://106.53.103.199:8088/plugin/api/v1/mainpass/verify", {
+    fetch(`${BASE}plugin/api/v1/mainpass/verify`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -843,7 +891,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     const { userInfo } = message.mes;
 
     let data = JSON.stringify(userInfo);
-    fetch("http://106.53.103.199:8088/plugin/api/v1/mainpass/reset", {
+    fetch(`${BASE}plugin/api/v1/mainpass/reset`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -864,7 +912,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       name,
     };
     data = JSON.stringify(userInfo);
-    fetch("http://106.53.103.199:8088/plugin/api/v1/folder/create", {
+    fetch(`${BASE}plugin/api/v1/folder/create`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -888,7 +936,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       pluginId,
     };
     data = JSON.stringify(userInfo);
-    fetch("http://106.53.103.199:8088/plugin/api/v1/folder/list", {
+    fetch(`${BASE}plugin/api/v1/folder/list`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -910,7 +958,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       passwordIds,
     };
     data = JSON.stringify(userInfo);
-    fetch("http://106.53.103.199:8088/plugin/api/v1/password/move/to", {
+    fetch(`${BASE}plugin/api/v1/password/move/to`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -931,7 +979,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       pluginId,
     };
     data = JSON.stringify(userInfo);
-    fetch("http://106.53.103.199:8088/plugin/api/v1/folder/delete", {
+    fetch(`${BASE}plugin/api/v1/folder/delete`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -952,7 +1000,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       name,
     };
     data = JSON.stringify(userInfo);
-    fetch("http://106.53.103.199:8088/plugin/api/v1/folder/rename", {
+    fetch(`${BASE}plugin/api/v1/folder/rename`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -974,7 +1022,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     };
 
     data = JSON.stringify(userInfo);
-    fetch("http://106.53.103.199:8088/plugin/api/v1/password/move/out", {
+    fetch(`${BASE}plugin/api/v1/password/move/out`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -995,7 +1043,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       pluginId,
     };
     data = JSON.stringify(userInfo);
-    fetch("http://106.53.103.199:8088/plugin/api/v1/setting/update/locked", {
+    fetch(`${BASE}plugin/api/v1/setting/update/locked`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -1015,7 +1063,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       key,
     };
     data = JSON.stringify(userInfo);
-    fetch("http://106.53.103.199:8088/plugin/api/login/scancode/generate", {
+    fetch(`${BASE}plugin/api/login/scancode/generate`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -1034,7 +1082,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       key,
     };
     data = JSON.stringify(userInfo);
-    fetch("http://106.53.103.199:8088/plugin/api/login/scancode/status", {
+    fetch(`${BASE}plugin/api/login/scancode/status`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -1055,7 +1103,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       verificationCode,
     };
     data = JSON.stringify(userInfo);
-    fetch("http://106.53.103.199:8088/plugin/api/v1/mainpass/modify", {
+    fetch(`${BASE}plugin/api/v1/mainpass/modify`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -1075,7 +1123,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       pluginId,
     };
     data = JSON.stringify(userInfo);
-    fetch("http://106.53.103.199:8088/plugin/api/v1/setting/skipping/list", {
+    fetch(`${BASE}plugin/api/v1/setting/skipping/list`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -1097,7 +1145,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       website: url,
     };
     data = JSON.stringify(userInfo);
-    fetch("http://106.53.103.199:8088/plugin/api/v1/setting/skipping/add", {
+    fetch(`${BASE}plugin/api/v1/setting/skipping/add`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -1121,7 +1169,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       idList,
     };
     data = JSON.stringify(userInfo);
-    fetch("http://106.53.103.199:8088/plugin/api/v1/setting/skipping/remove", {
+    fetch(`${BASE}plugin/api/v1/setting/skipping/remove`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

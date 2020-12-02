@@ -4,8 +4,6 @@ import React, { Component } from "react";
 import "./set.css";
 import { handleLocalStorage } from "../../../api/index";
 
-import * as actionCreator from "../../store/actionCreator";
-import { connect } from "react-redux";
 import { Switch } from "antd";
 import arrowLeft from "./icon_arrowright_black@2x.png";
 import arrowRight from "./icon_arrowright(1).png";

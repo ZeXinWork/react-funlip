@@ -37,6 +37,14 @@ export default class componentName extends Component {
     inputValue: "",
   };
   componentDidMount() {
+    let arrSortMinToMax = (a, b) => {
+      let cReg = /^[\u4E00-\u9FCC\u3400-\u4DB5\uFA0E\uFA0F\uFA11\uFA13\uFA14\uFA1F\uFA21\uFA23\uFA24\uFA27-\uFA29]|[\ud840-\ud868][\udc00-\udfff]|\ud869[\udc00-\uded6\udf00-\udfff]|[\ud86a-\ud86c][\udc00-\udfff]|\ud86d[\udc00-\udf34\udf40-\udfff]|\ud86e[\udc00-\udc1d]/;
+      if (!cReg.test(a.title) || !cReg.test(b.title)) {
+        return a.title.localeCompare(b.title);
+      } else {
+        return a.title.localeCompare(b.title, "zh");
+      }
+    };
     let passwordList;
     let dataList;
     let folderId;
@@ -108,14 +116,14 @@ export default class componentName extends Component {
         folderList.map((item) => {
           if (item.id == folderId) {
             let { passwords } = item;
-
             if (passwords) {
               targetArray = [...passwords, ...newArray];
             } else {
               targetArray = newArray;
             }
+            let sortArr = targetArray.sort(arrSortMinToMax);
             this.setState({
-              list: targetArray,
+              list: sortArr,
             });
           }
         });
@@ -136,9 +144,9 @@ export default class componentName extends Component {
       getLocalState();
     } else if (passwordList) {
       //如果没有更新的，显示父级传过来的passwordList()
-
+      let sortArr = passwordList.sort(arrSortMinToMax);
       this.setState({
-        list: passwordList,
+        list: sortArr,
       });
     } else if (afterDelete) {
       let loading = document.getElementById("funlip-loading");
@@ -167,20 +175,26 @@ export default class componentName extends Component {
             } else {
               targetArray = [];
             }
+            let sortArr = targetArray.sort(arrSortMinToMax);
+
             this.setState({
-              list: targetArray,
+              list: sortArr,
             });
           }
         });
       };
       getLocalState();
     } else if (oldList && oldList.length > 0) {
+      let sortArr = oldList.sort(arrSortMinToMax);
+
       this.setState({
-        list: oldList,
+        list: sortArr,
       });
     } else if (preList && preList.length > 0) {
+      let sortArr = preList.sort(arrSortMinToMax);
+
       this.setState({
-        list: preList,
+        list: sortArr,
       });
     } else {
       this.setState({
