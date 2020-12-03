@@ -1,4 +1,4 @@
-.CRX-content {
+.XMFunlip-autoStorage-CRX-content {
   position: relative;
   z-index: 99999999999999999;
   background: 1px solid transparent;
@@ -7,27 +7,28 @@
     top: 0px;
     right: 0px;
     width: 360px;
-
-    margin: 0 16px;
     background: #ffffff;
     box-sizing: border-box;
     border: 1px solid #b9b9b9;
     .save-ps-header {
-      display: flex;
-      border-bottom: 1px solid #ddddeb;
-      justify-content: space-between;
-      align-items: center;
+      width: 100%;
+      margin:16px 0 0 18px;
       padding-bottom: 5px;
-      margin-top: 15px;
-      margin-left: 20px;
+
       .save-header-left {
-        display: flex;
-        align-items: center;
-        .logo {
+        // display: flex;
+        // align-items: center;
+        float: left;
+
+        width: 100px;
+          .XMFunlip-autoStorage-logo {
           width: 32px;
           height: 32px;
           margin-right: 8px;
+          max-width:32px; 
+    
         }
+        
         .header-text {
           width: 45px;
           height: 20px;
@@ -36,17 +37,23 @@
           font-weight: 600;
           color: #3a3f6d;
           line-height: 20px;
+          margin-top: 8px;
         }
       }
       .logo-right {
         width: 18px;
         height: 18px;
-        margin-right: 20px;
+        margin-right: 47px;
+        margin-top: 5px;
+        float: right;
         cursor: pointer;
       }
     }
+  
     .body-text {
-      margin-top: 15px;
+      margin-top: 40px;
+      border-top:1px solid #DDDDEB;
+      padding-top: 15px;
       width: 308px;
       height: 20px;
       font-size: 14px;
@@ -55,11 +62,11 @@
       color: #8f96b6;
       line-height: 20px;
       margin-left: 20px;
+    
     }
     .save-psw-body {
-      margin-top: 16px;
+      margin-top: 32px;
       margin-bottom: 20px;
-
       .body-password {
         width: 328px;
         height: 72px;
@@ -71,7 +78,6 @@
         margin-left: 20px;
         .body-password-left {
           display: flex;
-
           align-items: center;
           .body-password-img {
             margin-left: 19px;
@@ -104,8 +110,8 @@
       width: 100%;
       margin-top: 40px;
       margin-bottom: 24px;
-      display: flex;
-      justify-content: center;
+      // display: flex;
+      // justify-content: center;
      .newpassword-text{
       outline: none;
       width: 118px;
@@ -119,6 +125,7 @@
       color: #5369D8;
       line-height: 20px;
       margin-right: 16px;
+      margin-left: 80px;
      }
       .main {
         width: 108px;
@@ -160,7 +167,9 @@
         width: 118px;
         height: 40px;
         text-align: center;
+        float: right;
         line-height: 40px;
+        margin-right: 20px;
         .save-text {
           width: 28px;
           height: 20px;
@@ -177,25 +186,47 @@
       }
     }
     .password-detail-wrapper {
-      margin-left: 24px;
+      margin-left: 18px;
+      margin-top:25px;
+      border:1px solid transparent;
+      position: relative;
+      .showPasswordIcon{
+        width: 24px;
+        height: 24px;
+        position: absolute;
+        top:250px;
+        right: 28px;
+        cursor: pointer;
+      }
       .password-detail-header {
         display: flex;
+
         margin-top: 20px;
         .password-detail-header-url {
-          margin-left: 11px;
+          margin-left: 11px;   
+          height: 20px;
+          font-size: 14px;
+          font-family: PingFang-SC-Medium, PingFang-SC;  
+          font-weight: 500;
+          color: #5D648B;
+          line-height: 20px;
+          margin-top: 6px;
+        }
+        .password-detail-wrapper-logo-wrapper{
+          width: 32px;
+          height: 32px;
         }
       }
       .password-detail-form-wrapper {
         margin-top: 32px;
-
         .password-form-inputnewPswText {
-          width: 24px;
           height: 17px;
           font-size: 12px;
           font-family: PingFang-SC-Medium, PingFang-SC;
           font-weight: 500;
           color: #7881a9;
           line-height: 17px;
+        
         }
         .newPsw-card-input {
           outline: none;
@@ -206,6 +237,8 @@
           caret-color: #5770ec;
           margin-bottom: 3px;
           margin-right: 5px;
+         
+
         }
         .autoMids {
 
@@ -275,6 +308,7 @@
           height: 17px;
           margin-bottom: 5px;
         }
+
       }
     }
   }

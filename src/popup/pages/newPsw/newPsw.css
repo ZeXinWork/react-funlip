@@ -212,6 +212,7 @@
   margin-top: 8px;
   caret-color: #d5d6e4;
   margin-bottom: 14px;
+  resize: none;
 }
 .newPsw-wrappers .newPsw-card-content .newPsw-form-btns {
   width: 312px;

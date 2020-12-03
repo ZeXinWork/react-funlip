@@ -372,7 +372,6 @@ class createNewPsw extends Component {
                   maxlength={24}
                   onChange={(e) => {
                     if (e.target.value.length === 24) {
-                      alert("进来");
                       let passwordExplain = document.getElementsByClassName(
                         "title-explain"
                       )[0];

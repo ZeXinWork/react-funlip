@@ -1,9 +1,8 @@
 /*global chrome*/
 
 import React, { useState, useEffect } from "react";
-
 import ReactDOM from "react-dom";
-
+import showPsw from "./images/icon_edit_visible@2x.png";
 import "antd/es/button/style/index.css";
 import logo from "./images/icon_WePass_logo备份@2x.png";
 import FunlipUrlLogo from "./images/img_me_photo备份.png";
@@ -75,6 +74,14 @@ function Content() {
   const sendMessageToBackgroundScript5 = (mes) => {
     mes.type = "savePsUs";
     chrome.runtime.sendMessage({ mes });
+  };
+
+  const showPassword = () => {
+    let input = document.getElementsByClassName("newPsw-card-input")[2];
+
+    input.type == "password"
+      ? (input.type = "text")
+      : (input.type = "password");
   };
 
   const saveNewPwd = (options) => {
@@ -178,14 +185,15 @@ function Content() {
   });
 
   return (
-    <div className="CRX-content CRX-antd-diy" style={{ display: show }}>
+    <div
+      className="XMFunlip-autoStorage-CRX-content CRX-antd-diy"
+      style={{ display: show }}
+    >
       <div className="save-psw-wrapper">
         <div className="save-ps-header">
           <div className="save-header-left">
-            <div>
-              <img src={logo} alt="logo" className="logo" />
-            </div>
-            <div className="header-text">Funlip</div>
+            <img src={logo} alt="logo" className="XMFunlip-autoStorage-logo" />
+            <span className="header-text">Funlip</span>
           </div>
           <div>
             <img
@@ -203,9 +211,15 @@ function Content() {
         {detail ? (
           <React.Fragment>
             <div className="password-detail-wrapper">
+              <img
+                src={showPsw}
+                className="showPasswordIcon"
+                onClick={showPassword}
+              />
               <div className="password-detail-header">
                 <img
                   src={showUrl}
+                  style={{ maxWidth: 32 }}
                   onError={() => {
                     setShowUrl(FunlipUrlLogo);
                   }}
@@ -385,7 +399,7 @@ function Content() {
                   });
                 }}
               >
-                <span className="password-text save-text">保存</span>
+                <span className="save-text">保存</span>
               </div>
             </div>
           </React.Fragment>
@@ -474,7 +488,6 @@ if (flag) {
     const sendMessageToBackgroundScript02 = (mes) => {
       mes.type = "showSave";
       mes.url = configUrl(window.location.href);
-
       chrome.runtime.sendMessage({ mes });
     };
     const sendMessageToBackgroundScript3 = (mes) => {
@@ -545,7 +558,7 @@ if (flag) {
         }
       }
       if (inputArray.length > 0) {
-        // sendMessageToBackgroundScript02({});
+        sendMessageToBackgroundScript02({});
         sendMessageToBackgroundScript3({});
       }
     };
@@ -614,7 +627,6 @@ if (flag) {
         passWordText.value.length > 0
       ) {
         // setShow("block");
-
         sendMessageToBackgroundScript02({});
         sendMessageToBackgroundScript3({});
         clearInterval(mid);

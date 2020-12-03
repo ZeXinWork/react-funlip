@@ -1,37 +1,33 @@
-.CRX-content {
+.XMFunlip-autoStorage-CRX-content {
   position: relative;
   z-index: 99999999999999999;
   background: 1px solid transparent;
 }
-.CRX-content .save-psw-wrapper {
+.XMFunlip-autoStorage-CRX-content .save-psw-wrapper {
   position: fixed;
   top: 0px;
   right: 0px;
   width: 360px;
-  margin: 0 16px;
   background: #ffffff;
   box-sizing: border-box;
   border: 1px solid #b9b9b9;
 }
-.CRX-content .save-psw-wrapper .save-ps-header {
-  display: flex;
-  border-bottom: 1px solid #ddddeb;
-  justify-content: space-between;
-  align-items: center;
+.XMFunlip-autoStorage-CRX-content .save-psw-wrapper .save-ps-header {
+  width: 100%;
+  margin: 16px 0 0 18px;
   padding-bottom: 5px;
-  margin-top: 15px;
-  margin-left: 20px;
 }
-.CRX-content .save-psw-wrapper .save-ps-header .save-header-left {
-  display: flex;
-  align-items: center;
+.XMFunlip-autoStorage-CRX-content .save-psw-wrapper .save-ps-header .save-header-left {
+  float: left;
+  width: 100px;
 }
-.CRX-content .save-psw-wrapper .save-ps-header .save-header-left .logo {
+.XMFunlip-autoStorage-CRX-content .save-psw-wrapper .save-ps-header .save-header-left .XMFunlip-autoStorage-logo {
   width: 32px;
   height: 32px;
   margin-right: 8px;
+  max-width: 32px;
 }
-.CRX-content .save-psw-wrapper .save-ps-header .save-header-left .header-text {
+.XMFunlip-autoStorage-CRX-content .save-psw-wrapper .save-ps-header .save-header-left .header-text {
   width: 45px;
   height: 20px;
   font-size: 14px;
@@ -39,15 +35,20 @@
   font-weight: 600;
   color: #3a3f6d;
   line-height: 20px;
+  margin-top: 8px;
 }
-.CRX-content .save-psw-wrapper .save-ps-header .logo-right {
+.XMFunlip-autoStorage-CRX-content .save-psw-wrapper .save-ps-header .logo-right {
   width: 18px;
   height: 18px;
-  margin-right: 20px;
+  margin-right: 47px;
+  margin-top: 5px;
+  float: right;
   cursor: pointer;
 }
-.CRX-content .save-psw-wrapper .body-text {
-  margin-top: 15px;
+.XMFunlip-autoStorage-CRX-content .save-psw-wrapper .body-text {
+  margin-top: 40px;
+  border-top: 1px solid #DDDDEB;
+  padding-top: 15px;
   width: 308px;
   height: 20px;
   font-size: 14px;
@@ -57,11 +58,11 @@
   line-height: 20px;
   margin-left: 20px;
 }
-.CRX-content .save-psw-wrapper .save-psw-body {
-  margin-top: 16px;
+.XMFunlip-autoStorage-CRX-content .save-psw-wrapper .save-psw-body {
+  margin-top: 32px;
   margin-bottom: 20px;
 }
-.CRX-content .save-psw-wrapper .save-psw-body .body-password {
+.XMFunlip-autoStorage-CRX-content .save-psw-wrapper .save-psw-body .body-password {
   width: 328px;
   height: 72px;
   background: #f8f9fc;
@@ -71,14 +72,14 @@
   align-items: center;
   margin-left: 20px;
 }
-.CRX-content .save-psw-wrapper .save-psw-body .body-password .body-password-left {
+.XMFunlip-autoStorage-CRX-content .save-psw-wrapper .save-psw-body .body-password .body-password-left {
   display: flex;
   align-items: center;
 }
-.CRX-content .save-psw-wrapper .save-psw-body .body-password .body-password-left .body-password-img {
+.XMFunlip-autoStorage-CRX-content .save-psw-wrapper .save-psw-body .body-password .body-password-left .body-password-img {
   margin-left: 19px;
 }
-.CRX-content .save-psw-wrapper .save-psw-body .body-password .body-password-left .body-left-text {
+.XMFunlip-autoStorage-CRX-content .save-psw-wrapper .save-psw-body .body-password .body-password-left .body-left-text {
   width: 200px;
   margin-left: 15px;
   font-size: 14px;
@@ -87,25 +88,23 @@
   color: #3a3f6d;
   line-height: 20px;
 }
-.CRX-content .save-psw-wrapper .save-psw-body .body-password .body-password-left .body-left-text .body-left-text-url {
+.XMFunlip-autoStorage-CRX-content .save-psw-wrapper .save-psw-body .body-password .body-password-left .body-left-text .body-left-text-url {
   margin-bottom: 5px;
 }
-.CRX-content .save-psw-wrapper .save-psw-body .body-right-icon {
+.XMFunlip-autoStorage-CRX-content .save-psw-wrapper .save-psw-body .body-right-icon {
   margin-right: 25px;
 }
-.CRX-content .save-psw-wrapper .save-psw-body .body-right-icon .edit-icon {
+.XMFunlip-autoStorage-CRX-content .save-psw-wrapper .save-psw-body .body-right-icon .edit-icon {
   width: 40px;
   height: 40px;
   cursor: pointer;
 }
-.CRX-content .save-psw-wrapper .autoMid {
+.XMFunlip-autoStorage-CRX-content .save-psw-wrapper .autoMid {
   width: 100%;
   margin-top: 40px;
   margin-bottom: 24px;
-  display: flex;
-  justify-content: center;
 }
-.CRX-content .save-psw-wrapper .autoMid .newpassword-text {
+.XMFunlip-autoStorage-CRX-content .save-psw-wrapper .autoMid .newpassword-text {
   outline: none;
   width: 118px;
   height: 40px;
@@ -118,8 +117,9 @@
   color: #5369D8;
   line-height: 20px;
   margin-right: 16px;
+  margin-left: 80px;
 }
-.CRX-content .save-psw-wrapper .autoMid .main {
+.XMFunlip-autoStorage-CRX-content .save-psw-wrapper .autoMid .main {
   width: 108px;
   height: 40px;
   box-sizing: border-box;
@@ -127,7 +127,7 @@
   border-radius: 18px;
   background-image: -webkit-linear-gradient(90deg, #18bff6, #1875f6);
 }
-.CRX-content .save-psw-wrapper .autoMid .btn-1 {
+.XMFunlip-autoStorage-CRX-content .save-psw-wrapper .autoMid .btn-1 {
   width: 106px;
   height: 100%;
   border-radius: 18px;
@@ -137,7 +137,7 @@
   cursor: pointer;
   padding-top: 2px;
 }
-.CRX-content .save-psw-wrapper .autoMid .btn-1 .reset-psw {
+.XMFunlip-autoStorage-CRX-content .save-psw-wrapper .autoMid .btn-1 .reset-psw {
   font-size: 14px;
   font-family: PingFangSC-Semibold, PingFang SC;
   font-weight: 600;
@@ -145,18 +145,20 @@
   line-height: 20px;
   margin-top: 2px;
 }
-.CRX-content .save-psw-wrapper .autoMid .set-bg {
+.XMFunlip-autoStorage-CRX-content .save-psw-wrapper .autoMid .set-bg {
   background: linear-gradient(245deg, #4ca0fe 0%, #8455ff 100%);
   border-radius: 18px;
   cursor: pointer;
 }
-.CRX-content .save-psw-wrapper .autoMid .btn-layout {
+.XMFunlip-autoStorage-CRX-content .save-psw-wrapper .autoMid .btn-layout {
   width: 118px;
   height: 40px;
   text-align: center;
+  float: right;
   line-height: 40px;
+  margin-right: 20px;
 }
-.CRX-content .save-psw-wrapper .autoMid .btn-layout .save-text {
+.XMFunlip-autoStorage-CRX-content .save-psw-wrapper .autoMid .btn-layout .save-text {
   width: 28px;
   height: 20px;
   font-size: 14px;
@@ -165,25 +167,46 @@
   color: #ffffff;
   line-height: 20px;
 }
-.CRX-content .save-psw-wrapper .autoMid .ml-20 {
+.XMFunlip-autoStorage-CRX-content .save-psw-wrapper .autoMid .ml-20 {
   margin-left: 20px;
   margin-right: 14px;
 }
-.CRX-content .save-psw-wrapper .password-detail-wrapper {
-  margin-left: 24px;
+.XMFunlip-autoStorage-CRX-content .save-psw-wrapper .password-detail-wrapper {
+  margin-left: 18px;
+  margin-top: 25px;
+  border: 1px solid transparent;
+  position: relative;
 }
-.CRX-content .save-psw-wrapper .password-detail-wrapper .password-detail-header {
+.XMFunlip-autoStorage-CRX-content .save-psw-wrapper .password-detail-wrapper .showPasswordIcon {
+  width: 24px;
+  height: 24px;
+  position: absolute;
+  top: 250px;
+  right: 28px;
+  cursor: pointer;
+}
+.XMFunlip-autoStorage-CRX-content .save-psw-wrapper .password-detail-wrapper .password-detail-header {
   display: flex;
   margin-top: 20px;
 }
-.CRX-content .save-psw-wrapper .password-detail-wrapper .password-detail-header .password-detail-header-url {
+.XMFunlip-autoStorage-CRX-content .save-psw-wrapper .password-detail-wrapper .password-detail-header .password-detail-header-url {
   margin-left: 11px;
+  height: 20px;
+  font-size: 14px;
+  font-family: PingFang-SC-Medium, PingFang-SC;
+  font-weight: 500;
+  color: #5D648B;
+  line-height: 20px;
+  margin-top: 6px;
 }
-.CRX-content .save-psw-wrapper .password-detail-wrapper .password-detail-form-wrapper {
+.XMFunlip-autoStorage-CRX-content .save-psw-wrapper .password-detail-wrapper .password-detail-header .password-detail-wrapper-logo-wrapper {
+  width: 32px;
+  height: 32px;
+}
+.XMFunlip-autoStorage-CRX-content .save-psw-wrapper .password-detail-wrapper .password-detail-form-wrapper {
   margin-top: 32px;
 }
-.CRX-content .save-psw-wrapper .password-detail-wrapper .password-detail-form-wrapper .password-form-inputnewPswText {
-  width: 24px;
+.XMFunlip-autoStorage-CRX-content .save-psw-wrapper .password-detail-wrapper .password-detail-form-wrapper .password-form-inputnewPswText {
   height: 17px;
   font-size: 12px;
   font-family: PingFang-SC-Medium, PingFang-SC;
@@ -191,7 +214,7 @@
   color: #7881a9;
   line-height: 17px;
 }
-.CRX-content .save-psw-wrapper .password-detail-wrapper .password-detail-form-wrapper .newPsw-card-input {
+.XMFunlip-autoStorage-CRX-content .save-psw-wrapper .password-detail-wrapper .password-detail-form-wrapper .newPsw-card-input {
   outline: none;
   border: none;
   border-bottom: 1px solid #ececec;
@@ -201,7 +224,7 @@
   margin-bottom: 3px;
   margin-right: 5px;
 }
-.CRX-content .save-psw-wrapper .password-detail-wrapper .password-detail-form-wrapper .autoMids {
+.XMFunlip-autoStorage-CRX-content .save-psw-wrapper .password-detail-wrapper .password-detail-form-wrapper .autoMids {
   width: 312px;
   margin-top: 50px;
   margin-bottom: 24px;
@@ -209,7 +232,7 @@
   justify-content: space-between;
   align-items: center;
 }
-.CRX-content .save-psw-wrapper .password-detail-wrapper .password-detail-form-wrapper .autoMids .save-wrappers {
+.XMFunlip-autoStorage-CRX-content .save-psw-wrapper .password-detail-wrapper .password-detail-form-wrapper .autoMids .save-wrappers {
   width: 270px;
   height: 40px;
   background: linear-gradient(244deg, #4ca0fe 0%, #8455ff 100%);
@@ -219,10 +242,10 @@
   cursor: pointer;
   outline: none;
 }
-.CRX-content .save-psw-wrapper .password-detail-wrapper .password-detail-form-wrapper .autoMids .button-layouts {
+.XMFunlip-autoStorage-CRX-content .save-psw-wrapper .password-detail-wrapper .password-detail-form-wrapper .autoMids .button-layouts {
   width: 312px;
 }
-.CRX-content .save-psw-wrapper .password-detail-wrapper .password-detail-form-wrapper .autoMids .mains {
+.XMFunlip-autoStorage-CRX-content .save-psw-wrapper .password-detail-wrapper .password-detail-form-wrapper .autoMids .mains {
   width: 148px;
   height: 40px;
   box-sizing: border-box;
@@ -231,7 +254,7 @@
   border-radius: 18px;
   background-image: -webkit-linear-gradient(90deg, #18bff6, #1875f6);
 }
-.CRX-content .save-psw-wrapper .password-detail-wrapper .password-detail-form-wrapper .autoMids .btn-1s {
+.XMFunlip-autoStorage-CRX-content .save-psw-wrapper .password-detail-wrapper .password-detail-form-wrapper .autoMids .btn-1s {
   width: 146px;
   height: 100%;
   border-radius: 18px;
@@ -241,10 +264,10 @@
   cursor: pointer;
   padding-top: 2px;
 }
-.CRX-content .save-psw-wrapper .password-detail-wrapper .password-detail-form-wrapper .autoMids .btn-1s .password-form-cancel {
+.XMFunlip-autoStorage-CRX-content .save-psw-wrapper .password-detail-wrapper .password-detail-form-wrapper .autoMids .btn-1s .password-form-cancel {
   color: #5791fe;
 }
-.CRX-content .save-psw-wrapper .password-detail-wrapper .password-detail-form-wrapper .content-textarea-setINfo {
+.XMFunlip-autoStorage-CRX-content .save-psw-wrapper .password-detail-wrapper .password-detail-form-wrapper .content-textarea-setINfo {
   width: 312px;
   height: 88px;
   background: #ffffff;
@@ -254,7 +277,7 @@
   margin-top: 8px;
   caret-color: #d5d6e4;
 }
-.CRX-content .save-psw-wrapper .password-detail-wrapper .password-detail-form-wrapper .funlip-explain-info {
+.XMFunlip-autoStorage-CRX-content .save-psw-wrapper .password-detail-wrapper .password-detail-form-wrapper .funlip-explain-info {
   color: #5770EC;
   height: 17px;
   margin-bottom: 5px;

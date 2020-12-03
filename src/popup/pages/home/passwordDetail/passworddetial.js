@@ -29,7 +29,6 @@ class PasswordDetail extends Component {
     accountExplain: "hidden",
     tipExplain: "hidden",
     websiteExplain: "hidden",
-
     accountExplainText: "请输入账号！",
     passwordExplainText: "请输入密码！",
     titleExplainText: "请输入标题！",
@@ -494,19 +493,10 @@ class PasswordDetail extends Component {
                 this.setState({
                   pwd: value,
                 });
-                if (e.target.value.length === 24) {
-                  let passwordExplain = document.getElementsByClassName(
-                    "password-explain"
-                  )[0];
-                  passwordExplain.className = "password-explain-long";
-                  this.setState({
-                    passwordExplain: "visible",
-                    passwordExplainText: "密码长度不能大于24位",
-                  });
-                } else if (e.target.value.length > 0) {
+                if (e.target.value.length > 0) {
                   this.setState({
                     passwordExplain: "hidden",
-                    passwordExplainText: "请输入账号！",
+                    passwordExplainText: "请输入密码！",
                   });
                 } else {
                   let passwordExplain = document.getElementsByClassName(
@@ -516,6 +506,16 @@ class PasswordDetail extends Component {
                   this.setState({
                     passwordExplain: "hidden",
                     passwordExplainText: "请输入密码！",
+                  });
+                }
+                if (e.target.value.length === 24) {
+                  let passwordExplain = document.getElementsByClassName(
+                    "password-explain"
+                  )[0];
+                  passwordExplain.className = "password-explain-long";
+                  this.setState({
+                    passwordExplain: "visible",
+                    passwordExplainText: "密码长度不能大于24位",
                   });
                 }
               }}

@@ -340,11 +340,13 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         chrome.tabs.query(
           { active: true, currentWindow: true },
           function (tabs) {
-            chrome.tabs.sendMessage(
-              tabs[0].id,
-              userInfoData,
-              function (response) {}
-            );
+            if (tabs[0].id) {
+              chrome.tabs.sendMessage(
+                tabs[0].id,
+                userInfoData,
+                function (response) {}
+              );
+            }
           }
         );
       };
@@ -411,6 +413,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     getData();
   } else if (type === "showSave") {
     //判断当前是否应该打开自动保存页面
+
     let getDomain = false;
     const configUrl = (url) => {
       var domain = url.split("/"); //以“/”进行分割
@@ -448,6 +451,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     // }
   } else if (type === "isShowSave") {
     //判断当前是否应该打开自动保存页面
+
     chrome.tabs.getSelected(null, function (tab) {
       // 先获取当前页面的tabID
       isRealShow = true;
@@ -507,7 +511,14 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       if (usersInfo && usersInfo.length > 0) {
         for (let i = 0; i < usersInfo.length; i++) {
           if (usersInfo[i].website && usersInfo[i].website.length > 0) {
-            if (usersInfo[i].website.indexOf(url) != -1) {
+            // if (usersInfo[i].website.indexOf(url) != -1) {
+            //   if (usersInfo[i].account == userName) {
+            //
+            //
+            //     realSend = false;
+            //   }
+            // }
+            if (url.indexOf(usersInfo[i].website) != -1) {
               if (usersInfo[i].account == userName) {
                 realSend = false;
               }
@@ -524,7 +535,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 
       // isRealShow 只在最顶层的window显示 不让接下来的iframe显示（修复样式bug）
       // realSend 判断是否需要显示
-      console.log(sendUrl);
+
       if (
         autoStore == 1 &&
         isRealShow &&
@@ -532,7 +543,6 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         password.length > 0 &&
         userName.length > 0
       ) {
-        console.log("发送");
         chrome.tabs.query(
           { active: true, currentWindow: true },
           function (tabs) {

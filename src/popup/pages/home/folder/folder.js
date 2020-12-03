@@ -20,6 +20,7 @@ export default class Folder extends Component {
     showCreate: "none",
     onlyOne: true,
     showExplain: "hidden",
+    showExplainInfo: "文件夹名不能为空！",
   };
   showModal = () => {
     this.setState({
@@ -148,6 +149,7 @@ export default class Folder extends Component {
         if (folderName.length == 0) {
           this.setState({
             showExplain: "visible",
+            showExplainInfo: "文件夹名不能为空！",
             onlyOne: true,
           });
         } else {
@@ -311,11 +313,18 @@ export default class Folder extends Component {
               <input
                 className="modal-input"
                 placeholder="输入文件夹名称"
+                maxLength={24}
                 onChange={(e) => {
                   const value = e.target.value;
                   if (value.length > 0) {
                     this.setState({
                       showExplain: "hidden",
+                    });
+                  }
+                  if (value.length == 24) {
+                    this.setState({
+                      showExplain: "visible",
+                      showExplainInfo: "文件夹长度最多为24位！",
                     });
                   }
                 }}
@@ -324,7 +333,7 @@ export default class Folder extends Component {
                 style={{ visibility: this.state.showExplain }}
                 className="modal-explain"
               >
-                <p>文件夹名不能为空</p>
+                <p>{this.state.showExplainInfo}</p>
               </div>
               <div className="password-btn-group">
                 <div className="main ml-20">

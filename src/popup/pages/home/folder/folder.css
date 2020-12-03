@@ -125,12 +125,16 @@
   margin-right: 6px;
 }
 .folder-wrapper .folder-info .folder-text {
+  width: 70px;
   height: 30px;
   font-size: 16px;
   font-family: PingFangSC-Semibold, PingFang SC;
   font-weight: 600;
   color: #3a3f6d;
   line-height: 22px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   margin-left: 40px;
 }
 .folder-wrapper .folderModal-wrapper {
