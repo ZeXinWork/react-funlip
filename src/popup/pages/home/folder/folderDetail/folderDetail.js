@@ -1,75 +1,77 @@
 /*global chrome*/
 
-import React, { Component } from "react";
-import Success from "./icon_success@2x.png";
-import { handleLocalStorage } from "../../../../../api";
-import localforage from "localforage";
-import { Checkbox, Input } from "antd";
-import copy from "copy-to-clipboard";
-import Lock from "./Lock.png";
-import Folder from "./Folder.png";
-import Up from "./Up.png";
-import Key from "./Key.png";
-import arrowLeft from "./icon_arrowright_black@2x.png";
-import Edit from "./icon_edit@2x.png";
-import deleteIcon from "./icon_home_delete_pre@2x.png";
-import remove from "./icon_home_mobile_pre@2x.png";
-import sadIcon from "./icon_sad.png";
-import "./folderDail.css";
+import React, { Component } from 'react'
+import Success from './icon_success@2x.png'
+import { handleLocalStorage } from '../../../../../api'
+import localforage from 'localforage'
+import { Input } from 'antd'
+import copy from 'copy-to-clipboard'
+import Lock from './Lock.png'
+import Folder from './Folder.png'
+import Up from './Up.png'
+import Key from './Key.png'
+import arrowLeft from './icon_arrowright_black@2x.png'
+import Edit from './icon_edit@2x.png'
+import deleteIcon from './icon_home_delete_pre@2x.png'
+import remove from './icon_home_mobile_pre@2x.png'
+import sadIcon from './icon_sad.png'
+import noHover from './password@2x.png'
+import './folderDail.css'
 export default class componentName extends Component {
   state = {
     list: [],
-    show: "",
-    editShow: "none",
-    folderName: "",
-    deleteShow: "none",
+    show: '',
+    editShow: 'none',
+    folderName: '',
+    deleteShow: 'none',
     showCheckBox: false,
-    btnShow: "block",
-    editPswShow: "none",
-    removeShow: "none",
-    deletePswShow: "none",
-    renameShow: "none",
-    noPasswordShow: "none",
-    folderExplain: "hidden",
+    btnShow: 'block',
+    editPswShow: 'none',
+    removeShow: 'none',
+    deletePswShow: 'none',
+    renameShow: 'none',
+    noPasswordShow: 'none',
+    folderExplain: 'hidden',
     mustCheck: false,
     canClick: false,
     isChecked: false,
-    inputValue: "",
-  };
+    showExplainInfo: '文件夹名不能为空！',
+    inputValue: '',
+  }
   componentDidMount() {
     let arrSortMinToMax = (a, b) => {
-      let cReg = /^[\u4E00-\u9FCC\u3400-\u4DB5\uFA0E\uFA0F\uFA11\uFA13\uFA14\uFA1F\uFA21\uFA23\uFA24\uFA27-\uFA29]|[\ud840-\ud868][\udc00-\udfff]|\ud869[\udc00-\uded6\udf00-\udfff]|[\ud86a-\ud86c][\udc00-\udfff]|\ud86d[\udc00-\udf34\udf40-\udfff]|\ud86e[\udc00-\udc1d]/;
+      let cReg = /^[\u4E00-\u9FCC\u3400-\u4DB5\uFA0E\uFA0F\uFA11\uFA13\uFA14\uFA1F\uFA21\uFA23\uFA24\uFA27-\uFA29]|[\ud840-\ud868][\udc00-\udfff]|\ud869[\udc00-\uded6\udf00-\udfff]|[\ud86a-\ud86c][\udc00-\udfff]|\ud86d[\udc00-\udf34\udf40-\udfff]|\ud86e[\udc00-\udc1d]/
       if (!cReg.test(a.title) || !cReg.test(b.title)) {
-        return a.title.localeCompare(b.title);
+        return a.title.localeCompare(b.title)
       } else {
-        return a.title.localeCompare(b.title, "zh");
+        return a.title.localeCompare(b.title, 'zh')
       }
-    };
-    let passwordList;
-    let dataList;
-    let folderId;
-    let afterDelete;
-    let oldList;
-    let preList;
-    const folderName = handleLocalStorage("get", "folderName");
-    let loading = document.getElementById("funlip-loading");
-    loading.style.display = "none";
+    }
+    let passwordList
+    let dataList
+    let folderId
+    let afterDelete
+    let oldList
+    let preList
+    const folderName = handleLocalStorage('get', 'folderName')
+    let loading = document.getElementById('funlip-loading')
+    loading.style.display = 'none'
     if (folderName) {
       this.setState(
         {
           folderName,
         },
         () => {}
-      );
+      )
     }
 
     if (this.props.location.state) {
-      passwordList = this.props.location.state.passwordList;
-      dataList = this.props.location.state.dataList;
-      folderId = this.props.location.state.folderId;
-      afterDelete = this.props.location.state.afterDelete;
-      oldList = this.props.location.state.oldList;
-      preList = this.props.location.state.preList;
+      passwordList = this.props.location.state.passwordList
+      dataList = this.props.location.state.dataList
+      folderId = this.props.location.state.folderId
+      afterDelete = this.props.location.state.afterDelete
+      oldList = this.props.location.state.oldList
+      preList = this.props.location.state.preList
     }
 
     // 点击空白处关闭弹窗
@@ -90,522 +92,534 @@ export default class componentName extends Component {
 
     //设置文件夹id
     if (folderId) {
-      handleLocalStorage("set", "folderId", folderId);
+      handleLocalStorage('set', 'folderId', folderId)
     }
     //有新增的dataList，更新视图
     if (dataList) {
-      let loading = document.getElementById("funlip-loading");
-      loading.style.display = "none";
-      let newArray = [dataList];
+      let loading = document.getElementById('funlip-loading')
+      loading.style.display = 'none'
+      let newArray = [dataList]
       const getLocalState = async () => {
         const getLocalState = async () => {
           const res = localforage
-            .getItem("folderList")
+            .getItem('folderList')
             .then(function (value) {
-              return value;
+              return value
             })
             .catch(function (err) {
-              let error = false;
-              return error;
-            });
-          return res;
-        };
-        let targetArray = [];
-        const folderList = await getLocalState();
-        const folderId = handleLocalStorage("get", "folderId");
+              let error = false
+              return error
+            })
+          return res
+        }
+        let targetArray = []
+        const folderList = await getLocalState()
+        const folderId = handleLocalStorage('get', 'folderId')
         folderList.map((item) => {
           if (item.id == folderId) {
-            let { passwords } = item;
+            let { passwords } = item
             if (passwords) {
-              targetArray = [...passwords, ...newArray];
+              targetArray = [...passwords, ...newArray]
             } else {
-              targetArray = newArray;
+              targetArray = newArray
             }
-            let sortArr = targetArray.sort(arrSortMinToMax);
+            let sortArr = targetArray.sort(arrSortMinToMax)
             this.setState({
               list: sortArr,
-            });
+            })
           }
-        });
+        })
 
         for (let i = 0; i < folderList.length; i++) {
           if (folderList[i].id == folderId) {
-            folderList[i].passwords = targetArray;
+            folderList[i].passwords = targetArray
           }
         }
         for (let i = 0; i < folderList.length; i++) {
-          folderList[i].fileNum = folderList[i].passwords.length;
+          folderList[i].fileNum = folderList[i].passwords.length
         }
         localforage
-          .setItem("folderList", folderList)
+          .setItem('folderList', folderList)
           .then(function (value) {})
-          .catch(function (err) {});
-      };
-      getLocalState();
+          .catch(function (err) {})
+      }
+      getLocalState()
     } else if (passwordList) {
       //如果没有更新的，显示父级传过来的passwordList()
-      let sortArr = passwordList.sort(arrSortMinToMax);
+      let sortArr = passwordList.sort(arrSortMinToMax)
       this.setState({
         list: sortArr,
-      });
+      })
     } else if (afterDelete) {
-      let loading = document.getElementById("funlip-loading");
-      loading.style.display = "none";
+      let loading = document.getElementById('funlip-loading')
+      loading.style.display = 'none'
       const getLocalState = async () => {
         const getLocalState = async () => {
           const res = localforage
-            .getItem("folderList")
+            .getItem('folderList')
             .then(function (value) {
-              return value;
+              return value
             })
             .catch(function (err) {
-              let error = false;
-              return error;
-            });
-          return res;
-        };
-        let targetArray = [];
-        const folderList = await getLocalState();
-        const folderId = handleLocalStorage("get", "folderId");
+              let error = false
+              return error
+            })
+          return res
+        }
+        let targetArray = []
+        const folderList = await getLocalState()
+        const folderId = handleLocalStorage('get', 'folderId')
         folderList.map((item) => {
           if (item.id == folderId) {
-            let { passwords } = item;
+            let { passwords } = item
             if (passwords) {
-              targetArray = passwords;
+              targetArray = passwords
             } else {
-              targetArray = [];
+              targetArray = []
             }
-            let sortArr = targetArray.sort(arrSortMinToMax);
+            let sortArr = targetArray.sort(arrSortMinToMax)
 
             this.setState({
               list: sortArr,
-            });
+            })
           }
-        });
-      };
-      getLocalState();
+        })
+      }
+      getLocalState()
     } else if (oldList && oldList.length > 0) {
-      let sortArr = oldList.sort(arrSortMinToMax);
+      let sortArr = oldList.sort(arrSortMinToMax)
 
       this.setState({
         list: sortArr,
-      });
+      })
     } else if (preList && preList.length > 0) {
-      let sortArr = preList.sort(arrSortMinToMax);
+      let sortArr = preList.sort(arrSortMinToMax)
 
       this.setState({
         list: sortArr,
-      });
+      })
     } else {
       this.setState({
         list: [],
-      });
+      })
     }
   }
   render() {
-    let folderId;
+    let folderId
     if (this.props.location.state) {
-      folderId = this.props.location.state.folderId;
+      folderId = this.props.location.state.folderId
     }
 
     //去密码详情页
 
     const toDetail = (itemDetail) => {
       this.props.history.push({
-        pathname: "/PswDetail",
+        pathname: '/PswDetail',
         state: {
           itemDetail,
           isDeleteFolder: true,
           folderId,
           preList: this.state.list,
         },
-      });
-    };
+      })
+    }
 
     //添加hover效果
     const showHover = (index) => {
       this.setState({
         show: index,
-      });
-    };
+      })
+    }
 
     //将hover效果移出
     const cancelHover = () => {
       this.setState({
-        show: "",
-      });
-    };
+        show: '',
+      })
+    }
 
     //发信息自动填充
     function sendMessageToContentScript(mes) {
-      mes.type = "mesToBackground";
-      chrome.runtime.sendMessage({ mes }, function (response) {});
+      mes.type = 'mesToBackground'
+      chrome.runtime.sendMessage({ mes }, function (response) {})
     }
 
     //发信息打开网址
     function sendMessageToContentScript2(url) {
       let mes = {
         url: url,
-        type: "goUrl",
-      };
-      chrome.runtime.sendMessage({ mes }, function (response) {});
+        type: 'goUrl',
+      }
+      chrome.runtime.sendMessage({ mes }, function (response) {})
     }
 
     //复制密码
     const Copy = (psw) => {
       // const input = document.createElement("input");
-      let modal = document.getElementsByClassName(
-        "psw-success-info-wrapper"
-      )[0];
-      copy(psw);
-      modal.style.display = "block";
+      let modal = document.getElementsByClassName('psw-success-info-wrapper')[0]
+      copy(psw)
+      modal.style.display = 'block'
       setTimeout(() => {
-        modal.style.display = "none";
-      }, 2000);
-    };
+        modal.style.display = 'none'
+      }, 2000)
+    }
 
     //显示操作面板
     const showEditHover = () => {
-      if (this.state.editShow == "none") {
+      if (this.state.editShow == 'none') {
         this.setState({
-          editShow: "block",
-        });
+          editShow: 'block',
+        })
       } else {
         this.setState({
-          editShow: "none",
-        });
+          editShow: 'none',
+        })
       }
-    };
+    }
 
     //打开删除页面
     const showModal2 = () => {
+      let MaskArea = document.getElementById('funlip-mask')
+      MaskArea.style.display = 'block'
       this.setState(
         {
-          editShow: "none",
+          editShow: 'none',
         },
         () => {
-          let Modal = document.getElementsByClassName("password-modal2")[0];
-          Modal.style.display = "block";
+          let Modal = document.getElementsByClassName('password-modal2')[0]
+          Modal.style.display = 'block'
         }
-      );
-    };
+      )
+    }
 
     //删除文件夹
     const deleteFolder = (config) => {
-      const _this = this;
-      const pluginID = handleLocalStorage("get", "pluginID");
-      const folderId = handleLocalStorage("get", "folderId");
+      const _this = this
+      const pluginID = handleLocalStorage('get', 'pluginID')
+      const folderId = handleLocalStorage('get', 'folderId')
       let userInfo = {
         folderId,
         pluginId: pluginID,
-      };
+      }
       function sendMessageToContentScript(mes) {
-        mes.requestType = "deleteFolder";
+        mes.requestType = 'deleteFolder'
 
         chrome.runtime.sendMessage({ mes }, function (response) {
-          let res = JSON.parse(response);
+          let res = JSON.parse(response)
           if (res.code == 200) {
             const getLocalSate = async () => {
               const getLocalState = async () => {
                 const res = localforage
-                  .getItem("folderList")
+                  .getItem('folderList')
                   .then(function (value) {
-                    return value;
+                    return value
                   })
                   .catch(function (err) {
-                    let error = false;
-                    return error;
-                  });
-                return res;
-              };
+                    let error = false
+                    return error
+                  })
+                return res
+              }
 
-              const folderList = await getLocalState();
+              const folderList = await getLocalState()
 
               const getuserInfoLocalState = async () => {
                 const res = localforage
-                  .getItem("userInfo")
+                  .getItem('userInfo')
                   .then(function (value) {
-                    return value;
+                    return value
                   })
                   .catch(function (err) {
-                    let error = false;
-                    return error;
-                  });
-                return res;
-              };
-              let targetIdArray = [];
-              const userInfoList = await getuserInfoLocalState();
+                    let error = false
+                    return error
+                  })
+                return res
+              }
+              let targetIdArray = []
+              const userInfoList = await getuserInfoLocalState()
               if (config) {
                 for (let i = 0; i < userInfoList.length; i++) {
                   for (let j = 0; j < _this.state.list.length; j++) {
                     if (userInfoList[i].id == _this.state.list[j].id) {
-                      targetIdArray.push(userInfoList[i].id);
-                      userInfoList.splice(i, 1);
+                      targetIdArray.push(userInfoList[i].id)
+                      userInfoList.splice(i, 1)
                     }
                   }
                 }
-                const pluginID = handleLocalStorage("get", "pluginID");
+                const pluginID = handleLocalStorage('get', 'pluginID')
                 let userInfo = {
                   pluginId: pluginID,
                   passwordIds: targetIdArray,
-                };
-                function sendMessageToContentScript2(mes) {
-                  mes.requestType = "deleteItem";
-                  chrome.runtime.sendMessage({ mes }, function (response) {});
                 }
-                sendMessageToContentScript2(userInfo);
+                function sendMessageToContentScript2(mes) {
+                  mes.requestType = 'deleteItem'
+                  chrome.runtime.sendMessage({ mes }, function (response) {})
+                }
+                sendMessageToContentScript2(userInfo)
                 localforage
-                  .setItem("userInfo", userInfoList)
+                  .setItem('userInfo', userInfoList)
                   .then(function (value) {})
-                  .catch(function (err) {});
+                  .catch(function (err) {})
               }
               for (let i = 0; i < folderList.length; i++) {
                 if (folderList[i].id == folderId) {
-                  folderList.splice(i, 1);
+                  folderList.splice(i, 1)
                 }
               }
               localforage
-                .setItem("folderList", folderList)
+                .setItem('folderList', folderList)
                 .then(function (value) {
-                  closeModal2("homeFolder");
+                  closeModal2('homeFolder')
+                  let MaskArea = document.getElementById('funlip-mask')
+                  MaskArea.style.display = 'none'
                 })
-                .catch(function (err) {});
-            };
-            getLocalSate();
+                .catch(function (err) {})
+            }
+
+            getLocalSate()
           }
-        });
+        })
       }
-      sendMessageToContentScript(userInfo);
-    };
+      sendMessageToContentScript(userInfo)
+    }
 
     //关闭Modal2
     const closeModal2 = (mes) => {
-      let Modal = document.getElementsByClassName("password-modal2")[0];
+      let MaskArea = document.getElementById('funlip-mask')
+      MaskArea.style.display = 'none'
+      let Modal = document.getElementsByClassName('password-modal2')[0]
       if (Modal) {
-        Modal.style.display = "none";
+        Modal.style.display = 'none'
       }
-      if (mes == "homeFolder") {
-        const _this = this;
+      if (mes == 'homeFolder') {
+        const _this = this
         function sendMessageToContentScript(mes) {
-          mes.type = "showImage2";
-          _this.props.history.push("/home/folder");
-          chrome.runtime.sendMessage({ mes }, function (response) {});
+          mes.type = 'showImage2'
+          _this.props.history.push('/home/folder')
+          chrome.runtime.sendMessage({ mes }, function (response) {})
         }
-        sendMessageToContentScript({});
+        sendMessageToContentScript({})
       }
-    };
+    }
 
     //文件夹重命名
     const renameFolder = () => {
-      const _this = this;
+      const _this = this
       let renameInput = document.getElementsByClassName(
-        "password-body-Input"
-      )[0].value;
+        'password-body-Input'
+      )[0].value
       if (renameInput.length == 0) {
         this.setState({
-          folderExplain: "visible",
-        });
+          showExplainInfo: '文件夹名不能为空！',
+          folderExplain: 'visible',
+        })
       } else {
         let userInfo = {
           folderId,
           name: renameInput,
-        };
+        }
 
         function sendMessageToContentScript(mes) {
-          mes.requestType = "renameFolder";
+          mes.requestType = 'renameFolder'
           chrome.runtime.sendMessage({ mes }, function (response) {
-            let res = JSON.parse(response);
+            let res = JSON.parse(response)
             if (res.code == 200) {
               const getLocalSate = async () => {
                 const getLocalState = async () => {
                   const res = localforage
-                    .getItem("folderList")
+                    .getItem('folderList')
                     .then(function (value) {
-                      return value;
+                      return value
                     })
                     .catch(function (err) {
-                      let error = false;
-                      return error;
-                    });
-                  return res;
-                };
-                const folderList = await getLocalState();
+                      let error = false
+                      return error
+                    })
+                  return res
+                }
+                const folderList = await getLocalState()
 
                 for (let i = 0; i < folderList.length; i++) {
                   if (folderList[i].id == folderId) {
-                    folderList[i].name = res.data.name;
+                    folderList[i].name = res.data.name
                   }
                 }
 
                 localforage
-                  .setItem("folderList", folderList)
+                  .setItem('folderList', folderList)
                   .then(function (value) {
                     _this.setState({
-                      renameShow: "none",
+                      renameShow: 'none',
                       folderName: res.data.name,
-                      editShow: "none",
-                      inputValue: "",
-                      folderExplain: "hidden",
-                    });
+                      editShow: 'none',
+                      inputValue: '',
+                      folderExplain: 'hidden',
+                    })
                   })
-                  .catch(function (err) {});
-              };
-              getLocalSate();
+                  .catch(function (err) {})
+              }
+              getLocalSate()
             }
-          });
+          })
         }
-        sendMessageToContentScript(userInfo);
+        sendMessageToContentScript(userInfo)
       }
-    };
+    }
 
     //删除文件夹并删除下面所有密码
     const showDeleteAllPswModal = () => {
       if (this.state.list.length > 0) {
-        this.setState({
-          deleteShow: "block",
-        });
+        this.setState(
+          {
+            deleteShow: 'block',
+          },
+          () => {
+            let MaskArea = document.getElementById('funlip-mask')
+            MaskArea.style.display = 'block'
+          }
+        )
       } else {
-        deleteFolder();
+        deleteFolder()
       }
-    };
+    }
 
     //删除文件夹但是不删除文件夹下的密码
     const cancelCloseModal3 = () => {
-      closeModal2();
-      deleteFolder();
+      closeModal2()
+      deleteFolder()
       function sendMessageToContentScript(mes) {
-        mes.type = "showImage2";
-        chrome.runtime.sendMessage({ mes }, function (response) {});
+        mes.type = 'showImage2'
+        chrome.runtime.sendMessage({ mes }, function (response) {})
       }
-      sendMessageToContentScript({});
+      sendMessageToContentScript({})
       this.setState({
-        deleteShow: "none",
-      });
-    };
+        deleteShow: 'none',
+      })
+    }
 
     //打开编辑模块
     const editPsw = () => {
       if (this.state.list.length > 0) {
         this.setState({
           showCheckBox: true,
-          editShow: "none",
-          btnShow: "none",
-          editPswShow: "block",
-        });
+          editShow: 'none',
+          btnShow: 'none',
+          editPswShow: 'block',
+        })
       } else {
         this.setState(
           {
-            noPasswordShow: "block",
+            noPasswordShow: 'block',
           },
           () => {
             setTimeout(() => {
               this.setState({
-                noPasswordShow: "none",
-              });
-            }, 1000);
+                noPasswordShow: 'none',
+              })
+            }, 1000)
           }
-        );
+        )
       }
-    };
+    }
     //打开移出密码modal
     const removePsw = () => {
-      let MyCheckBox = document.getElementsByClassName("folderCheckbox");
-      let myChecked = [];
-      let targetArray = [];
-      let targetIdArray = [];
+      let MyCheckBox = document.getElementsByClassName('folderCheckbox')
+      let myChecked = []
+      let targetArray = []
+      let targetIdArray = []
       for (let i = 0; i < MyCheckBox.length; i++) {
         if (MyCheckBox[i].checked) {
-          myChecked.push(i);
+          myChecked.push(i)
         }
       }
       if (myChecked.length > 0) {
         this.setState({
-          removeShow: "block",
-        });
+          removeShow: 'block',
+        })
       } else {
-        alert("请选择要移出的密码");
+        alert('请选择要移出的密码')
       }
-    };
+    }
 
     //删除密码modal
     const deletePsw = () => {
-      let MyCheckBox = document.getElementsByClassName("folderCheckbox");
-      let myChecked = [];
-      let targetArray = [];
-      let targetIdArray = [];
+      let MyCheckBox = document.getElementsByClassName('folderCheckbox')
+      let myChecked = []
+      let targetArray = []
+      let targetIdArray = []
       for (let i = 0; i < MyCheckBox.length; i++) {
         if (MyCheckBox[i].checked) {
-          myChecked.push(i);
+          myChecked.push(i)
         }
       }
       if (myChecked.length > 0) {
         this.setState({
-          deletePswShow: "block",
-        });
+          deletePswShow: 'block',
+        })
       } else {
-        alert("请选择要删除的密码");
+        alert('请选择要删除的密码')
       }
-    };
+    }
 
     //取消密码移出
     const cancelMove = () => {
       this.setState({
-        removeShow: "none",
-      });
-    };
+        removeShow: 'none',
+      })
+    }
 
     //将密码移出文件夹
     const removePswFolder = () => {
-      const _this = this;
-      const folderId = handleLocalStorage("get", "folderId");
-      let MyCheckBox = document.getElementsByClassName("folderCheckbox");
-      let myChecked = [];
-      let targetArray = [];
-      let targetIdArray = [];
+      const _this = this
+      const folderId = handleLocalStorage('get', 'folderId')
+      let MyCheckBox = document.getElementsByClassName('folderCheckbox')
+      let myChecked = []
+      let targetArray = []
+      let targetIdArray = []
       for (let i = 0; i < MyCheckBox.length; i++) {
         if (MyCheckBox[i].checked) {
-          myChecked.push(i);
+          myChecked.push(i)
         }
       }
 
-      let list = this.state.list;
+      let list = this.state.list
       for (let i = 0; i < list.length; i++) {
         for (let j = 0; j < myChecked.length; j++) {
           if (i == myChecked[j]) {
-            targetArray.push(list[i]);
+            targetArray.push(list[i])
           }
         }
       }
 
       for (let i = 0; i < targetArray.length; i++) {
-        targetIdArray.push(targetArray[i].id);
+        targetIdArray.push(targetArray[i].id)
       }
       let userInfo = {
         passwordIds: targetIdArray,
         folderId,
-      };
+      }
       const sendMessageToContentBackgroundScript2 = (mes) => {
-        mes.requestType = "outFolder";
+        mes.requestType = 'outFolder'
 
         chrome.runtime.sendMessage({ mes }, function (res) {
-          let response = JSON.parse(res);
+          let response = JSON.parse(res)
           if (response.code == 200) {
             const getLocalState = async () => {
               const getLocalState = async () => {
                 const res = localforage
-                  .getItem("folderList")
+                  .getItem('folderList')
                   .then(function (value) {
-                    return value;
+                    return value
                   })
                   .catch(function (err) {
-                    let error = false;
-                    return error;
-                  });
-                return res;
-              };
-              let outPsw = response.data;
-              const folderId = handleLocalStorage("get", "folderId");
-              const folderList = await getLocalState();
+                    let error = false
+                    return error
+                  })
+                return res
+              }
+              let outPsw = response.data
+              const folderId = handleLocalStorage('get', 'folderId')
+              const folderList = await getLocalState()
               for (let i = 0; i < folderList.length; i++) {
                 for (let j = 0; j < folderList[i].passwords.length; j++) {
                   for (let p = 0; p < outPsw.length; p++) {
@@ -613,183 +627,183 @@ export default class componentName extends Component {
                       folderList[i].id == folderId &&
                       folderList[i].passwords[j].id == outPsw[p].id
                     ) {
-                      folderList[i].passwords.splice(j, 1);
+                      folderList[i].passwords.splice(j, 1)
                     }
                   }
                 }
               }
               for (let i = 0; i < folderList.length; i++) {
-                folderList[i].fileNum = folderList[i].passwords.length;
+                folderList[i].fileNum = folderList[i].passwords.length
               }
-              let list = _this.state.list;
+              let list = _this.state.list
               for (let i = 0; i < list.length; i++) {
                 for (let p = 0; p < outPsw.length; p++) {
                   if (list[i].id == outPsw[p].id) {
-                    list.splice(i, 1);
+                    list.splice(i, 1)
                   }
                 }
               }
 
               _this.setState({
-                removeShow: "none",
-                editPswShow: "none",
+                removeShow: 'none',
+                editPswShow: 'none',
                 showCheckBox: false,
-                btnShow: "block",
-              });
+                btnShow: 'block',
+              })
               localforage
-                .setItem("folderList", folderList)
+                .setItem('folderList', folderList)
                 .then(function (value) {})
-                .catch(function (err) {});
-            };
-            getLocalState();
+                .catch(function (err) {})
+            }
+            getLocalState()
           } else {
             _this.setState({
-              removeShow: "none",
-              editPswShow: "none",
+              removeShow: 'none',
+              editPswShow: 'none',
               showCheckBox: false,
-              btnShow: "block",
-            });
+              btnShow: 'block',
+            })
           }
-        });
-      };
-      sendMessageToContentBackgroundScript2(userInfo);
-    };
+        })
+      }
+      sendMessageToContentBackgroundScript2(userInfo)
+    }
 
     //将密码从文件夹删除
     const deletePswFolder = () => {
-      const _this = this;
+      const _this = this
 
-      let MyCheckBox = document.getElementsByClassName("folderCheckbox");
-      let myChecked = [];
-      let targetArray = [];
-      let targetIdArray = [];
+      let MyCheckBox = document.getElementsByClassName('folderCheckbox')
+      let myChecked = []
+      let targetArray = []
+      let targetIdArray = []
       for (let i = 0; i < MyCheckBox.length; i++) {
         if (MyCheckBox[i].checked) {
-          myChecked.push(i);
+          myChecked.push(i)
         }
       }
-      let list = this.state.list;
+      let list = this.state.list
       for (let i = 0; i < list.length; i++) {
         for (let j = 0; j < myChecked.length; j++) {
           if (i == myChecked[j]) {
-            targetArray.push(list[i]);
+            targetArray.push(list[i])
           }
         }
       }
 
       for (let i = 0; i < targetArray.length; i++) {
-        targetIdArray.push(targetArray[i].id);
+        targetIdArray.push(targetArray[i].id)
       }
 
-      const pluginID = handleLocalStorage("get", "pluginID");
+      const pluginID = handleLocalStorage('get', 'pluginID')
       const value = {
         pluginId: pluginID / 1,
         passwordIds: targetIdArray,
-      };
-      const folderId = handleLocalStorage("get", "folderId");
+      }
+      const folderId = handleLocalStorage('get', 'folderId')
       const userInfo = {
         folderId,
         passwordIds: targetIdArray,
-      };
-      function sendMessageToContentScript2(mes) {
-        mes.requestType = "outFolder";
-        chrome.runtime.sendMessage({ mes }, function (response) {
-          let res = JSON.parse(response);
-        });
       }
-      sendMessageToContentScript2(userInfo);
-      const sendMessageToContentBackgroundScript = (mes) => {
-        mes.requestType = "deleteItem";
+      function sendMessageToContentScript2(mes) {
+        mes.requestType = 'outFolder'
         chrome.runtime.sendMessage({ mes }, function (response) {
-          let res = JSON.parse(response);
-          let outPsw = res.data;
+          let res = JSON.parse(response)
+        })
+      }
+      sendMessageToContentScript2(userInfo)
+      const sendMessageToContentBackgroundScript = (mes) => {
+        mes.requestType = 'deleteItem'
+        chrome.runtime.sendMessage({ mes }, function (response) {
+          let res = JSON.parse(response)
+          let outPsw = res.data
           if (res.code == 200) {
             const getLocalState = async () => {
               const getLocalState = async () => {
                 const res = localforage
-                  .getItem("folderList")
+                  .getItem('folderList')
                   .then(function (value) {
-                    return value;
+                    return value
                   })
                   .catch(function (err) {
-                    let error = false;
-                    return error;
-                  });
-                return res;
-              };
+                    let error = false
+                    return error
+                  })
+                return res
+              }
 
-              const folderList = await getLocalState();
+              const folderList = await getLocalState()
               for (let i = 0; i < folderList.length; i++) {
                 for (let j = 0; j < folderList[i].passwords.length; j++) {
                   for (let p = 0; p < outPsw.length; p++) {
                     if (folderList[i].passwords[j].id == outPsw[p].id) {
-                      folderList[i].passwords.splice(j, 1);
+                      folderList[i].passwords.splice(j, 1)
                     }
                   }
                 }
               }
-              let list = _this.state.list;
+              let list = _this.state.list
               for (let i = 0; i < list.length; i++) {
                 for (let p = 0; p < outPsw.length; p++) {
                   if (list[i].id == outPsw[p].id) {
-                    list.splice(i, 1);
+                    list.splice(i, 1)
                   }
                 }
               }
               _this.setState({
-                deletePswShow: "none",
-                editPswShow: "none",
+                deletePswShow: 'none',
+                editPswShow: 'none',
                 showCheckBox: false,
-                btnShow: "block",
-              });
+                btnShow: 'block',
+              })
               localforage
-                .setItem("folderList", folderList)
+                .setItem('folderList', folderList)
                 .then(function (value) {})
-                .catch(function (err) {});
-            };
-            getLocalState();
+                .catch(function (err) {})
+            }
+            getLocalState()
           }
-        });
-      };
-      sendMessageToContentBackgroundScript(value);
-    };
+        })
+      }
+      sendMessageToContentBackgroundScript(value)
+    }
 
     //取消删除密码
     const cancelPswFolder = () => {
       this.setState({
-        deletePswShow: "none",
-      });
-    };
+        deletePswShow: 'none',
+      })
+    }
 
     //关闭重命名模块
     const closeModal8 = () => {
       this.setState({
-        renameShow: "none",
-        inputValue: "",
-        folderExplain: "hidden",
-      });
-    };
+        renameShow: 'none',
+        inputValue: '',
+        folderExplain: 'hidden',
+      })
+    }
 
     const setCanClick = () => {
-      let myChecked = [];
+      let myChecked = []
 
-      let MyCheckBoxs = document.getElementsByClassName("folderCheckbox");
+      let MyCheckBoxs = document.getElementsByClassName('folderCheckbox')
       for (let i = 0; i < MyCheckBoxs.length; i++) {
         if (MyCheckBoxs[i].checked) {
-          myChecked.push(i);
+          myChecked.push(i)
         }
       }
 
       if (myChecked.length > 0) {
         this.setState({
           canClick: true,
-        });
+        })
       } else {
         this.setState({
           canClick: false,
-        });
+        })
       }
-    };
+    }
     return (
       <div className="psw-wrappers">
         <div
@@ -813,19 +827,33 @@ export default class componentName extends Component {
             <Input
               placeholder={this.state.folderName}
               className="password-body-Input"
+              maxLength={24}
               value={this.state.inputValue}
               onChange={(e) => {
-                const value = e.target.value;
+                const value = e.target.value
+                if (value.length > 0) {
+                  this.setState({
+                    folderExplain: 'hidden',
+                  })
+                }
+                if (value.length == 24) {
+                  this.setState({
+                    showExplainInfo: '文件夹名称长度不得大于24位！',
+                    folderExplain: 'visible',
+                  })
+                }
                 this.setState({
                   inputValue: value,
-                  folderExplain: "hidden",
-                });
+                })
               }}
               bordered={false}
             />
             <div style={{ visibility: this.state.folderExplain }}>
-              <span className="folderName-explain">文件夹名称不能为空！</span>
+              <span className="folderName-explain">
+                {this.state.showExplainInfo}
+              </span>
             </div>
+
             <div className="password-btn-group">
               <div className="main ml-20">
                 <div className="btn-1 " onClick={closeModal8}>
@@ -847,11 +875,14 @@ export default class componentName extends Component {
           </div>
           <div className="password-body">
             <div className="password-btn-group">
-              <div className="main ml-20">
+              {/* <div className="main ml-20">
                 <div className="btn-1 " onClick={closeModal2}>
                   <span className="password-text">取消</span>
                 </div>
-              </div>
+              </div> */}
+              <button className="btn-1" onClick={closeModal2}>
+                取消
+              </button>
               <div
                 className="btn-layout mr-20 set-bg "
                 onClick={showDeleteAllPswModal}
@@ -875,15 +906,18 @@ export default class componentName extends Component {
           </div>
           <div className="password-body">
             <div className="password-btn-group">
-              <div className="main ml-20">
-                <div className="btn-1 " onClick={cancelCloseModal3}>
+              {/* <div className="main ml-20">
+                <div className="btn-1 " onClick={closeModal2}>
                   <span className="password-text">取消</span>
                 </div>
-              </div>
+              </div> */}
+              <button className="btn-1" onClick={cancelCloseModal3}>
+                取消
+              </button>
               <div
                 className="btn-layout mr-20 set-bg "
                 onClick={() => {
-                  deleteFolder("deleteAllPsw");
+                  deleteFolder('deleteAllPsw')
                 }}
               >
                 <span className="password-text">确认</span>
@@ -903,11 +937,9 @@ export default class componentName extends Component {
           </div>
           <div className="password-body">
             <div className="password-btn-group">
-              <div className="main ml-20">
-                <div className="btn-1 " onClick={cancelMove}>
-                  <span className="password-text">取消</span>
-                </div>
-              </div>
+              <button className="btn-1 " onClick={cancelMove}>
+                取消
+              </button>
               <div
                 className="btn-layout mr-20 set-bg "
                 onClick={removePswFolder}
@@ -922,18 +954,16 @@ export default class componentName extends Component {
           style={{ display: this.state.deletePswShow }}
         >
           <div className="password-title-icon">
-            <img src={Lock} className="lock-icon" />
+            <img src={Lock} className="lock-icon" alt="Lock" />
           </div>
           <div className="password-title">
             <span className="password-title-info">是否删除此密码?</span>
           </div>
           <div className="password-body">
             <div className="password-btn-group">
-              <div className="main ml-20">
-                <div className="btn-1 " onClick={cancelPswFolder}>
-                  <span className="password-text">取消</span>
-                </div>
-              </div>
+              <button onClick={cancelPswFolder} className="btn-1">
+                取消
+              </button>
               <div
                 className="btn-layout mr-20 set-bg "
                 onClick={deletePswFolder}
@@ -958,9 +988,9 @@ export default class componentName extends Component {
           style={{ display: this.state.editShow }}
           onClick={(e) => {
             if (e && e.stopPropagation) {
-              e.stopPropagation();
+              e.stopPropagation()
             } else {
-              window.event.cancelBubble = true;
+              window.event.cancelBubble = true
             }
           }}
         >
@@ -975,9 +1005,9 @@ export default class componentName extends Component {
               className="reName text-wrapper"
               onClick={() => {
                 this.setState({
-                  renameShow: "block",
-                  editShow: "none",
-                });
+                  renameShow: 'block',
+                  editShow: 'none',
+                })
               }}
             >
               重命名
@@ -990,29 +1020,30 @@ export default class componentName extends Component {
             className="arrowLeft"
             onClick={() => {
               function sendMessageToContentScript(mes) {
-                mes.type = "showImage2";
-                chrome.runtime.sendMessage({ mes }, function (response) {});
+                mes.type = 'showImage2'
+                chrome.runtime.sendMessage({ mes }, function (response) {})
               }
-              sendMessageToContentScript({});
-              this.props.history.push("/home/folder");
+              sendMessageToContentScript({})
+              this.props.history.push('/home/folder')
             }}
           />
+          <div className="folder-tag-wrapper">
+            <p className="folder-tag">{this.state.folderName}</p>
+          </div>
           <img
             src={Edit}
             className="edit"
             onClick={(e) => {
               if (e && e.stopPropagation) {
-                e.stopPropagation();
+                e.stopPropagation()
               } else {
-                window.event.cancelBubble = true;
+                window.event.cancelBubble = true
               }
-              showEditHover();
+              showEditHover()
             }}
           />
         </div>
-        <div className="folder-tag-wrapper">
-          <p className="folder-tag">{`文件夹 > ${this.state.folderName}`}</p>
-        </div>
+
         <div className="home-body">
           {this.state.list.map((item, index) => {
             return (
@@ -1021,31 +1052,31 @@ export default class componentName extends Component {
                 key={item.title}
                 onClick={() => {
                   if (!this.state.showCheckBox) {
-                    toDetail(item);
+                    toDetail(item)
                   } else {
                     let MyCheckBox = document.getElementsByClassName(
-                      "folderCheckbox"
-                    )[index];
+                      'folderCheckbox'
+                    )[index]
                     if (MyCheckBox.checked) {
-                      MyCheckBox.checked = false;
+                      MyCheckBox.checked = false
                     } else {
-                      MyCheckBox.checked = true;
+                      MyCheckBox.checked = true
                     }
 
-                    setCanClick();
+                    setCanClick()
                   }
                 }}
                 onMouseOver={() => {
-                  showHover(index);
+                  showHover(index)
                 }}
                 onMouseLeave={() => {
-                  cancelHover(index);
+                  cancelHover(index)
                 }}
                 key={index}
               >
                 <div className="psw-user-info">
                   <div>{item.title}</div>
-                  <div>{item.account}</div>
+                  <p className="psw-user-account">{item.account}</p>
                 </div>
                 {this.state.showCheckBox ? (
                   <div>
@@ -1055,11 +1086,11 @@ export default class componentName extends Component {
                         className="folderCheckbox"
                         onClick={(e) => {
                           if (e && e.stopPropagation) {
-                            e.stopPropagation();
+                            e.stopPropagation()
                           } else {
-                            window.event.cancelBubble = true;
+                            window.event.cancelBubble = true
                           }
-                          setCanClick();
+                          setCanClick()
                         }}
                       />
                     </div>
@@ -1074,48 +1105,48 @@ export default class componentName extends Component {
                             className="lock-icon"
                             onClick={(e) => {
                               if (e && e.stopPropagation) {
-                                e.stopPropagation();
+                                e.stopPropagation()
                               } else {
-                                window.event.cancelBubble = true;
+                                window.event.cancelBubble = true
                               }
-                              sendMessageToContentScript(item);
+                              sendMessageToContentScript(item)
                             }}
                           />
                           <img
                             src={Up}
                             className="lock-icon"
                             onClick={(e) => {
-                              const url = item.website;
+                              const url = item.website
                               if (e && e.stopPropagation) {
-                                e.stopPropagation();
+                                e.stopPropagation()
                               } else {
-                                window.event.cancelBubble = true;
+                                window.event.cancelBubble = true
                               }
-                              sendMessageToContentScript2(url);
+                              sendMessageToContentScript2(url)
                             }}
                           />
                           <img
                             src={Folder}
                             className="lock-icon"
                             onClick={(e) => {
-                              const password = item.pwd;
+                              const password = item.pwd
                               if (e && e.stopPropagation) {
-                                e.stopPropagation();
+                                e.stopPropagation()
                               } else {
-                                window.event.cancelBubble = true;
+                                window.event.cancelBubble = true
                               }
-                              Copy(password);
+                              Copy(password)
                             }}
                           />
                         </div>
                       ) : (
-                        <img src={Lock} className="lock-icon" />
+                        <img src={noHover} className="lock-icon" />
                       )}
                     </div>
                   </div>
                 )}
               </div>
-            );
+            )
           })}
         </div>
         <div className="autoMid" style={{ display: this.state.btnShow }}>
@@ -1124,13 +1155,13 @@ export default class componentName extends Component {
               className="main ml-20"
               onClick={() => {
                 this.props.history.push({
-                  pathname: "/newPsw",
+                  pathname: '/newPsw',
                   state: {
                     isFolderDetail: true,
                     folderId,
                     preList: this.state.list,
                   },
-                });
+                })
               }}
             >
               <div className="btn-1 ">
@@ -1141,22 +1172,22 @@ export default class componentName extends Component {
               className="btn-layout mr-20 set-bg  copy-psw"
               onClick={() => {
                 this.props.history.push({
-                  pathname: "/folderAdd",
+                  pathname: '/folderAdd',
                   state: {
                     folderName: this.state.folderName,
                     list: this.state.list,
                   },
-                });
+                })
               }}
             >
               <span className="copy-text-info">添加密码</span>
             </div>
           </div>
         </div>
-        {this.state.editPswShow == "block" ? (
+        {this.state.editPswShow == 'block' ? (
           <div
             className={
-              this.state.canClick ? "editPsws-wrapper" : "editPsw-wrapper"
+              this.state.canClick ? 'editPsws-wrapper' : 'editPsw-wrapper'
             }
           >
             <div className="remove-wrapper">
@@ -1165,7 +1196,7 @@ export default class componentName extends Component {
                 className="remove-wrapper-icon"
                 onClick={() => {
                   if (this.state.canClick) {
-                    removePsw();
+                    removePsw()
                   }
                 }}
               />
@@ -1173,7 +1204,7 @@ export default class componentName extends Component {
                 className="remove-wrapper-text"
                 onClick={() => {
                   if (this.state.canClick) {
-                    removePsw();
+                    removePsw()
                   }
                 }}
               >
@@ -1186,7 +1217,7 @@ export default class componentName extends Component {
                 className="delete-wrapper-icon "
                 onClick={() => {
                   if (this.state.canClick) {
-                    deletePsw();
+                    deletePsw()
                   }
                 }}
               />
@@ -1194,7 +1225,7 @@ export default class componentName extends Component {
                 className="delete-wrapper-text"
                 onClick={() => {
                   if (this.state.canClick) {
-                    deletePsw();
+                    deletePsw()
                   }
                 }}
               >
@@ -1203,9 +1234,9 @@ export default class componentName extends Component {
             </div>
           </div>
         ) : (
-          ""
+          ''
         )}
       </div>
-    );
+    )
   }
 }

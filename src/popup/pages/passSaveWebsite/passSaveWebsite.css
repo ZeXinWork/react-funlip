@@ -40,7 +40,7 @@
 .passSaveWebsite-wrapper .password-modal3 .password-btn-group .set-bg {
   width: 108px;
   height: 36px;
-  background: linear-gradient(245deg, #4ca0fe 0%, #8455ff 100%);
+  background: linear-gradient(245deg, #4ca0fe 0%, #4ca0fe 100%);
   border-radius: 18px;
   cursor: pointer;
 }

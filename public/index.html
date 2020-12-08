@@ -36,15 +36,27 @@
       line-height: 17px;
     }
       /****/
+      .funlip-mask{
+        width: 100%;
+        height: 100%;
+        background: #AFB3C8;
+        opacity: 0.24;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index:999;
+      }
     </style>
   </head>
   <body>
- 
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
     <div class="funlip-loading" style="display: none;" id='funlip-loading'>
         <img src='./loading.gif' class="loading-gif" />
        <div class="funlip-loading-text">努力加载中</div>
+    </div>
+    <div class="funlip-mask" style="display: none;" id="funlip-mask">
+
     </div>
     </div>
   </body>

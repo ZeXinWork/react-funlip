@@ -1,178 +1,185 @@
 /* global chrome */
 
-import React, { Component } from "react";
-import arrowLeft from "./icon_arrowright_black@2x.png";
-import { Button, Card, Form, Input } from "antd";
-import iconFall from "./icon_fail@2x.png";
-import iconArrow from "./icon_arrowright_black@3x.png";
-import successSet from "./icon_smile.png";
-import iconWarning from "./icon_warning.png";
-import "./forgot.css";
-import { handleLocalStorage } from "../../../api";
+import React, { Component } from 'react'
+import arrowLeft from './icon_arrowright_black@2x.png'
+import { Button, Card, Form, Input } from 'antd'
+import iconFall from './icon_fail@2x.png'
+import iconArrow from './icon_arrowright_black@3x.png'
+import successSet from './icon_smile.png'
+import iconWarning from './icon_warning.png'
+import './forgot.css'
+import { handleLocalStorage } from '../../../api'
 export default class Forgot extends Component {
   state = {
-    FormatShow: "none",
-    already: "none",
-    warnIng: "none",
-    sixLength: "none",
-    mainPswErr: "none",
-  };
+    FormatShow: 'none',
+    already: 'none',
+    warnIng: 'none',
+    sixLength: 'none',
+    mainPswErr: 'none',
+  }
   render() {
-    let id;
-    let phone;
-    let forgotNumber;
+    let id
+    let phone
+    let forgotNumber
     if (this.props.location.state) {
-      id = this.props.location.state.id;
-      phone = this.props.location.state.phone;
-      forgotNumber = this.props.location.state.forgotNumber;
+      id = this.props.location.state.id
+      phone = this.props.location.state.phone
+      forgotNumber = this.props.location.state.forgotNumber
     }
 
     const goBack = () => {
-      this.props.history.push("./login");
-    };
+      this.props.history.push('./login')
+    }
     const layout = {
       labelCol: { span: 24 },
       wrapperCol: { span: 16 },
-    };
+    }
     const onFinishFailed = () => {
-      setShow();
-    };
+      setShow()
+    }
 
     const onFinish = (value) => {
-      const { tele } = value;
+      const { tele } = value
       const userInfo = {
-        areaCode: "+86",
+        areaCode: '+86',
         phone: tele,
-        type: "FORGOT_PASSWORD",
-      };
+        type: 'FORGOT_PASSWORD',
+      }
 
       const sendMessageToContentBackgroundScript = (mes) => {
-        const _this = this;
-        mes.requestType = "getNumbers";
+        const _this = this
+        mes.requestType = 'getNumbers'
 
         chrome.runtime.sendMessage({ mes }, function (res) {
-          res = JSON.parse(res);
+          res = JSON.parse(res)
           if (res.code === 200) {
-            const { verificationCode } = res.data;
+            const { verificationCode } = res.data
 
             _this.props.history.push({
-              pathname: "/pswNum",
+              pathname: '/pswNum',
               state: {
                 tele: tele,
                 number: verificationCode,
                 isForgotPsw: true,
                 forgotNumber: verificationCode,
               },
-            });
+            })
           } else if (res.code === 714) {
             _this.setState(
               {
-                already: "block",
+                already: 'block',
               },
               () => {
                 setTimeout(() => {
                   _this.setState({
-                    already: "none",
-                  });
-                }, 2000);
+                    already: 'none',
+                  })
+                }, 2000)
               }
-            );
+            )
+          } else if (res.code === 713) {
+            _this.props.history.push({
+              pathname: '/pswNum',
+              state: {
+                tele: tele,
+                number: 111111,
+                isForgotPsw: true,
+                forgotNumber: 111111,
+              },
+            })
           }
-        });
-      };
-      sendMessageToContentBackgroundScript(userInfo);
-    };
+        })
+      }
+      sendMessageToContentBackgroundScript(userInfo)
+    }
     const setShow = () => {
       this.setState(
         {
-          FormatShow: "block",
+          FormatShow: 'block',
         },
         () => {
           let mid = setTimeout(() => {
             this.setState(
               {
-                FormatShow: "none",
+                FormatShow: 'none',
               },
               () => {
-                clearTimeout(mid);
+                clearTimeout(mid)
               }
-            );
-          }, 2000);
+            )
+          }, 2000)
         }
-      );
-    };
+      )
+    }
 
     const setMainPsw = () => {
-      const _this = this;
-      let newPsw = document.getElementById("newPassword").value;
-      let conFirmPsw = document.getElementById("conFirmPsw").value;
+      const _this = this
+      let newPsw = document.getElementById('newPassword').value
+      let conFirmPsw = document.getElementById('conFirmPsw').value
       if (newPsw.length != 6) {
         this.setState(
           {
-            sixLength: "block",
+            sixLength: 'block',
           },
           () => {
             setTimeout(() => {
               _this.setState({
-                sixLength: "none",
-              });
-            }, 1000);
+                sixLength: 'none',
+              })
+            }, 1000)
           }
-        );
+        )
       } else if (conFirmPsw != newPsw) {
         this.setState(
           {
-            warnIng: "block",
+            warnIng: 'block',
           },
           () => {
             setTimeout(() => {
               _this.setState({
-                warnIng: "none",
-              });
-            }, 1000);
+                warnIng: 'none',
+              })
+            }, 1000)
           }
-        );
+        )
       } else {
         function sendMessageToContentScript2(mes) {
-          const verificationCode = handleLocalStorage(
-            "get",
-            "verificationCode"
-          );
+          const verificationCode = handleLocalStorage('get', 'verificationCode')
 
           mes = {
-            requestType: "forgotPsw",
+            requestType: 'forgotPsw',
             newMainPass: newPsw,
             phone: phone,
             verificationCode: forgotNumber,
-          };
+          }
           chrome.runtime.sendMessage({ mes }, function (response) {
-            let res = JSON.parse(response);
+            let res = JSON.parse(response)
             if (res.code == 200) {
               _this.setState(
                 {
-                  FormatShow: "block",
+                  FormatShow: 'block',
                 },
                 () => {
                   setTimeout(() => {
                     _this.setState(
                       {
-                        FormatShow: "none",
+                        FormatShow: 'none',
                       },
                       () => {
-                        _this.props.history.push("/autoLock");
+                        _this.props.history.push('/autoLock')
                       }
-                    );
-                  }, 500);
+                    )
+                  }, 500)
                 }
-              );
+              )
             } else {
-              alert(res.msg);
+              alert(res.msg)
             }
-          });
+          })
         }
-        sendMessageToContentScript2({});
+        sendMessageToContentScript2({})
       }
-    };
+    }
     return (
       <div>
         {id ? (
@@ -209,33 +216,35 @@ export default class Forgot extends Component {
               src={iconArrow}
               alt="iconArrow"
               className="resetMain-icon"
-              // onClick={goLogin}
+              onClick={() => {
+                this.props.history.push('/autoLock')
+              }}
             />
-            <div className="set-header">重置密码</div>{" "}
+            <div className="set-header">重置密码</div>{' '}
             <Form layout="vertical" className="from">
               <Form.Item
                 label="新主密码"
                 name="newPassword"
-                style={{ marginLeft: "30px" }}
+                style={{ marginLeft: '30px' }}
               >
                 <Input
                   className="set-body-input"
                   id="newPassword"
                   bordered={false}
-                  style={{ caretColor: "#5272eb", marginRight: "10px" }}
+                  style={{ caretColor: '#5272eb', marginRight: '10px' }}
                 />
               </Form.Item>
 
               <Form.Item
                 name="conFirmPsw"
                 label="确认新主密码"
-                style={{ marginLeft: "30px" }}
+                style={{ marginLeft: '30px' }}
               >
                 <Input
                   className="set-body-input"
                   bordered={false}
                   id="conFirmPsw"
-                  style={{ caretColor: "#5272eb", marginRight: "10px" }}
+                  style={{ caretColor: '#5272eb', marginRight: '10px' }}
                 />
               </Form.Item>
               <Form.Item>
@@ -277,11 +286,11 @@ export default class Forgot extends Component {
                       rules={[
                         ({ getFieldValue }) => ({
                           validator(rule, value) {
-                            const myReg = /^1(?:3\d{3}|5[^4\D]\d{2}|8\d{3}|7(?:[235-8]\d{2}|4(?:0\d|1[0-2]|9\d))|9[0-35-9]\d{2}|66\d{2})\d{6}$/;
+                            const myReg = /^1(?:3\d{3}|5[^4\D]\d{2}|8\d{3}|7(?:[235-8]\d{2}|4(?:0\d|1[0-2]|9\d))|9[0-35-9]\d{2}|66\d{2})\d{6}$/
                             if (!myReg.test(value)) {
-                              return Promise.reject("");
+                              return Promise.reject('')
                             } else {
-                              return Promise.resolve();
+                              return Promise.resolve()
                             }
                           },
                         }),
@@ -311,6 +320,6 @@ export default class Forgot extends Component {
           </div>
         )}
       </div>
-    );
+    )
   }
 }

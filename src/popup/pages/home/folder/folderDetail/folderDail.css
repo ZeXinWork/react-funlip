@@ -60,25 +60,28 @@
   /*复选框的背景图*/
   background-size: contain;
 }
-.psw-wrappers .folder-tag-wrapper {
-  margin-left: 24px;
-}
 .psw-wrappers .folder-tag-wrapper .folder-tag {
-  height: 17px;
-  font-size: 12px;
-  font-family: PingFang-SC-Medium, PingFang-SC;
-  font-weight: 500;
-  color: #5d648b;
-  line-height: 17px;
+  height: 25px;
+  font-size: 18px;
+  font-family: PingFangSC-Semibold, PingFang SC;
+  font-weight: 600;
+  color: #212441;
+  line-height: 25px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .psw-wrappers .password-modal2 {
+  z-index: 9999;
   display: none;
   position: absolute;
   top: 220px;
-  left: 45px;
+  left: 55px;
   background: #ffffff;
   border: 1px solid #ebf1fb;
-  width: 270px;
+  width: 256px;
+  height: 160px;
+  border-radius: 8px;
   z-index: 1000;
 }
 .psw-wrappers .password-modal2 .password-btn-group {
@@ -97,19 +100,33 @@
   background-image: -webkit-linear-gradient(90deg, #18bff6, #1875f6);
 }
 .psw-wrappers .password-modal2 .password-btn-group .btn-1 {
-  width: 100%;
-  height: 100%;
+  width: 108px;
+  height: 36px;
+  border: none;
+  font-size: 14px;
+  font-family: PingFangSC-Semibold, PingFang SC;
+  font-weight: 600;
+  color: #E95E5E;
+  line-height: 20px;
   border-radius: 18px;
-  background: #fff;
+  background: #FDF0F0;
   text-align: center;
   line-height: 30px;
   cursor: pointer;
+  outline: none;
+  margin-left: 16px;
+  margin-right: 8px;
 }
 .psw-wrappers .password-modal2 .password-btn-group .set-bg {
   width: 108px;
   height: 36px;
-  background: linear-gradient(245deg, #4ca0fe 0%, #8455ff 100%);
+  background: linear-gradient(270deg, #E453A2 0%, #EB665B 100%);
   border-radius: 18px;
+  font-size: 14px;
+  font-family: PingFangSC-Semibold, PingFang SC;
+  font-weight: 600;
+  color: #FFFFFF;
+  line-height: 20px;
   cursor: pointer;
 }
 .psw-wrappers .password-modal2 .password-btn-group .btn-layout {
@@ -129,37 +146,32 @@
   display: flex;
   justify-content: flex-end;
   margin-top: 16px;
-  margin-right: 16px;
   cursor: pointer;
 }
 .psw-wrappers .password-modal2 .password-title-icon .lock-icon {
   width: 32px;
   height: 32px;
-  margin-right: 100px;
+  margin-right: 111px;
 }
 .psw-wrappers .password-modal2 .password-title {
   margin-top: 15px;
   margin-left: 70px;
-  text-align: center;
-  line-height: 18px;
-  width: 140px;
+}
+.psw-wrappers .password-modal2 .password-title .password-title-info {
+  width: 126px;
   height: 20px;
   font-size: 14px;
   font-family: PingFangSC-Semibold, PingFang SC;
   font-weight: 600;
-  color: #3a3f6d;
+  color: #3A3F6D;
   line-height: 20px;
-}
-.psw-wrappers .password-modal2 .password-title .password-title-info {
-  color: #1e1e1e;
-  font-size: 16px;
 }
 .psw-wrappers .password-modal2 .password-body {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin-top: 30px;
+  margin-top: 24px;
 }
 .psw-wrappers .password-modal2 .password-body .password-body-num {
   width: 230px;
@@ -171,13 +183,16 @@
   text-overflow: ellipsis;
 }
 .psw-wrappers .password-modal3 {
+  z-index: 9999;
   display: none;
   position: absolute;
   top: 220px;
-  left: 45px;
+  left: 55px;
   background: #ffffff;
   border: 1px solid #ebf1fb;
-  width: 270px;
+  width: 256px;
+  height: 160px;
+  border-radius: 8px;
   z-index: 1000;
 }
 .psw-wrappers .password-modal3 .password-btn-group {
@@ -196,19 +211,33 @@
   background-image: -webkit-linear-gradient(90deg, #18bff6, #1875f6);
 }
 .psw-wrappers .password-modal3 .password-btn-group .btn-1 {
-  width: 100%;
-  height: 100%;
+  width: 108px;
+  height: 36px;
+  border: none;
+  font-size: 14px;
+  font-family: PingFangSC-Semibold, PingFang SC;
+  font-weight: 600;
+  color: #E95E5E;
+  line-height: 20px;
   border-radius: 18px;
-  background: #fff;
+  background: #FDF0F0;
   text-align: center;
   line-height: 30px;
   cursor: pointer;
+  outline: none;
+  margin-left: 16px;
+  margin-right: 8px;
 }
 .psw-wrappers .password-modal3 .password-btn-group .set-bg {
   width: 108px;
   height: 36px;
-  background: linear-gradient(245deg, #4ca0fe 0%, #8455ff 100%);
+  background: linear-gradient(270deg, #E453A2 0%, #EB665B 100%);
   border-radius: 18px;
+  font-size: 14px;
+  font-family: PingFangSC-Semibold, PingFang SC;
+  font-weight: 600;
+  color: #FFFFFF;
+  line-height: 20px;
   cursor: pointer;
 }
 .psw-wrappers .password-modal3 .password-btn-group .btn-layout {
@@ -228,37 +257,32 @@
   display: flex;
   justify-content: flex-end;
   margin-top: 16px;
-  margin-right: 16px;
   cursor: pointer;
 }
 .psw-wrappers .password-modal3 .password-title-icon .lock-icon {
   width: 32px;
   height: 32px;
-  margin-right: 100px;
+  margin-right: 111px;
 }
 .psw-wrappers .password-modal3 .password-title {
   margin-top: 15px;
-  margin-left: 70px;
-  text-align: center;
-  line-height: 18px;
-  width: 140px;
+  margin-left: 50px;
+}
+.psw-wrappers .password-modal3 .password-title .password-title-info {
+  width: 126px;
   height: 20px;
   font-size: 14px;
   font-family: PingFangSC-Semibold, PingFang SC;
   font-weight: 600;
-  color: #3a3f6d;
+  color: #3A3F6D;
   line-height: 20px;
-}
-.psw-wrappers .password-modal3 .password-title .password-title-info {
-  color: #1e1e1e;
-  font-size: 18px;
 }
 .psw-wrappers .password-modal3 .password-body {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin-top: 30px;
+  margin-top: 24px;
 }
 .psw-wrappers .password-modal3 .password-body .password-body-num {
   width: 230px;
@@ -270,6 +294,7 @@
   text-overflow: ellipsis;
 }
 .psw-wrappers .password-modal4 {
+  z-index: 99999;
   display: none;
   position: absolute;
   top: 220px;
@@ -295,18 +320,19 @@
   background-image: -webkit-linear-gradient(90deg, #18bff6, #1875f6);
 }
 .psw-wrappers .password-modal4 .password-btn-group .btn-1 {
-  width: 100%;
-  height: 100%;
+  width: 108px !important;
+  height: 36px;
+  background: #FFFFFF;
   border-radius: 18px;
-  background: #fff;
-  text-align: center;
-  line-height: 30px;
+  margin-left: 16px;
   cursor: pointer;
+  border: 2px solid #5790FE;
+  outline: none;
 }
 .psw-wrappers .password-modal4 .password-btn-group .set-bg {
   width: 108px;
   height: 36px;
-  background: linear-gradient(245deg, #4ca0fe 0%, #8455ff 100%);
+  background: linear-gradient(245deg, #4ca0fe 0%, #4ca0fe 100%);
   border-radius: 18px;
   cursor: pointer;
 }
@@ -370,6 +396,7 @@
 }
 .psw-wrappers .password-modal5 {
   display: none;
+  z-index: 99999;
   position: absolute;
   top: 220px;
   left: 45px;
@@ -394,18 +421,19 @@
   background-image: -webkit-linear-gradient(90deg, #18bff6, #1875f6);
 }
 .psw-wrappers .password-modal5 .password-btn-group .btn-1 {
-  width: 100%;
-  height: 100%;
+  width: 108px;
+  height: 36px;
+  background: #FFFFFF;
   border-radius: 18px;
-  background: #fff;
-  text-align: center;
-  line-height: 30px;
+  margin-left: 16px;
   cursor: pointer;
+  border: 2px solid #5790FE;
+  outline: none;
 }
 .psw-wrappers .password-modal5 .password-btn-group .set-bg {
   width: 108px;
   height: 36px;
-  background: linear-gradient(245deg, #4ca0fe 0%, #8455ff 100%);
+  background: linear-gradient(245deg, #4ca0fe 0%, #4ca0fe 100%);
   border-radius: 18px;
   cursor: pointer;
 }
@@ -468,6 +496,7 @@
   text-overflow: ellipsis;
 }
 .psw-wrappers .password-modal8 {
+  z-index: 99999;
   position: absolute;
   top: 220px;
   left: 45px;
@@ -519,7 +548,7 @@
 .psw-wrappers .password-modal8 .password-btn-group .set-bg {
   width: 108px;
   height: 36px;
-  background: linear-gradient(245deg, #4ca0fe 0%, #8455ff 100%);
+  background: linear-gradient(245deg, #4ca0fe 0%, #4ca0fe 100%);
   border-radius: 18px;
   cursor: pointer;
 }
@@ -691,6 +720,12 @@
 }
 .psw-wrappers .home-body .psw-info .psw-user-info {
   margin: 10px;
+  width: 130px;
+}
+.psw-wrappers .home-body .psw-info .psw-user-info .psw-user-account {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .psw-wrappers .home-body .psw-info .psw-icon {
   cursor: pointer;
@@ -735,7 +770,7 @@
   align-items: center;
 }
 .psw-wrappers .autoMid .set-bg {
-  background: linear-gradient(244deg, #4ca0fe 0%, #8455ff 100%);
+  background: linear-gradient(244deg, #4ca0fe 0%, #4ca0fe 100%);
   border-radius: 18px;
   cursor: pointer;
 }
@@ -802,7 +837,7 @@
 .psw-wrappers .editPsws-wrapper {
   width: 360px;
   height: 64px;
-  background: linear-gradient(222deg, #4ca0fe 0%, #8455ff 100%);
+  background: linear-gradient(222deg, #4ca0fe 0%, #4ca0fe 100%);
   display: flex;
   justify-content: center;
   position: fixed;

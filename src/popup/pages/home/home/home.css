@@ -15,10 +15,46 @@
   margin: 0;
   padding: 0;
 }
+.home-wrapper .lock-wrapper {
+  width: 100%;
+  display: flex;
+  position: absolute;
+  justify-content: flex-end;
+  margin-bottom: 24px;
+  top: 452px;
+  width: 360px;
+}
+.home-wrapper .lock-wrapper .lock-item-wrapper {
+  cursor: pointer;
+  width: 79px;
+  height: 40px;
+  background: #ffffff;
+  box-shadow: 0px 3px 6px 0px rgba(204, 205, 219, 0.8);
+  border-radius: 20px 0px 0px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+.home-wrapper .lock-wrapper .lock-item-wrapper .lock-icon {
+  width: 16px;
+  height: 16px;
+}
+.home-wrapper .lock-wrapper .lock-item-wrapper .lock-text {
+  width: 28px;
+  height: 20px;
+  font-size: 14px;
+  font-family: PingFangSC-Semibold, PingFang SC;
+  font-weight: 600;
+  color: #5D648B;
+  line-height: 20px;
+  margin-left: 2px;
+}
 .home-wrapper .home-classification {
   position: absolute;
   width: 360px;
   bottom: 0;
+  z-index: 99;
   right: 0;
 }
 .home-wrapper .home-classification .fly-ball {
@@ -29,38 +65,6 @@
   left: 148px;
   cursor: pointer;
   z-index: 99;
-}
-.home-wrapper .home-classification .lock-wrapper {
-  width: 100%;
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 24px;
-  width: 360px;
-}
-.home-wrapper .home-classification .lock-wrapper .lock-item-wrapper {
-  cursor: pointer;
-  width: 79px;
-  height: 40px;
-  background: #ffffff;
-  box-shadow: 0px 3px 6px 0px rgba(204, 205, 219, 0.8);
-  border-radius: 20px 0px 0px 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.home-wrapper .home-classification .lock-wrapper .lock-item-wrapper .lock-icon {
-  width: 16px;
-  height: 16px;
-}
-.home-wrapper .home-classification .lock-wrapper .lock-item-wrapper .lock-text {
-  width: 28px;
-  height: 20px;
-  font-size: 14px;
-  font-family: PingFangSC-Semibold, PingFang SC;
-  font-weight: 600;
-  color: #5d648b;
-  line-height: 20px;
-  margin-left: 2px;
 }
 .home-wrapper .home-classification .item-classification {
   border-bottom: none;

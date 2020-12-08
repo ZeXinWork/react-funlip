@@ -1,53 +1,53 @@
 /* global chrome */
-import React, { Component } from "react";
-import { Button, Card, Form, Input, Slider, Checkbox } from "antd";
-import Arrow from "./icon_arrowright_black@2x.png";
-import copyIcon from "./icon_edit_visible.png";
-import { handleLocalStorage, addNewInfo } from "../../../api/index";
-import radom from "./icon_generate_password.png";
+import React, { Component } from 'react'
+import { Button, Card, Form, Input, Slider, Checkbox } from 'antd'
+import Arrow from './icon_arrowright_black@2x.png'
+import copyIcon from './icon_edit_visible.png'
+import { handleLocalStorage, addNewInfo } from '../../../api/index'
+import radom from './icon_generate_password.png'
 
-import close from "./close.png";
+import close from './close.png'
 
-import "./newPsw.css";
+import './newPsw.css'
 class createNewPsw extends Component {
   state = {
-    password: "",
+    password: '',
     check: true,
     value: 10,
     ToolTip: 10,
     mustShowUp: true,
-    passwordExplain: "hidden",
-    titleExplain: "hidden",
-    accountExplain: "hidden",
-    tipExplain: "hidden",
-    websiteExplain: "hidden",
-    accountExplainText: "请输入账号！",
-    passwordExplainText: "请输入密码！",
-    titleExplainText: "请输入标题！",
+    passwordExplain: 'hidden',
+    titleExplain: 'hidden',
+    accountExplain: 'hidden',
+    tipExplain: 'hidden',
+    websiteExplain: 'hidden',
+    accountExplainText: '请输入账号！',
+    passwordExplainText: '请输入密码！',
+    titleExplainText: '请输入标题！',
     onlyOne: true,
-  };
+  }
 
   //生成随机密码
   createPassword = (value) => {
     // 生成随机大写
     function getRandomUpper() {
-      return String.fromCharCode(Math.floor(Math.random() * 26) + 65);
+      return String.fromCharCode(Math.floor(Math.random() * 26) + 65)
     }
 
     //生成随机小写
     function getRandomLower() {
-      return String.fromCharCode(Math.floor(Math.random() * 26) + 97);
+      return String.fromCharCode(Math.floor(Math.random() * 26) + 97)
     }
 
     // 生成随机数字
     function getRandomNumber() {
-      return +String.fromCharCode(Math.floor(Math.random() * 10) + 48);
+      return +String.fromCharCode(Math.floor(Math.random() * 10) + 48)
     }
 
     // 生成随机符号
     function getRandomSymbol() {
-      const symbols = "!@#$%^&*(){}[]=<>/,.";
-      return symbols[Math.floor(Math.random() * symbols.length)];
+      const symbols = '!@#$%^&*(){}[]=<>/,.'
+      return symbols[Math.floor(Math.random() * symbols.length)]
     }
     //创建随机函数对象
     const randomFunc = {
@@ -55,18 +55,18 @@ class createNewPsw extends Component {
       number: getRandomNumber,
       symbol: getRandomSymbol,
       lower: getRandomLower,
-    };
+    }
     //获取对应节点
-    const uppercaseEl = document.getElementById("uppercase");
-    const numbersEl = document.getElementById("numbers");
-    const symbolsEl = document.getElementById("symbols");
+    const uppercaseEl = document.getElementById('uppercase')
+    const numbersEl = document.getElementById('numbers')
+    const symbolsEl = document.getElementById('symbols')
     //设置对应配置信息
-    const length = value;
+    const length = value
     // const hasLower = lowercaseEl.checked;
-    let hasUpper = uppercaseEl.checked;
-    const hasNumber = numbersEl.checked;
-    const hasSymbol = symbolsEl.checked;
-    let hasLower = true;
+    let hasUpper = uppercaseEl.checked
+    const hasNumber = numbersEl.checked
+    const hasSymbol = symbolsEl.checked
+    let hasLower = true
 
     const res = generatePassword(
       hasLower,
@@ -74,46 +74,46 @@ class createNewPsw extends Component {
       hasNumber,
       hasSymbol,
       length
-    );
+    )
     //获取密码
     function generatePassword(lower, upper, number, symbol, length) {
       // 1.初始化密码
-      let generatedPassword = "";
+      let generatedPassword = ''
       // 2.过滤出没有选中的密码类型
-      const typesCount = lower + upper + number + symbol;
+      const typesCount = lower + upper + number + symbol
       const typeArr = [{ lower }, { upper }, { number }, { symbol }].filter(
         (item) => Object.values(item)[0]
-      );
+      )
       //
       if (typesCount === 0) {
-        return "";
+        return ''
       }
       // 3.通过循环获得每个密码并返回给存储密码的变量
       for (let i = 0; i < length; i += typesCount) {
         typeArr.forEach((type) => {
-          const funcName = Object.keys(type)[0];
-          generatedPassword += randomFunc[funcName]();
-        });
+          const funcName = Object.keys(type)[0]
+          generatedPassword += randomFunc[funcName]()
+        })
       }
       //
       // 4.将处理后的随机密码结果进行保存再返回这个值
-      const finalPassword = generatedPassword.slice(0, length);
+      const finalPassword = generatedPassword.slice(0, length)
 
-      return finalPassword;
+      return finalPassword
     }
-    return res;
-  };
+    return res
+  }
 
   componentDidMount() {
     //一开始打开就赋值
-    let res = this.createPassword(this.state.value);
+    let res = this.createPassword(this.state.value)
     this.setState(() => ({
       password: res,
-    }));
+    }))
   }
 
   render() {
-    const pluginID = handleLocalStorage("get", "pluginID");
+    const pluginID = handleLocalStorage('get', 'pluginID')
 
     //设置密码
     const setValue = (value) => {
@@ -123,91 +123,91 @@ class createNewPsw extends Component {
           value,
         },
         () => {
-          let res = this.createPassword(this.state.value);
+          let res = this.createPassword(this.state.value)
           this.setState(() => ({
             password: res,
-          }));
+          }))
         }
-      );
-    };
+      )
+    }
 
     //返回上一级子页面
     const goBack = () => {
-      let isFolderDetail;
-      let preList;
+      let isFolderDetail
+      let preList
       if (this.props.location.state) {
-        isFolderDetail = this.props.location.state.isFolderDetail;
-        preList = this.props.location.state.preList;
+        isFolderDetail = this.props.location.state.isFolderDetail
+        preList = this.props.location.state.preList
       }
       if (isFolderDetail) {
         if (preList && preList.length > 0) {
           this.props.history.push({
-            pathname: "/folderDetail",
+            pathname: '/folderDetail',
             state: { preList: preList },
-          });
+          })
         } else {
           this.props.history.push({
-            pathname: "/folderDetail",
-          });
+            pathname: '/folderDetail',
+          })
         }
       } else {
-        this.props.history.goBack();
+        this.props.history.goBack()
       }
-    };
+    }
 
     //Form布局
     const layout = {
       labelCol: { span: 24 },
       wrapperCol: { span: 16 },
-    };
+    }
 
     //表单验证通过后的回调
     const onFinish = async (values) => {
       if (this.state.onlyOne) {
         this.setState({
           onlyOne: false,
-        });
-        let { title, password, tip, url, username } = values;
+        })
+        let { title, password, tip, url, username } = values
 
         if (!title) {
           this.setState({
-            titleExplain: "visible",
+            titleExplain: 'visible',
             onlyOne: true,
-          });
+          })
         }
 
         if (!password) {
           this.setState({
-            passwordExplain: "visible",
+            passwordExplain: 'visible',
             onlyOne: true,
-          });
+          })
         }
         if (!username) {
           this.setState({
-            accountExplain: "visible",
+            accountExplain: 'visible',
             onlyOne: true,
-          });
+          })
         }
         if (title) {
           this.setState({
-            titleExplain: "hidden",
+            titleExplain: 'hidden',
             onlyOne: true,
-          });
+          })
         }
         if (password && password.length < 24) {
           this.setState({
-            passwordExplain: "hidden",
+            passwordExplain: 'hidden',
             onlyOne: true,
-          });
+          })
         }
         if (username) {
           this.setState({
-            accountExplain: "hidden",
+            accountExplain: 'hidden',
             onlyOne: true,
-          });
+          })
         }
         if (!url) {
-          url = "";
+          url = ''
         }
 
         if (
@@ -218,11 +218,11 @@ class createNewPsw extends Component {
           username &&
           username.length > 0
         ) {
-          let isFolderDetail;
-          let folderId;
+          let isFolderDetail
+          let folderId
           if (this.props.location.state) {
-            isFolderDetail = this.props.location.state.isFolderDetail;
-            folderId = this.props.location.state.folderId;
+            isFolderDetail = this.props.location.state.isFolderDetail
+            folderId = this.props.location.state.folderId
           }
 
           if (isFolderDetail) {
@@ -233,42 +233,42 @@ class createNewPsw extends Component {
               website: url,
               account: username,
               pluginId: pluginID,
-            };
+            }
 
             const sendMessageToContentBackgroundScript = (mes) => {
-              const _this = this;
-              mes.requestType = "saveNewPsw";
-              mes.isFolderAdd = true;
+              const _this = this
+              mes.requestType = 'saveNewPsw'
+              mes.isFolderAdd = true
               chrome.runtime.sendMessage({ mes }, function (res) {
-                let response = JSON.parse(res);
+                let response = JSON.parse(res)
                 if (response.id) {
                   if (!folderId) {
-                    folderId = handleLocalStorage("get", "folderId");
+                    folderId = handleLocalStorage('get', 'folderId')
                   }
                   let userInfo = {
                     passwordIds: [response.id],
                     folderId,
-                  };
+                  }
                   const sendMessageToContentBackgroundScript2 = (mes) => {
-                    mes.requestType = "addPswToFolder";
+                    mes.requestType = 'addPswToFolder'
                     chrome.runtime.sendMessage({ mes }, function (res) {
-                      let responses = JSON.parse(res);
+                      let responses = JSON.parse(res)
                       if (responses.code == 200) {
                         _this.setState({
                           onlyOne: true,
-                        });
+                        })
                         _this.props.history.push({
-                          pathname: "/folderDetail",
+                          pathname: '/folderDetail',
                           state: { dataList: response },
-                        });
+                        })
                       }
-                    });
-                  };
-                  sendMessageToContentBackgroundScript2(userInfo);
+                    })
+                  }
+                  sendMessageToContentBackgroundScript2(userInfo)
                 }
-              });
-            };
-            sendMessageToContentBackgroundScript(passwordItem);
+              })
+            }
+            sendMessageToContentBackgroundScript(passwordItem)
           } else {
             let passwordItem = {
               title: title,
@@ -277,69 +277,69 @@ class createNewPsw extends Component {
               website: url,
               account: username,
               pluginId: pluginID,
-            };
+            }
             const sendMessageToContentBackgroundScript = (mes) => {
-              const _this = this;
-              mes.requestType = "saveNewPsw";
+              const _this = this
+              mes.requestType = 'saveNewPsw'
               chrome.runtime.sendMessage({ mes }, function (res) {
-                let response = JSON.parse(res);
+                let response = JSON.parse(res)
                 if (response.id) {
                   _this.setState({
                     onlyOne: true,
-                  });
+                  })
                   _this.props.history.push({
-                    pathname: "/home/psd",
-                  });
+                    pathname: '/home/psd',
+                  })
                 }
-              });
-            };
-            sendMessageToContentBackgroundScript(passwordItem);
+              })
+            }
+            sendMessageToContentBackgroundScript(passwordItem)
           }
         }
       }
-    };
+    }
 
     //表单验证失败后的回调
-    const onFinishFailed = (errorInfo) => {};
+    const onFinishFailed = (errorInfo) => {}
 
     //显示\隐藏用户设置的密码
     const showPassword = () => {
-      let input = document.getElementById("password-input");
-      input.type == "password"
-        ? (input.type = "text")
-        : (input.type = "password");
-    };
+      let input = document.getElementById('password-input')
+      input.type == 'password'
+        ? (input.type = 'text')
+        : (input.type = 'password')
+    }
 
     //关闭面膜选择器modal
     const closeModal = () => {
-      let Modal = document.getElementsByClassName("password-modal")[0];
-      Modal.style.display = "none";
-    };
+      let Modal = document.getElementsByClassName('password-modal')[0]
+      Modal.style.display = 'none'
+    }
 
     //打开密码选择器modal
     const showModal = () => {
-      let Modal = document.getElementsByClassName("password-modal")[0];
-      Modal.style.display = "block";
-    };
+      let Modal = document.getElementsByClassName('password-modal')[0]
+      Modal.style.display = 'block'
+    }
 
     //设置并关闭密码选择器modal
     const closeSetModal = () => {
-      let Modal = document.getElementsByClassName("password-modal")[0];
-      let input = document.getElementById("password-input");
+      let Modal = document.getElementsByClassName('password-modal')[0]
+      let input = document.getElementById('password-input')
       //触发react的event listener 否则无法填充
 
       var nativeInputValueSetter = Object.getOwnPropertyDescriptor(
         window.HTMLInputElement.prototype,
-        "value"
-      ).set;
+        'value'
+      ).set
 
-      nativeInputValueSetter.call(input, this.state.password);
+      nativeInputValueSetter.call(input, this.state.password)
 
-      var ev2 = new Event("input", { bubbles: true });
-      input.dispatchEvent(ev2);
+      var ev2 = new Event('input', { bubbles: true })
+      input.dispatchEvent(ev2)
       // input.value = this.state.password;
-      Modal.style.display = "none";
-    };
+      Modal.style.display = 'none'
+    }
 
     return (
       <div className="newPsw-wrappers">
@@ -373,27 +373,27 @@ class createNewPsw extends Component {
                   onChange={(e) => {
                     if (e.target.value.length === 24) {
                       let passwordExplain = document.getElementsByClassName(
-                        "title-explain"
-                      )[0];
-                      passwordExplain.className = "title-explain-long";
+                        'title-explain'
+                      )[0]
+                      passwordExplain.className = 'title-explain-long'
                       this.setState({
-                        titleExplain: "visible",
-                        titleExplainText: "标题长度不能大于24位",
-                      });
+                        titleExplain: 'visible',
+                        titleExplainText: '标题长度不能大于24位',
+                      })
                     } else if (e.target.value.length > 0) {
                       this.setState({
-                        titleExplain: "hidden",
-                        titleExplainText: "请输入标题！",
-                      });
+                        titleExplain: 'hidden',
+                        titleExplainText: '请输入标题！',
+                      })
                     } else {
                       let passwordExplain = document.getElementsByClassName(
-                        "title-explain-long"
-                      )[0];
-                      passwordExplain.className = "title-explain";
+                        'title-explain-long'
+                      )[0]
+                      passwordExplain.className = 'title-explain'
                       this.setState({
-                        titleExplain: "hidden",
-                        titleExplainText: "请输入标题！",
-                      });
+                        titleExplain: 'hidden',
+                        titleExplainText: '请输入标题！',
+                      })
                     }
                   }}
                 />
@@ -414,27 +414,27 @@ class createNewPsw extends Component {
                   onChange={(e) => {
                     if (e.target.value.length === 64) {
                       let passwordExplain = document.getElementsByClassName(
-                        "account-explain"
-                      )[0];
-                      passwordExplain.className = "account-explain-long";
+                        'account-explain'
+                      )[0]
+                      passwordExplain.className = 'account-explain-long'
                       this.setState({
-                        accountExplain: "visible",
-                        accountExplainText: "账号长度不能大于64位",
-                      });
+                        accountExplain: 'visible',
+                        accountExplainText: '账号长度不能大于64位',
+                      })
                     } else if (e.target.value.length > 0) {
                       this.setState({
-                        accountExplain: "hidden",
-                        accountExplainText: "请输入账号！",
-                      });
+                        accountExplain: 'hidden',
+                        accountExplainText: '请输入账号！',
+                      })
                     } else {
                       let passwordExplain = document.getElementsByClassName(
-                        "account-explain-long"
-                      )[0];
-                      passwordExplain.className = "account-explain";
+                        'account-explain-long'
+                      )[0]
+                      passwordExplain.className = 'account-explain'
                       this.setState({
-                        accountExplain: "hidden",
-                        accountExplainText: "请输入账号！",
-                      });
+                        accountExplain: 'hidden',
+                        accountExplainText: '请输入账号！',
+                      })
                     }
                   }}
                 />
@@ -455,27 +455,27 @@ class createNewPsw extends Component {
                   onChange={(e) => {
                     if (e.target.value.length === 24) {
                       let passwordExplain = document.getElementsByClassName(
-                        "password-explain"
-                      )[0];
-                      passwordExplain.className = "password-explain-long";
+                        'password-explain'
+                      )[0]
+                      passwordExplain.className = 'password-explain-long'
                       this.setState({
-                        passwordExplain: "visible",
-                        passwordExplainText: "密码长度不能大于24位",
-                      });
+                        passwordExplain: 'visible',
+                        passwordExplainText: '密码长度不能大于24位',
+                      })
                     } else if (e.target.value.length > 0) {
                       this.setState({
-                        passwordExplain: "hidden",
-                        passwordExplainText: "请输入密码！",
-                      });
+                        passwordExplain: 'hidden',
+                        passwordExplainText: '请输入密码！',
+                      })
                     } else {
                       let passwordExplain = document.getElementsByClassName(
-                        "password-explain-long"
-                      )[0];
-                      passwordExplain.className = "password-explain";
+                        'password-explain-long'
+                      )[0]
+                      passwordExplain.className = 'password-explain'
                       this.setState({
-                        passwordExplain: "hidden",
-                        passwordExplainText: "请输入密码！",
-                      });
+                        passwordExplain: 'hidden',
+                        passwordExplainText: '请输入密码！',
+                      })
                     }
                   }}
                 />
@@ -493,15 +493,15 @@ class createNewPsw extends Component {
                   bordered={false}
                   maxlength={255}
                   onChange={(e) => {
-                    const value = e.target.value;
+                    const value = e.target.value
                     if (value.length == 255) {
                       this.setState({
-                        websiteExplain: "visible",
-                      });
+                        websiteExplain: 'visible',
+                      })
                     } else {
                       this.setState({
-                        websiteExplain: "hidden",
-                      });
+                        websiteExplain: 'hidden',
+                      })
                     }
                   }}
                 />
@@ -520,12 +520,12 @@ class createNewPsw extends Component {
                   onChange={(e) => {
                     if (e.target.value.length === 100) {
                       this.setState({
-                        tipExplain: "visible",
-                      });
+                        tipExplain: 'visible',
+                      })
                     } else {
                       this.setState({
-                        tipExplain: "hidden",
-                      });
+                        tipExplain: 'hidden',
+                      })
                     }
                   }}
                 />
@@ -572,9 +572,9 @@ class createNewPsw extends Component {
                       ToolTip,
                     },
                     () => {
-                      setValue(ToolTip);
+                      setValue(ToolTip)
                     }
-                  );
+                  )
                 }}
               />
               <span>24</span>
@@ -591,13 +591,13 @@ class createNewPsw extends Component {
                     if (this.state.mustShowUp) {
                       this.setState({
                         mustShowUp: false,
-                      });
+                      })
                     } else {
                       this.setState({
                         mustShowUp: true,
-                      });
+                      })
                     }
-                    setValue(this.state.value);
+                    setValue(this.state.value)
                   }}
                 />
               </div>
@@ -608,7 +608,7 @@ class createNewPsw extends Component {
                   defaultChecked={this.state.check}
                   id="numbers"
                   onChange={() => {
-                    setValue(this.state.value);
+                    setValue(this.state.value)
                   }}
                 />
               </div>
@@ -619,17 +619,16 @@ class createNewPsw extends Component {
                   id="symbols"
                   defaultChecked={this.state.check}
                   onChange={() => {
-                    setValue(this.state.value);
+                    setValue(this.state.value)
                   }}
                 />
               </div>
             </div>
             <div className="password-btn-group">
-              <div className="main ml-20" onClick={closeModal}>
-                <div className="btn-1 ">
-                  <span className="password-text">取消</span>
-                </div>
-              </div>
+              <button onClick={closeModal} className="btn-1">
+                取消
+              </button>
+
               <div className="btn-layout mr-20 set-bg " onClick={closeSetModal}>
                 <span className="password-text">确认</span>
               </div>
@@ -637,8 +636,8 @@ class createNewPsw extends Component {
           </div>
         </div>
       </div>
-    );
+    )
   }
 }
 
-export default createNewPsw;
+export default createNewPsw

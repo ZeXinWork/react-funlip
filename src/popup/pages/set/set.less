@@ -4,6 +4,23 @@
   box-sizing: border-box;
   background: #ffffff;
   position: relative;
+  input[type="checkbox"] {
+    -webkit-appearance: none; /*清除复选框默认样式*/
+    border: none;
+    outline: none;
+    vertical-align: middle;
+    width: 17px;
+    height: 17px;
+    margin-right: 24px;
+    background: url("./checkbox／unselected+normal.png") no-repeat;
+  }
+  input[type="checkbox"]:checked {
+    outline: none;
+    -webkit-appearance: none;
+    border: none;
+    background: url("./checkbox／selected+normal.png") no-repeat; /*复选框的背景图*/
+    background-size: contain;
+  }
   .skip-text {
     cursor: pointer;
   }
@@ -94,7 +111,8 @@
   .auto-lock-wrappers {
     box-sizing: border-box;
     width: 360px;
-    height: 270px;
+    z-index:9999;
+    height: 292px;
     position: absolute;
     top: 308px;
     background: #ffffff;
@@ -102,26 +120,45 @@
     display: flex;
     justify-content: center;
     .auto-lock-text {
-      width: 56px;
+      width: 76px;
       height: 20px;
       font-size: 14px;
       font-family: PingFang-SC-Medium, PingFang-SC;
       font-weight: 500;
       color: #7881a9;
       line-height: 20px;
+      margin-left: 15px;
+      text-align: center;
+    }
+    .ml-8{
+      margin-left: 8px;
+    }
+    .folderCheckbox{
+      margin-bottom: 5px;
     }
     .auto-lock-text-bold {
-      width: 56px;
+      width: 76px;
       height: 20px;
       font-size: 14px;
+      margin-left: 15px;
       font-family: PingFang-SC-Medium, PingFang-SC;
       font-weight: 800;
       color: #5d648b;
       line-height: 20px;
+      text-align: center;
+
     }
+ 
     .mb-24 {
-      margin-bottom: 24px;
+      margin-bottom: 22px;
       cursor: pointer;
+    }
+    .ml-40{
+      margin-left: 24px;
+      width: 150px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
     .mt-5 {
       margin-top: 5px;

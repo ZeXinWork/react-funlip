@@ -29,6 +29,27 @@
   width: 24px;
   height: 24px;
 }
+.psw-wrapper .folderName-wrapper .folder-tag-wrapper {
+  margin-right: 144px;
+  margin-top: 23px;
+  float: right;
+  width: 150px;
+  border: 1px solid red;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.psw-wrapper .folderName-wrapper .folder-tag-wrapper text-overflow:ellipsis .folder-tag {
+  border: 1px solid yellow;
+  height: 25px;
+  font-size: 18px;
+  font-family: PingFangSC-Semibold, PingFang SC;
+  font-weight: 600;
+  color: #212441;
+  line-height: 25px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .psw-wrapper .folderName-wrapper .psw-wrapper-folderName {
   margin-left: 24px;
   margin-top: 11px;
@@ -152,7 +173,7 @@
 .psw-wrapper .btn-group .folder-btn {
   width: 312px;
   height: 50px;
-  background: linear-gradient(245deg, #4ca0fe 0%, #8455ff 100%);
+  background: linear-gradient(245deg, #4ca0fe 0%, #4ca0fe 100%);
   font-size: 16px;
   font-family: PingFangSC-Semibold, PingFang SC;
   font-weight: 600;
