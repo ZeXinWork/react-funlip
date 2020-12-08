@@ -124,6 +124,7 @@ class PasswordDetail extends Component {
       pwd,
       title,
       website,
+      id,
     } = this.props.location.state.itemDetail
     this.setState({
       account,
@@ -131,6 +132,7 @@ class PasswordDetail extends Component {
       pwd,
       title,
       website,
+      id,
     })
   }
 
@@ -232,6 +234,7 @@ class PasswordDetail extends Component {
         pluginId: pluginID / 1,
         passwordIds: [id],
       }
+
       const folderId = handleLocalStorage('get', 'folderId')
 
       if (isDeleteFolder) {
@@ -250,10 +253,6 @@ class PasswordDetail extends Component {
       }
 
       const sendMessageToContentBackgroundScript = (mes) => {
-        if (config == 'editConfig') {
-          mes.editConfig = 'editConfig'
-          mes.targetObj = targetObj
-        }
         mes.requestType = 'deleteItem'
         chrome.runtime.sendMessage({ mes }, function (response) {})
       }
@@ -304,7 +303,7 @@ class PasswordDetail extends Component {
         this.setState({
           onlyOne: false,
         })
-        let { title, pwd, note, website, account } = this.state
+        let { title, pwd, note, website, account, id } = this.state
         if (!title) {
           this.setState({
             titleExplain: 'visible',
@@ -357,15 +356,22 @@ class PasswordDetail extends Component {
             website: website,
             account: account,
             pluginId: pluginID,
+            id,
           }
           const sendMessageToContentBackgroundScript = (mes) => {
-            console.log(mes)
             mes.requestType = 'editNewPsw'
             chrome.runtime.sendMessage({ mes }, (res) => {
               let response = JSON.parse(res)
-              let config = 'editConfig'
-
-              deleteItem(config, response)
+              if (response.code === 200) {
+                if (isDeleteFolder) {
+                  _this.props.history.push({
+                    pathname: '/folderDetail',
+                    state: { afterDelete: true },
+                  })
+                } else {
+                  _this.props.history.push('/home/psd')
+                }
+              }
             })
           }
           sendMessageToContentBackgroundScript(passwordItem)

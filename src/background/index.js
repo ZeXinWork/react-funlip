@@ -37,8 +37,8 @@ localforage.config({
 })
 //2、封装从接口获取用户信息的代码
 const getData = async () => {
-  let BASE = 'https://devfunlipextapi.xmwefun.com/'
-  // let BASE = "http://106.53.103.199:8088/";
+  // let BASE = 'https://devfunlipextapi.xmwefun.com/'
+  let BASE = 'http://106.53.103.199:8088/'
 
   const token = handleLocalStorage('get', 'token')
   const pluginID = handleLocalStorage('get', 'pluginID')
@@ -193,71 +193,39 @@ const deletePsdItem = async (deleteItem, config, targetObj) => {
   data = newData
   let targetId = value.data[0].id
 
-  if (config) {
-    const localFolderState = await localforage
-      .getItem('folderList')
-      .then(function (value) {
-        // 当离线仓库中的值被载入时，此处代码运行
-        return value
-      })
-      .catch(function (err) {
-        // 当出错时，此处代码运行
-      })
-    if (localFolderState) {
-      for (let i = 0; i < localFolderState.length; i++) {
+  const cmd = 'deleteSuccess'
+
+  const localFolderState = await localforage
+    .getItem('folderList')
+    .then(function (value) {
+      // 当离线仓库中的值被载入时，此处代码运行
+      return value
+    })
+    .catch(function (err) {
+      // 当出错时，此处代码运行
+    })
+  if (localFolderState && localFolderState.length > 0) {
+    for (let i = 0; i < localFolderState.length; i++) {
+      if (localFolderState[i].passwords) {
         for (let j = 0; j < localFolderState[i].passwords.length; j++) {
           if (localFolderState[i].passwords[j].id == targetId) {
             localFolderState[i].passwords.splice(j, 1)
-            localFolderState[i].passwords.push(targetObj)
           }
         }
       }
-      for (let i = 0; i < localFolderState.length; i++) {
-        localFolderState[i].fileNum = localFolderState[i].passwords.length
-      }
-
-      localforage
-        .setItem('folderList', localFolderState)
-        .then(function (value) {
-          return value
-        })
-        .catch(function (err) {})
     }
-  }
-  const cmd = 'deleteSuccess'
+    for (let i = 0; i < localFolderState.length; i++) {
+      localFolderState[i].fileNum = localFolderState[i].passwords.length
+    }
 
-  if (!config) {
-    const localFolderState = await localforage
-      .getItem('folderList')
+    localforage
+      .setItem('folderList', localFolderState)
       .then(function (value) {
-        // 当离线仓库中的值被载入时，此处代码运行
         return value
       })
-      .catch(function (err) {
-        // 当出错时，此处代码运行
-      })
-    if (localFolderState && localFolderState.length > 0) {
-      for (let i = 0; i < localFolderState.length; i++) {
-        if (localFolderState[i].passwords) {
-          for (let j = 0; j < localFolderState[i].passwords.length; j++) {
-            if (localFolderState[i].passwords[j].id == targetId) {
-              localFolderState[i].passwords.splice(j, 1)
-            }
-          }
-        }
-      }
-      for (let i = 0; i < localFolderState.length; i++) {
-        localFolderState[i].fileNum = localFolderState[i].passwords.length
-      }
-
-      localforage
-        .setItem('folderList', localFolderState)
-        .then(function (value) {
-          return value
-        })
-        .catch(function (err) {})
-    }
+      .catch(function (err) {})
   }
+
   function sendCmd() {
     chrome.runtime.sendMessage(cmd, function (response) {})
   }
@@ -265,8 +233,11 @@ const deletePsdItem = async (deleteItem, config, targetObj) => {
 }
 
 //编辑密码后更新本地数据
-const editItem = async (value) => {
+const editItem = async (userInfo, value) => {
   value = JSON.parse(value)
+  //针对密码库首页的数据库进行更改
+  const { code } = value
+  let { title, pwd, note, website, account } = userInfo
   const localState = await localforage
     .getItem('userInfo')
     .then(function (value) {
@@ -276,15 +247,60 @@ const editItem = async (value) => {
     .catch(function (err) {
       // 当出错时，此处代码运行
     })
-  localState.push(value)
-  localforage
-    .setItem('userInfo', localState)
-    .then(function (value) {
-      data = value
-    })
-    .catch(function (err) {
-      // 当出错时，此处代码运行
-    })
+  // localState.push(value)
+  const targetId = value.data.id
+  if (code === 200) {
+    for (let i = 0; i < localState.length; i++) {
+      if (targetId == localState[i].id) {
+        localState[i].title = title
+        localState[i].pwd = pwd
+        localState[i].note = note
+        localState[i].website = website
+        localState[i].account = account
+      }
+    }
+    localforage
+      .setItem('userInfo', localState)
+      .then(function (value) {
+        data = value
+      })
+      .catch(function (err) {
+        // 当出错时，此处代码运行
+      })
+    //针对文件夹列表
+    const fileList = await localforage
+      .getItem('folderList')
+      .then(function (value) {
+        // 当离线仓库中的值被载入时，此处代码运行
+        return value
+      })
+      .catch(function (err) {
+        // 当出错时，此处代码运行
+      })
+    if (fileList) {
+      for (let i = 0; i < fileList.length; i++) {
+        for (let j = 0; j < fileList[i].passwords.length; j++) {
+          if (fileList[i].passwords[j].id == targetId) {
+            fileList[i].passwords[j].title = title
+            fileList[i].passwords[j].pwd = pwd
+            fileList[i].passwords[j].note = note
+            fileList[i].passwords[j].website = website
+            fileList[i].passwords[j].account = account
+          }
+        }
+      }
+      for (let i = 0; i < fileList.length; i++) {
+        fileList[i].fileNum = fileList[i].passwords.length
+      }
+
+      localforage
+        .setItem('folderList', fileList)
+        .then(function (value) {
+          return value
+        })
+        .catch(function (err) {})
+    }
+  }
 }
 
 //把密码发送个密码页
@@ -342,8 +358,8 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   let { requestType } = message.mes
   const autoFill = handleLocalStorage('get', 'autoFill') //设置是否自动填充
   const autoStore = handleLocalStorage('get', 'autoStore') //设置是否自动保存密码
-  // let BASE = "http://106.53.103.199:8088/";
-  let BASE = 'https://devfunlipextapi.xmwefun.com/'
+  let BASE = 'http://106.53.103.199:8088/'
+  // let BASE = 'https://devfunlipextapi.xmwefun.com/'
   if (type === 'autofill') {
     if (autoFill == 1 && isAutofill) {
       const getAllDatas = async () => {
@@ -749,7 +765,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     return true
   } else if (requestType === 'editNewPsw') {
     const token = handleLocalStorage('get', 'token')
-    const { title, pwd, note, website, account, pluginId } = message.mes
+    const { title, pwd, note, website, account, pluginId, id } = message.mes
     let userInfo = {
       title,
       pwd,
@@ -757,11 +773,11 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       website,
       account,
       pluginId,
+      id,
     }
 
-    const finished = 'finished'
     userInfo = JSON.stringify(userInfo)
-    fetch(`${BASE}plugin/api/v1/password/store`, {
+    fetch(`${BASE}plugin/api/v1/password/modify`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -773,7 +789,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       .then((response) => response.text())
       .then((text) => {
         const getSet = async () => {
-          await editItem(text)
+          await editItem(JSON.parse(userInfo), text)
           sendResponse(text)
         }
         getSet()
